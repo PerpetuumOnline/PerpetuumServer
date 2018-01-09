@@ -1,0 +1,1167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{8587A597-848E-497F-8036-3B6F8047EC45}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Perpetuum</RootNamespace>
+    <AssemblyName>Perpetuum</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\x64\Debug\Perpetuum\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <CodeAnalysisRules>-!Microsoft.Design#CA1012;-!Microsoft.Design#CA2210;-!Microsoft.Design#CA1040;-!Microsoft.Design#CA1005;-!Microsoft.Design#CA1020;-!Microsoft.Design#CA1021;-!Microsoft.Design#CA1010;-!Microsoft.Design#CA1011;-!Microsoft.Design#CA1009;-!Microsoft.Design#CA1050;-!Microsoft.Design#CA1026;-!Microsoft.Design#CA1019;-!Microsoft.Design#CA1031;-!Microsoft.Design#CA1047;-!Microsoft.Design#CA1000;-!Microsoft.Design#CA1048;-!Microsoft.Design#CA1051;-!Microsoft.Design#CA1002;-!Microsoft.Design#CA1061;-!Microsoft.Design#CA1006;-!Microsoft.Design#CA1046;-!Microsoft.Design#CA1045;-!Microsoft.Design#CA1065;-!Microsoft.Design#CA1038;-!Microsoft.Design#CA1008;-!Microsoft.Design#CA1028;-!Microsoft.Design#CA1064;-!Microsoft.Design#CA1004;-!Microsoft.Design#CA1035;-!Microsoft.Design#CA1063;-!Microsoft.Design#CA1032;-!Microsoft.Design#CA1023;-!Microsoft.Design#CA1033;-!Microsoft.Design#CA1039;-!Microsoft.Design#CA1016;-!Microsoft.Design#CA1014;-!Microsoft.Design#CA1017;-!Microsoft.Design#CA1018;-!Microsoft.Design#CA1027;-!Microsoft.Design#CA1059;-!Microsoft.Design#CA1060;-!Microsoft.Design#CA1034;-!Microsoft.Design#CA1013;-!Microsoft.Design#CA1036;-!Microsoft.Design#CA1044;-!Microsoft.Design#CA1041;-!Microsoft.Design#CA1025;-!Microsoft.Design#CA1052;-!Microsoft.Design#CA1053;-!Microsoft.Design#CA1057;-!Microsoft.Design#CA1058;-!Microsoft.Design#CA1001;-!Microsoft.Design#CA1049;-!Microsoft.Design#CA1054;-!Microsoft.Design#CA1056;-!Microsoft.Design#CA1055;-!Microsoft.Design#CA1030;-!Microsoft.Design#CA1003;-!Microsoft.Design#CA1007;-!Microsoft.Design#CA1043;-!Microsoft.Design#CA1024;-!Microsoft.Globalization#CA1301;-!Microsoft.Globalization#CA1302;-!Microsoft.Globalization#CA1308;-!Microsoft.Globalization#CA1306;-!Microsoft.Globalization#CA1304;-!Microsoft.Globalization#CA1305;-!Microsoft.Globalization#CA2101;-!Microsoft.Globalization#CA1300;-!Microsoft.Globalization#CA1307;-!Microsoft.Globalization#CA1309;-!Microsoft.Interoperability#CA1403;-!Microsoft.Interoperability#CA1406;-!Microsoft.Interoperability#CA1413;-!Microsoft.Interoperability#CA1402;-!Microsoft.Interoperability#CA1407;-!Microsoft.Interoperability#CA1404;-!Microsoft.Interoperability#CA1410;-!Microsoft.Interoperability#CA1411;-!Microsoft.Interoperability#CA1405;-!Microsoft.Interoperability#CA1409;-!Microsoft.Interoperability#CA1415;-!Microsoft.Interoperability#CA1408;-!Microsoft.Interoperability#CA1414;-!Microsoft.Interoperability#CA1412;-!Microsoft.Interoperability#CA1400;-!Microsoft.Interoperability#CA1401;-!Microsoft.Maintainability#CA1506;-!Microsoft.Maintainability#CA1502;-!Microsoft.Maintainability#CA1501;-!Microsoft.Maintainability#CA1505;-!Microsoft.Maintainability#CA1504;-!Microsoft.Maintainability#CA1500;-!Microsoft.Mobility#CA1600;-!Microsoft.Mobility#CA1601;-!Microsoft.Naming#CA1702;-!Microsoft.Naming#CA1700;-!Microsoft.Naming#CA1712;-!Microsoft.Naming#CA1713;-!Microsoft.Naming#CA1714;-!Microsoft.Naming#CA1709;-!Microsoft.Naming#CA1704;-!Microsoft.Naming#CA1708;-!Microsoft.Naming#CA1715;-!Microsoft.Naming#CA1710;-!Microsoft.Naming#CA1720;-!Microsoft.Naming#CA1707;-!Microsoft.Naming#CA1722;-!Microsoft.Naming#CA1711;-!Microsoft.Naming#CA1716;-!Microsoft.Naming#CA1717;-!Microsoft.Naming#CA1725;-!Microsoft.Naming#CA1719;-!Microsoft.Naming#CA1721;-!Microsoft.Naming#CA1701;-!Microsoft.Naming#CA1703;-!Microsoft.Naming#CA1724;-!Microsoft.Naming#CA1726;-!Microsoft.Performance#CA1809;-!Microsoft.Performance#CA1811;-!Microsoft.Performance#CA1812;-!Microsoft.Performance#CA1813;-!Microsoft.Performance#CA1823;-!Microsoft.Performance#CA1800;-!Microsoft.Performance#CA1805;-!Microsoft.Performance#CA1810;-!Microsoft.Performance#CA1824;-!Microsoft.Performance#CA1822;-!Microsoft.Performance#CA1815;-!Microsoft.Performance#CA1814;-!Microsoft.Performance#CA1819;-!Microsoft.Performance#CA1821;-!Microsoft.Performance#CA1804;-!Microsoft.Performance#CA1820;-!Microsoft.Performance#CA1802;-!Microsoft.Portability#CA1901;-!Microsoft.Portability#CA1900;-!Microsoft.Reliability#CA2001;-!Microsoft.Reliability#CA2002;-!Microsoft.Reliability#CA2003;-!Microsoft.Reliability#CA2004;-!Microsoft.Reliability#CA2006;-!Microsoft.Security#CA2116;-!Microsoft.Security#CA2117;-!Microsoft.Security#CA2105;-!Microsoft.Security#CA2115;-!Microsoft.Security#CA2102;-!Microsoft.Security#CA2104;-!Microsoft.Security#CA2122;-!Microsoft.Security#CA2114;-!Microsoft.Security#CA2123;-!Microsoft.Security#CA2111;-!Microsoft.Security#CA2108;-!Microsoft.Security#CA2107;-!Microsoft.Security#CA2103;-!Microsoft.Security#CA2118;-!Microsoft.Security#CA2109;-!Microsoft.Security#CA2119;-!Microsoft.Security#CA2106;-!Microsoft.Security#CA2112;-!Microsoft.Security#CA2120;-!Microsoft.Security#CA2121;-!Microsoft.Security#CA2126;-!Microsoft.Security#CA2124;-!Microsoft.Security#CA2127;-!Microsoft.Security#CA2128;-!Microsoft.Security#CA2129;-!Microsoft.Usage#CA2243;-!Microsoft.Usage#CA2236;-!Microsoft.Usage#CA1816;-!Microsoft.Usage#CA2227;-!Microsoft.Usage#CA2213;-!Microsoft.Usage#CA2216;-!Microsoft.Usage#CA2214;-!Microsoft.Usage#CA2222;-!Microsoft.Usage#CA1806;-!Microsoft.Usage#CA2217;-!Microsoft.Usage#CA2212;-!Microsoft.Usage#CA2219;-!Microsoft.Usage#CA2201;-!Microsoft.Usage#CA2228;-!Microsoft.Usage#CA2221;-!Microsoft.Usage#CA2220;-!Microsoft.Usage#CA2240;-!Microsoft.Usage#CA2229;-!Microsoft.Usage#CA2238;-!Microsoft.Usage#CA2207;-!Microsoft.Usage#CA2208;-!Microsoft.Usage#CA2235;-!Microsoft.Usage#CA2237;-!Microsoft.Usage#CA2232;-!Microsoft.Usage#CA2223;-!Microsoft.Usage#CA2211;-!Microsoft.Usage#CA2233;-!Microsoft.Usage#CA2225;-!Microsoft.Usage#CA2226;-!Microsoft.Usage#CA2231;-!Microsoft.Usage#CA2224;-!Microsoft.Usage#CA2218;-!Microsoft.Usage#CA2234;-!Microsoft.Usage#CA2239;-!Microsoft.Usage#CA2200;-!Microsoft.Usage#CA1801;-!Microsoft.Usage#CA2242;-!Microsoft.Usage#CA2205;-!Microsoft.Usage#CA2230</CodeAnalysisRules>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin\x64\Release\Perpetuum\</OutputPath>
+    <DefineConstants>TRACE;PARALLEL,RELEASE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.2.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Collections.Immutable.1.4.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.ValueTuple, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.ValueTuple.4.4.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccessLevel.cs" />
+    <Compile Include="AccessLevelExtensions.cs" />
+    <Compile Include="AccessRoles.cs" />
+    <Compile Include="Accounting\Account.cs" />
+    <Compile Include="Accounting\AccountCreditHandler.cs" />
+    <Compile Include="Accounting\AccountManager.cs" />
+    <Compile Include="Accounting\AccountTransactionLogger.cs" />
+    <Compile Include="Accounting\AccountWalletFactory.cs" />
+    <Compile Include="Accounting\Characters\CharacterProfile.cs" />
+    <Compile Include="Accounting\Characters\CharacterProfileRepository.cs" />
+    <Compile Include="Accounting\Characters\CharacterTransactionLogger.cs" />
+    <Compile Include="Accounting\Characters\CharacterWalletFactory.cs" />
+    <Compile Include="Accounting\Characters\CharacterWalletHelper.cs" />
+    <Compile Include="Accounting\Characters\ICharacterProfileRepository.cs" />
+    <Compile Include="Accounting\Characters\ICharacterTransactionLogger.cs" />
+    <Compile Include="Accounting\Characters\ICharacterWallet.cs" />
+    <Compile Include="Accounting\EpForActivityLogEvent.cs" />
+    <Compile Include="Accounting\EpForActivityLogEventFormatter.cs" />
+    <Compile Include="Accounting\AccountExtensionPenaltyType.cs" />
+    <Compile Include="Accounting\AccountRepository.cs" />
+    <Compile Include="Accounting\AccountState.cs" />
+    <Compile Include="Accounting\AccountTransactionLogEvent.cs" />
+    <Compile Include="Accounting\AccountTransactionType.cs" />
+    <Compile Include="Accounting\AccountWallet.cs" />
+    <Compile Include="Accounting\Characters\Character.cs" />
+    <Compile Include="Accounting\Characters\CharacterCreditService.cs" />
+    <Compile Include="Accounting\Characters\CharacterExtensionMethods.cs" />
+    <Compile Include="Accounting\Characters\CharacterWallet.cs" />
+    <Compile Include="Accounting\Characters\ICharacterCreditService.cs" />
+    <Compile Include="Accounting\Characters\TransactionLogEventBuilderExtensions.cs" />
+    <Compile Include="Accounting\IAccountManager.cs" />
+    <Compile Include="Accounting\IAccountRepository.cs" />
+    <Compile Include="Accounting\IAccountWallet.cs" />
+    <Compile Include="Accounting\MtProductPrices.cs" />
+    <Compile Include="AggregateFieldExtensions.cs" />
+    <Compile Include="Annotations.cs" />
+    <Compile Include="Area.cs" />
+    <Compile Include="Argument.cs" />
+    <Compile Include="BinaryStream.cs" />
+    <Compile Include="BitmapExtensions.cs" />
+    <Compile Include="Builders\AnonymousBuilder.cs" />
+    <Compile Include="Builders\BuilderExtensions.cs" />
+    <Compile Include="Builders\IBuilder.cs" />
+    <Compile Include="ByteArrayExtensions.cs" />
+    <Compile Include="CachedReadOnlyRepository.cs" />
+    <Compile Include="CategoryFlagsExtensions.cs" />
+    <Compile Include="CollectionExtensions.cs" />
+    <Compile Include="Collections\LazyDictionary.cs" />
+    <Compile Include="Collections\LazyLookup.cs" />
+    <Compile Include="Collections\PriorityQueue.cs" />
+    <Compile Include="Collections\Spatial\Cell.cs" />
+    <Compile Include="Collections\Spatial\CellCoord.cs" />
+    <Compile Include="Collections\Spatial\Grid.cs" />
+    <Compile Include="Collections\Spatial\Grid.NonGeneric.cs" />
+    <Compile Include="Collections\Spatial\GridDistricts.cs" />
+    <Compile Include="Collections\Spatial\QuadTree.cs" />
+    <Compile Include="Collections\Spatial\QuadTreeItem.cs" />
+    <Compile Include="Collections\Spatial\QuadTreeNode.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="Commands.cs" />
+    <Compile Include="Common\CentralBank.cs" />
+    <Compile Include="Common\GenxyVersion.cs" />
+    <Compile Include="Common\Loggers\DbLogger.cs" />
+    <Compile Include="Common\Loggers\Transaction\TransactionLogEvent.cs" />
+    <Compile Include="Common\Loggers\Transaction\TransactionLogEventBuilder.cs" />
+    <Compile Include="Common\Loggers\Transaction\TransactionType.cs" />
+    <Compile Include="Converters\ConverterExtensions.cs" />
+    <Compile Include="Converters\DelegateConverter.cs" />
+    <Compile Include="Converters\IConverter.cs" />
+    <Compile Include="Converters\IConvertible.cs" />
+    <Compile Include="CorporationConfiguration.cs" />
+    <Compile Include="Data\AnonymousEnlistmentNotification.cs" />
+    <Compile Include="Data\Database.cs" />
+    <Compile Include="Data\DataReaderExtensions.cs" />
+    <Compile Include="Data\DataRecordExtensions.cs" />
+    <Compile Include="Data\DataRecordStepper.cs" />
+    <Compile Include="Data\Db.cs" />
+    <Compile Include="Data\DbQuery.cs" />
+    <Compile Include="Data\DynamicSqlQuery.cs" />
+    <Compile Include="Data\Transactional.cs" />
+    <Compile Include="Data\TransactionExtensions.cs" />
+    <Compile Include="DateTimeExtensions.cs" />
+    <Compile Include="DateTimeRange.cs" />
+    <Compile Include="DictionaryExtensions.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="EnumHelper.cs" />
+    <Compile Include="EpForActivityType.cs" />
+    <Compile Include="ErrorCodes.cs" />
+    <Compile Include="Extension.cs" />
+    <Compile Include="Factory.cs" />
+    <Compile Include="FastRandom.cs" />
+    <Compile Include="GenericTypeExtensions.cs" />
+    <Compile Include="GenXY\GenxyConverter.cs" />
+    <Compile Include="GenXY\GenxyReader.cs" />
+    <Compile Include="GenXY\GenxyString.cs" />
+    <Compile Include="GenXY\GenxyToken.cs" />
+    <Compile Include="GenXY\GenxyWriter.cs" />
+    <Compile Include="GlobalConfiguration.cs" />
+    <Compile Include="Groups\Corporations\IVolunteerCEOService.cs" />
+    <Compile Include="Groups\Corporations\IVolunteerCEORepository.cs" />
+    <Compile Include="Groups\Corporations\VolunteerCEO.cs" />
+    <Compile Include="Groups\Corporations\VolunteerCEOService.cs" />
+    <Compile Include="Groups\Corporations\VolunteerCEOProcessor.cs" />
+    <Compile Include="Groups\Corporations\VolunteerCEORepository.cs" />
+    <Compile Include="Guard.cs" />
+    <Compile Include="GZip.cs" />
+    <Compile Include="Host\Requests\IRequest.cs" />
+    <Compile Include="Host\Requests\RequestHandlerFactory.cs" />
+    <Compile Include="IArgument.cs" />
+    <Compile Include="IDGenerators\IDGenerator.cs" />
+    <Compile Include="IDGenerators\IIDGenerator.cs" />
+    <Compile Include="IDGenerators\IntIDGenerator.cs" />
+    <Compile Include="IDGenerators\LongIDGenerator.cs" />
+    <Compile Include="IFinder.cs" />
+    <Compile Include="IMessage.cs" />
+    <Compile Include="IntRange.cs" />
+    <Compile Include="IO\FileSystem.cs" />
+    <Compile Include="IO\FileSystemExtensions.cs" />
+    <Compile Include="IO\IFileSystem.cs" />
+    <Compile Include="IReadOnlyRepository.cs" />
+    <Compile Include="Items\Templates\CachedRobotTemplateReader.cs" />
+    <Compile Include="Items\Templates\IRobotTemplateReader.cs" />
+    <Compile Include="Items\Templates\IRobotTemplateRelation.cs" />
+    <Compile Include="Items\Templates\IRobotTemplateRelations.cs" />
+    <Compile Include="Items\Templates\IRobotTemplateRepository.cs" />
+    <Compile Include="Items\Templates\IRobotTemplateServices.cs" />
+    <Compile Include="Items\Templates\RobotTemplateReader.cs" />
+    <Compile Include="Items\Templates\RobotTemplateReaderExtensions.cs" />
+    <Compile Include="Items\Templates\RobotTemplateRelation.cs" />
+    <Compile Include="Items\Templates\RobotTemplateRelations.cs" />
+    <Compile Include="Items\Templates\RobotTemplateRelationsExtensions.cs" />
+    <Compile Include="Items\Templates\RobotTemplateRepository.cs" />
+    <Compile Include="Keywords.cs" />
+    <Compile Include="LinkedListExtensions.cs" />
+    <Compile Include="LoggerCache.cs" />
+    <Compile Include="Log\Formatters\DefaultLogEventFormatter.cs" />
+    <Compile Include="Log\Formatters\DelegateLogEventFormatter.cs" />
+    <Compile Include="Log\ILogEvent.cs" />
+    <Compile Include="Log\ILogEventFormatter.cs" />
+    <Compile Include="Log\ILogger.cs" />
+    <Compile Include="Log\LogEvent.cs" />
+    <Compile Include="Log\Logger.cs" />
+    <Compile Include="Log\Loggers\BufferedLogger.cs" />
+    <Compile Include="Log\Loggers\ColoredConsoleLogger.cs" />
+    <Compile Include="Log\Loggers\CompositeLogger.cs" />
+    <Compile Include="Log\Loggers\ConsoleLogger.cs" />
+    <Compile Include="Log\Loggers\DelegateLogger.cs" />
+    <Compile Include="Log\Loggers\FileLogger.cs" />
+    <Compile Include="Log\Loggers\NullLogger.cs" />
+    <Compile Include="Log\LogType.cs" />
+    <Compile Include="LookupExtensions.cs" />
+    <Compile Include="MathHelper.cs" />
+    <Compile Include="Modules\ModulePropertyModifiersReader.cs" />
+    <Compile Include="Network\ClientConnection.cs" />
+    <Compile Include="Network\EncryptedTcpConnection.cs" />
+    <Compile Include="Network\Http.cs" />
+    <Compile Include="Network\ITcpConnection.cs" />
+    <Compile Include="Network\SocketExtensions.cs" />
+    <Compile Include="Network\TcpConnection.cs" />
+    <Compile Include="Network\TcpListenerExtensions.cs" />
+    <Compile Include="ObjectCacheExtensions.cs" />
+    <Compile Include="ObjectHelper.cs" />
+    <Compile Include="PathFinders\AStarFinder.cs" />
+    <Compile Include="PathFinders\Heuristic.cs" />
+    <Compile Include="PathFinders\PathFinder.cs" />
+    <Compile Include="PathFinders\PathFinderNodeType.cs" />
+    <Compile Include="PerpetuumException.cs" />
+    <Compile Include="PointExtensions.cs" />
+    <Compile Include="Position.cs" />
+    <Compile Include="ProducerConsumerCollectionExtensions.cs" />
+    <Compile Include="Profiler.cs" />
+    <Compile Include="QueueExtensions.cs" />
+    <Compile Include="Rc4.cs" />
+    <Compile Include="Reactive\AnonymousObservable.cs" />
+    <Compile Include="Reactive\AnonymousObserver.cs" />
+    <Compile Include="Reactive\Observable.cs" />
+    <Compile Include="Reactive\ObservableExtensions.cs" />
+    <Compile Include="Reactive\Observer.cs" />
+    <Compile Include="Robots\RobotHelper.cs" />
+    <Compile Include="Rsa.cs" />
+    <Compile Include="Selectors\ISelector.cs" />
+    <Compile Include="Selectors\ModuloBasedSelector.cs" />
+    <Compile Include="Services\MissionEngine\DisplayMissionSpotsProcess.cs" />
+    <Compile Include="Services\MissionEngine\MissionResolveTester.cs" />
+    <Compile Include="Services\MissionEngine\OneLocationTest.cs" />
+    <Compile Include="Services\Relay\GoodiePack.cs" />
+    <Compile Include="IMessageSender.cs" />
+    <Compile Include="MessageSender.cs" />
+    <Compile Include="Services\Relay\ServerStateInfo.cs" />
+    <Compile Include="Services\Sessions\SessionID.cs" />
+    <Compile Include="Common\SettingsLoader.cs" />
+    <Compile Include="EntityFramework\DefinitionConfig.cs" />
+    <Compile Include="EntityFramework\DynamicProperty.cs" />
+    <Compile Include="EntityFramework\Entity.cs" />
+    <Compile Include="EntityFramework\EntityDbState.cs" />
+    <Compile Include="EntityFramework\EntityDefault.cs" />
+    <Compile Include="EntityFramework\EntityDefaultOptions.cs" />
+    <Compile Include="EntityFramework\EntityDynamicProperties.cs" />
+    <Compile Include="EntityFramework\EntityFactory.cs" />
+    <Compile Include="EntityFramework\EntityIDGenerator.cs" />
+    <Compile Include="EntityFramework\EntityRepository.cs" />
+    <Compile Include="EntityFramework\EntityRepositoryExtensions.cs" />
+    <Compile Include="EntityFramework\IDynamicProperty.cs" />
+    <Compile Include="EntityFramework\IEntityDefaultReader.cs" />
+    <Compile Include="EntityFramework\IEntityFactory.cs" />
+    <Compile Include="EntityFramework\IEntityRepository.cs" />
+    <Compile Include="EntityFramework\IEntityVisitor.cs" />
+    <Compile Include="EntityFramework\TierInfo.cs" />
+    <Compile Include="Groups\Gangs\GangManager.cs" />
+    <Compile Include="Groups\Gangs\GangRepository.cs" />
+    <Compile Include="Groups\Gangs\IGangManager.cs" />
+    <Compile Include="Groups\Gangs\IGangRepository.cs" />
+    <Compile Include="Host\HostInfo.cs" />
+    <Compile Include="Host\HostOnlineStateWriter.cs" />
+    <Compile Include="Host\HostShutDownManager.cs" />
+    <Compile Include="Host\HostState.cs" />
+    <Compile Include="Host\HostStateService.cs" />
+    <Compile Include="Host\IHostStateService.cs" />
+    <Compile Include="Message.cs" />
+    <Compile Include="MessageBuilder.cs" />
+    <Compile Include="Host\Requests\IRequestHandler.cs" />
+    <Compile Include="Host\Requests\Request.cs" />
+    <Compile Include="Items\Ammos\Ammo.cs" />
+    <Compile Include="Items\Ammos\AmmoProperty.cs" />
+    <Compile Include="Items\DefaultItemPropertyModifiers.cs" />
+    <Compile Include="Items\Item.cs" />
+    <Compile Include="Items\ItemInfo.cs" />
+    <Compile Include="Items\ItemProperty.cs" />
+    <Compile Include="Items\ItemPropertyModifier.cs" />
+    <Compile Include="Modules\MiningAmmo.cs" />
+    <Compile Include="Common\BinaryStreamExtensions.cs" />
+    <Compile Include="Groups\Corporations\CorporationTransactionLogEventFormatter.cs" />
+    <Compile Include="Groups\Gangs\GangExtensions.cs" />
+    <Compile Include="Groups\Gangs\GangInviteInfo.cs" />
+    <Compile Include="Groups\Gangs\GangInviteService.cs" />
+    <Compile Include="Groups\Gangs\GangInviteServiceExtensions.cs" />
+    <Compile Include="Groups\Gangs\IGangInviteService.cs" />
+    <Compile Include="Services\Channels\ChannelManagerExtensions.cs" />
+    <Compile Include="Services\ExtensionService\CharacterDefaultExtensionHelper.cs" />
+    <Compile Include="Services\ExtensionService\CharacterExtensionCollection.cs" />
+    <Compile Include="Services\ExtensionService\CharacterExtensions.cs" />
+    <Compile Include="Services\ExtensionService\CleanUpPayingCustomersService.cs" />
+    <Compile Include="Services\ExtensionService\ExtensionBonus.cs" />
+    <Compile Include="Services\ExtensionService\ExtensionHelper.cs" />
+    <Compile Include="Services\ExtensionService\ExtensionInfo.cs" />
+    <Compile Include="Services\ExtensionService\ExtensionPoints.cs" />
+    <Compile Include="Services\ExtensionService\ExtensionReader.cs" />
+    <Compile Include="Services\ExtensionService\ExtensionReaderExtensions.cs" />
+    <Compile Include="Services\ExtensionService\GiveExtensionPointsService.cs" />
+    <Compile Include="Services\ExtensionService\ICharacterExtensions.cs" />
+    <Compile Include="Services\ExtensionService\IExtensionReader.cs" />
+    <Compile Include="Services\ItemShop\Coin.cs" />
+    <Compile Include="Services\ItemShop\ItemShop.cs" />
+    <Compile Include="Services\ItemShop\ItemShopEntry.cs" />
+    <Compile Include="Services\Looting\FieldContainer.cs" />
+    <Compile Include="Services\Looting\FieldContainerCapsule.cs" />
+    <Compile Include="Services\Looting\ILootItemRepository.cs" />
+    <Compile Include="Services\Looting\LootContainer.cs" />
+    <Compile Include="Services\Looting\LootContainerType.cs" />
+    <Compile Include="Services\Looting\LootItem.cs" />
+    <Compile Include="Services\Looting\LootItemBuilder.cs" />
+    <Compile Include="Services\Looting\LootItemRepository.cs" />
+    <Compile Include="Services\Looting\LootItemRepositoryExtensions.cs" />
+    <Compile Include="Services\Looting\MissionContainer.cs" />
+    <Compile Include="Services\Mail\MailFolder.cs" />
+    <Compile Include="Services\Mail\MailHandler.cs" />
+    <Compile Include="Services\Mail\MailType.cs" />
+    <Compile Include="Services\Mail\MassMail.cs" />
+    <Compile Include="Services\Mail\MassMailer.cs" />
+    <Compile Include="Services\Mail\TrackedMail.cs" />
+    <Compile Include="Services\MarketEngine\Ice.cs" />
+    <Compile Include="Services\MarketEngine\IMarketInfoService.cs" />
+    <Compile Include="Services\MarketEngine\IMarketRobotPriceWriter.cs" />
+    <Compile Include="Services\MarketEngine\Market.cs" />
+    <Compile Include="Services\MarketEngine\MarketAveragePriceEntry.cs" />
+    <Compile Include="Services\MarketEngine\MarketCleanUpService.cs" />
+    <Compile Include="Services\MarketEngine\MarketHandler.cs" />
+    <Compile Include="Services\MarketEngine\MarketHelper.cs" />
+    <Compile Include="Services\MarketEngine\MarketInfoService.cs" />
+    <Compile Include="Services\MarketEngine\MarketOrder.cs" />
+    <Compile Include="Services\MarketEngine\MarketOrderRepository.cs" />
+    <Compile Include="Services\MarketEngine\MarketPriceCollector.cs" />
+    <Compile Include="Services\MarketEngine\MarketRobotPriceWriter.cs" />
+    <Compile Include="Services\MarketEngine\MarketTaxChangeLogEvent.cs" />
+    <Compile Include="Services\MarketEngine\MarketTaxChangeLogger.cs" />
+    <Compile Include="Services\MarketEngine\ProfitingOwnerSelector.cs" />
+    <Compile Include="Services\MissionEngine\AdministratorObjects\MissionAdministrator.cs" />
+    <Compile Include="Services\MissionEngine\AdministratorObjects\MissionInProgressCollector.cs" />
+    <Compile Include="Services\MissionEngine\MissionBonusObjects\MissionBonus.cs" />
+    <Compile Include="Services\MissionEngine\MissionBonusObjects\MissionBonusCollector.cs" />
+    <Compile Include="Services\MissionEngine\MissionDataCacheObjects\MissionDataCache.cs" />
+    <Compile Include="Services\MissionEngine\MissionDataCacheObjects\SelectionValidator.cs" />
+    <Compile Include="Services\MissionEngine\MissionEnums.cs" />
+    <Compile Include="Services\MissionEngine\MissionFilter.cs" />
+    <Compile Include="Services\MissionEngine\MissionHandler.cs" />
+    <Compile Include="Services\MissionEngine\MissionHelper.cs" />
+    <Compile Include="Services\MissionEngine\MissionProcessorObjects\MissionPayOutLog.cs" />
+    <Compile Include="Services\MissionEngine\MissionProcessorObjects\MissionProcessor.cs" />
+    <Compile Include="Services\MissionEngine\MissionProcessorObjects\MissionProcessorAbortMission.cs" />
+    <Compile Include="Services\MissionEngine\MissionProcessorObjects\MissionProcessorAdvanceTarget.cs" />
+    <Compile Include="Services\MissionEngine\MissionProcessorObjects\MissionProcessorDeliverMission.cs" />
+    <Compile Include="Services\MissionEngine\MissionProcessorObjects\MissionProcessorFinishedMissions.cs" />
+    <Compile Include="Services\MissionEngine\MissionProcessorObjects\MissionProcessorGangCache.cs" />
+    <Compile Include="Services\MissionEngine\MissionProcessorObjects\MissionProcessorGetOptions.cs" />
+    <Compile Include="Services\MissionEngine\MissionProcessorObjects\MissionProcessorStartMission.cs" />
+    <Compile Include="Services\MissionEngine\MissionSpotObjects.cs" />
+    <Compile Include="Services\MissionEngine\MissionStructures\AlarmSwitch.cs" />
+    <Compile Include="Services\MissionEngine\MissionStructures\ItemSupply.cs" />
+    <Compile Include="Services\MissionEngine\MissionStructures\Kiosk.cs" />
+    <Compile Include="Services\MissionEngine\MissionStructures\MissionLocation.cs" />
+    <Compile Include="Services\MissionEngine\MissionStructures\MissionStructure.cs" />
+    <Compile Include="Services\MissionEngine\MissionStructures\MissionStructureHelpers.cs" />
+    <Compile Include="Services\MissionEngine\MissionStructures\MissionSwitch.cs" />
+    <Compile Include="Services\MissionEngine\MissionStructures\SimpleSwitch.cs" />
+    <Compile Include="Services\MissionEngine\Missions\Mission.cs" />
+    <Compile Include="Services\MissionEngine\Missions\MissionAgent.cs" />
+    <Compile Include="Services\MissionEngine\Missions\MissionInProgress.cs" />
+    <Compile Include="Services\MissionEngine\Missions\MissionObjects.cs" />
+    <Compile Include="Services\MissionEngine\Missions\MissionResolveInfo.cs" />
+    <Compile Include="Services\MissionEngine\Missions\MissionVisitor.cs" />
+    <Compile Include="Services\MissionEngine\Missions\RandomMission.cs" />
+    <Compile Include="Services\MissionEngine\Missions\ZoneMissionInProgress.cs" />
+    <Compile Include="Services\MissionEngine\MissionTargets\DeliveryHelper.cs" />
+    <Compile Include="Services\MissionEngine\MissionTargets\MissionEventInfo.cs" />
+    <Compile Include="Services\MissionEngine\MissionTargets\MissionTarget.cs" />
+    <Compile Include="Services\MissionEngine\MissionTargets\MissionTargetFactory.cs" />
+    <Compile Include="Services\MissionEngine\MissionTargets\MissionTargetInProgress.cs" />
+    <Compile Include="Services\MissionEngine\MissionTargets\MissionTargetObjects.cs" />
+    <Compile Include="Services\MissionEngine\MissionTargets\MissionTargetRewardCalculator.cs" />
+    <Compile Include="Services\MissionEngine\MissionTargets\MissionTargetSuccessInfoGenerator.cs" />
+    <Compile Include="Services\MissionEngine\MissionTargets\MissionTargetVisitor.cs" />
+    <Compile Include="Services\MissionEngine\MissionTargets\RandomMissionTarget.cs" />
+    <Compile Include="Services\MissionEngine\MissionTargets\RandomTargetObjects.cs" />
+    <Compile Include="Services\MissionEngine\MissionTargets\ZoneMissionTarget.cs" />
+    <Compile Include="Services\MissionEngine\MissionTargets\ZoneMissionTargetObjects.cs" />
+    <Compile Include="Services\MissionEngine\RandomMissionItem.cs" />
+    <Compile Include="Services\MissionEngine\TransportAssignments\TransportAssignment.cs" />
+    <Compile Include="Services\MissionEngine\TransportAssignments\TransportAssignment.Helpers.cs" />
+    <Compile Include="Services\MissionEngine\TransportAssignments\TransportAssignmentEvent.cs" />
+    <Compile Include="Services\MissionEngine\TransportAssignments\TransportAssignmentExtensions.cs" />
+    <Compile Include="Services\ProductionEngine\CalibrationPrograms\CalibrationDefault.cs" />
+    <Compile Include="Services\ProductionEngine\CalibrationPrograms\CalibrationProgram.cs" />
+    <Compile Include="Services\ProductionEngine\CalibrationPrograms\CalibrationProgramBase.cs" />
+    <Compile Include="Services\ProductionEngine\CalibrationPrograms\DynamicCalibrationProgram.cs" />
+    <Compile Include="Services\ProductionEngine\CalibrationPrograms\DynamicCalibrationTemplate.cs" />
+    <Compile Include="Services\ProductionEngine\CalibrationPrograms\RandomCalibrationProgram.cs" />
+    <Compile Include="Services\ProductionEngine\Facilities\InsuraceFacility.cs" />
+    <Compile Include="Services\ProductionEngine\Facilities\Mill.cs" />
+    <Compile Include="Services\ProductionEngine\Facilities\ProductionFacility.cs" />
+    <Compile Include="Services\ProductionEngine\Facilities\ProductionFacilityEx.cs" />
+    <Compile Include="Services\ProductionEngine\Facilities\Prototyper.cs" />
+    <Compile Include="Services\ProductionEngine\Facilities\Refinery.cs" />
+    <Compile Include="Services\ProductionEngine\Facilities\Repair.cs" />
+    <Compile Include="Services\ProductionEngine\Facilities\Reprocessor.cs" />
+    <Compile Include="Services\ProductionEngine\Facilities\ResearchLab.cs" />
+    <Compile Include="Services\ProductionEngine\IProductionDataAccess.cs" />
+    <Compile Include="Services\ProductionEngine\ItemResearchLevel.cs" />
+    <Compile Include="Services\ProductionEngine\NextRoundProduction.cs" />
+    <Compile Include="Services\ProductionEngine\OutpostFacilities.cs" />
+    <Compile Include="Services\ProductionEngine\PBSFacilities.cs" />
+    <Compile Include="Services\ProductionEngine\ProductionComponent.cs" />
+    <Compile Include="Services\ProductionEngine\ProductionComponentCollector.cs" />
+    <Compile Include="Services\ProductionEngine\ProductionDataAccess.cs" />
+    <Compile Include="Services\ProductionEngine\ProductionDataAccessExtensions.cs" />
+    <Compile Include="Services\ProductionEngine\ProductionDecalibration.cs" />
+    <Compile Include="Services\ProductionEngine\ProductionDescription.cs" />
+    <Compile Include="Services\ProductionEngine\ProductionEnums.cs" />
+    <Compile Include="Services\ProductionEngine\ProductionHelper.cs" />
+    <Compile Include="Services\ProductionEngine\ProductionInProgress.cs" />
+    <Compile Include="Services\ProductionEngine\ProductionItemInfo.cs" />
+    <Compile Include="Services\ProductionEngine\ProductionLine.cs" />
+    <Compile Include="Services\ProductionEngine\ProductionManager.cs" />
+    <Compile Include="Services\ProductionEngine\ProductionProcessor.cs" />
+    <Compile Include="Services\ProductionEngine\ProductionRefreshInfo.cs" />
+    <Compile Include="Services\ProductionEngine\ReprocessSession.cs" />
+    <Compile Include="Services\ProductionEngine\ReprocessSessionMember.cs" />
+    <Compile Include="Services\ProductionEngine\ResearchKits\RandomResearchKit.cs" />
+    <Compile Include="Services\ProductionEngine\ResearchKits\ResearchKit.cs" />
+    <Compile Include="Services\Relay\GoodiePackHandler.cs" />
+    <Compile Include="Services\Relay\ILoginQueueService.cs" />
+    <Compile Include="Services\Relay\IRelayStateService.cs" />
+    <Compile Include="Services\Relay\LoginQueueService.cs" />
+    <Compile Include="Items\LotteryItem.cs" />
+    <Compile Include="Services\Relay\RelayInfoBuilder.cs" />
+    <Compile Include="Services\Relay\RelayState.cs" />
+    <Compile Include="Services\Relay\RelayStateService.cs" />
+    <Compile Include="Items\Gift.cs" />
+    <Compile Include="Services\Relay\ServerMessageRecipient.cs" />
+    <Compile Include="Services\Relay\ServerMessageType.cs" />
+    <Compile Include="Services\Relay\ServerInfoService.cs" />
+    <Compile Include="Services\Sessions\ISessionManager.cs" />
+    <Compile Include="Services\Sessions\Session.cs" />
+    <Compile Include="Services\Sessions\SessionCountWriter.cs" />
+    <Compile Include="Services\Sessions\SessionManager.cs" />
+    <Compile Include="Services\Sessions\SessionManagerExtensions.cs" />
+    <Compile Include="Services\Social\CharacterSocial.cs" />
+    <Compile Include="Services\Social\CharacterSocialExtensions.cs" />
+    <Compile Include="Services\Social\FriendInfo.cs" />
+    <Compile Include="Services\Social\ICharacterSocial.cs" />
+    <Compile Include="Services\Social\ISocialService.cs" />
+    <Compile Include="Services\Social\SocialService.cs" />
+    <Compile Include="Services\Social\SocialServiceExtensions.cs" />
+    <Compile Include="Services\Social\SocialState.cs" />
+    <Compile Include="Services\Sparks\ISparkExtensionsReader.cs" />
+    <Compile Include="Services\Sparks\ISparkRepository.cs" />
+    <Compile Include="Services\Sparks\SparkExtensionsReader.cs" />
+    <Compile Include="Services\Sparks\SparkRepository.cs" />
+    <Compile Include="Services\Sparks\Teleports\ISparkTeleportRepository.cs" />
+    <Compile Include="Services\Sparks\Teleports\SparkTeleportHelper.cs" />
+    <Compile Include="Services\Sparks\Teleports\SparkTeleportRepository.cs" />
+    <Compile Include="Services\Steam\SteamHelper.cs" />
+    <Compile Include="SizeExtensions.cs" />
+    <Compile Include="StateMachines\FiniteStateMachine.cs" />
+    <Compile Include="StateMachines\IState.cs" />
+    <Compile Include="StateMachines\StackFSM.cs" />
+    <Compile Include="StreamExtensions.cs" />
+    <Compile Include="StringExtensions.cs" />
+    <Compile Include="Stubs.cs" />
+    <Compile Include="SystemTools.cs" />
+    <Compile Include="TaskExtensions.cs" />
+    <Compile Include="Threading\AnonymousDisposable.cs" />
+    <Compile Include="Threading\DefaultDisposable.cs" />
+    <Compile Include="Threading\Disposable.cs" />
+    <Compile Include="Threading\LockFree.cs" />
+    <Compile Include="Threading\Process\AnonymousProcess.cs" />
+    <Compile Include="Threading\Process\AsyncProcess.cs" />
+    <Compile Include="Threading\Process\IProcess.cs" />
+    <Compile Include="Threading\Process\IProcessManager.cs" />
+    <Compile Include="Threading\Process\Process.cs" />
+    <Compile Include="Threading\Process\ProcessExtensions.cs" />
+    <Compile Include="Threading\Process\ProcessManager.cs" />
+    <Compile Include="Threading\Process\TimedProcess.cs" />
+    <Compile Include="TimeRange.cs" />
+    <Compile Include="Timers\GlobalTimer.cs" />
+    <Compile Include="Timers\IntervalTimer.cs" />
+    <Compile Include="Timers\TimerAction.cs" />
+    <Compile Include="Timers\TimerList.cs" />
+    <Compile Include="Timers\TimeTracker.cs" />
+    <Compile Include="TimeSpanExtensions.cs" />
+    <Compile Include="Units\CombatLogType.cs" />
+    <Compile Include="Units\CoreRecharger.cs" />
+    <Compile Include="Units\ICoreRecharger.cs" />
+    <Compile Include="Units\INotifyOptionalPropertyChanged.cs" />
+    <Compile Include="Units\IOptionalProperty.cs" />
+    <Compile Include="Units\ITaggable.cs" />
+    <Compile Include="Units\OptionalPropertyCollection.cs" />
+    <Compile Include="Units\OptionalPropertyExtensions.cs" />
+    <Compile Include="Units\ReadOnlyOptionalProperty.cs" />
+    <Compile Include="Units\TagHelper.cs" />
+    <Compile Include="Units\UnitDataType.cs" />
+    <Compile Include="Units\UnitDespawnHelper.cs" />
+    <Compile Include="Units\UnitExtensions.cs" />
+    <Compile Include="Units\UnitOptionalProperty.cs" />
+    <Compile Include="Units\UnitPropertiesUpdatePacketBuilder.cs" />
+    <Compile Include="Units\UnitUpdatedEventArgs.cs" />
+    <Compile Include="Units\UnitUpdatePacketBuilder.cs" />
+    <Compile Include="Units\UnitUpdateTypes.cs" />
+    <Compile Include="Units\UpdatePacketControl.cs" />
+    <Compile Include="ValueTypeExtensions.cs" />
+    <Compile Include="Vector2Extensions.cs" />
+    <Compile Include="Wallets\IWallet.cs" />
+    <Compile Include="Wallets\Wallet.cs" />
+    <Compile Include="Zones\Artifacts\Generators\MissionArtifactGenerator.cs" />
+    <Compile Include="Zones\Artifacts\Repositories\ArtifactReader.cs" />
+    <Compile Include="Zones\Artifacts\Repositories\ArtifactReadMode.cs" />
+    <Compile Include="Zones\Artifacts\Repositories\CompositeArtifactReader.cs" />
+    <Compile Include="Zones\Artifacts\Repositories\IArtifactReader.cs" />
+    <Compile Include="Zones\Artifacts\Repositories\MissionArtifactReader.cs" />
+    <Compile Include="Zones\Artifacts\Repositories\TrainingZoneArtifactReader.cs" />
+    <Compile Include="Zones\Artifacts\Repositories\ZoneArtifactReader.cs" />
+    <Compile Include="Zones\CombatLogs\CombatEventHandler.cs" />
+    <Compile Include="Zones\CombatLogs\CombatLogger.cs" />
+    <Compile Include="Zones\CombatLogs\CombatLogHelper.cs" />
+    <Compile Include="Zones\CombatLogs\CombatLogSaver.cs" />
+    <Compile Include="Zones\CombatLogs\CombatSummary.cs" />
+    <Compile Include="Zones\CombatLogs\ICombatLogSaver.cs" />
+    <Compile Include="Zones\IUsableItem.cs" />
+    <Compile Include="Services\Channels\Channel.cs" />
+    <Compile Include="Services\Channels\ChannelBanRepository.cs" />
+    <Compile Include="Services\Channels\ChannelCommand.cs" />
+    <Compile Include="Services\Channels\ChannelLogger.cs" />
+    <Compile Include="Services\Channels\ChannelManager.cs" />
+    <Compile Include="Services\Channels\ChannelMember.cs" />
+    <Compile Include="Services\Channels\ChannelMemberRepository.cs" />
+    <Compile Include="Services\Channels\ChannelMemberRole.cs" />
+    <Compile Include="Services\Channels\ChannelNotify.cs" />
+    <Compile Include="Services\Channels\ChannelRepository.cs" />
+    <Compile Include="Services\Channels\ChannelType.cs" />
+    <Compile Include="Services\Channels\IChannelBanRepository.cs" />
+    <Compile Include="Services\Channels\IChannelManager.cs" />
+    <Compile Include="Services\Channels\IChannelMemberRepository.cs" />
+    <Compile Include="Services\Channels\IChannelRepository.cs" />
+    <Compile Include="Services\Channels\PresetChannelRoles.cs" />
+    <Compile Include="Services\HighScores\HighScore.cs" />
+    <Compile Include="Services\HighScores\HighScoreExtensions.cs" />
+    <Compile Include="Services\HighScores\HighScoreService.cs" />
+    <Compile Include="Services\HighScores\IHighScoreService.cs" />
+    <Compile Include="Services\Looting\CompositeLootGenerator.cs" />
+    <Compile Include="Services\Looting\ILootGenerator.cs" />
+    <Compile Include="Services\Looting\ILootService.cs" />
+    <Compile Include="Services\Looting\LootGenerator.cs" />
+    <Compile Include="Services\Looting\LootGeneratorItemInfo.cs" />
+    <Compile Include="Services\Looting\LootHelper.cs" />
+    <Compile Include="Services\Looting\LootService.cs" />
+    <Compile Include="Services\Looting\NullLootGenerator.cs" />
+    <Compile Include="Services\RiftSystem\Rift.cs" />
+    <Compile Include="Services\RiftSystem\RiftManager.cs" />
+    <Compile Include="Services\Sparks\Spark.cs" />
+    <Compile Include="Services\Sparks\SparkExtension.cs" />
+    <Compile Include="Services\Sparks\SparkHelper.cs" />
+    <Compile Include="Services\Sparks\Teleports\SparkTeleport.cs" />
+    <Compile Include="Services\Sparks\UnlockedSpark.cs" />
+    <Compile Include="Services\Standing\IStandingHandler.cs" />
+    <Compile Include="Services\Standing\IStandingRepository.cs" />
+    <Compile Include="Services\Standing\StandingExtensions.cs" />
+    <Compile Include="Services\Standing\StandingHandler.cs" />
+    <Compile Include="Services\Standing\StandingInfo.cs" />
+    <Compile Include="Services\Standing\StandingLogEntry.cs" />
+    <Compile Include="Services\Standing\StandingRepository.cs" />
+    <Compile Include="Services\TechTree\CachedTechTreeInfoService.cs" />
+    <Compile Include="Services\TechTree\CachedTechTreeService.cs" />
+    <Compile Include="Services\TechTree\ITechTreeService.cs" />
+    <Compile Include="Services\TechTree\ITechTreeInfoService.cs" />
+    <Compile Include="Services\TechTree\Kernel.cs" />
+    <Compile Include="Services\TechTree\LogEvent.cs" />
+    <Compile Include="Services\TechTree\LogType.cs" />
+    <Compile Include="Services\TechTree\Points.cs" />
+    <Compile Include="Services\TechTree\TechTreeGroupInfo.cs" />
+    <Compile Include="Services\TechTree\TechTreeService.cs" />
+    <Compile Include="Services\TechTree\TechTreeInfoService.cs" />
+    <Compile Include="Services\TechTree\TechTreeLogger.cs" />
+    <Compile Include="Services\TechTree\TechTreeNode.cs" />
+    <Compile Include="Services\TechTree\TechTreePointsHandler.cs" />
+    <Compile Include="Services\Trading\ITradeService.cs" />
+    <Compile Include="Services\Trading\Trade.cs" />
+    <Compile Include="Services\Trading\TradeItem.cs" />
+    <Compile Include="Services\Trading\TradeService.cs" />
+    <Compile Include="Services\Trading\TradeState.cs" />
+    <Compile Include="Zones\IWeatherService.cs" />
+    <Compile Include="Zones\IZoneEnterQueueService.cs" />
+    <Compile Include="Zones\LineOfSight.cs" />
+    <Compile Include="Zones\NpcSystem\Flocks\FlockConfigurationBuilder.cs" />
+    <Compile Include="Zones\NpcSystem\Flocks\FlockConfigurationRepository.cs" />
+    <Compile Include="Zones\NpcSystem\Flocks\IFlockConfiguration.cs" />
+    <Compile Include="Zones\NpcSystem\Flocks\IFlockConfigurationRepository.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\IPresenceConfigurationReader.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\IPresenceManager.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\IRandomFlockReader.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\IRandomFlockSelector.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\PresenceConfigurationReader.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\PresenceManager.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\RandomFlockInfo.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\RandomFlockReader.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\RandomFlockSelector.cs" />
+    <Compile Include="Zones\ProximityProbes\PBSRegisterHelper.cs" />
+    <Compile Include="Zones\ProximityProbes\VisibilityBasedProximityProbe.cs" />
+    <Compile Include="Accounting\Characters\CharacterCleaner.cs" />
+    <Compile Include="Common\Loggers\ChatLogger.cs" />
+    <Compile Include="Containers\Container.cs" />
+    <Compile Include="Containers\Container.Helpers.cs" />
+    <Compile Include="Containers\ContainerAccess.cs" />
+    <Compile Include="Containers\ContainerAccessChecker.cs" />
+    <Compile Include="Containers\ContainerLogger.cs" />
+    <Compile Include="Containers\InfiniteBoxContainer.cs" />
+    <Compile Include="Containers\LimitedBoxContainer.cs" />
+    <Compile Include="Containers\LimitiedCapacityContainer.cs" />
+    <Compile Include="Containers\PublicContainer.cs" />
+    <Compile Include="Containers\PublicCorporationHangarStorage.cs" />
+    <Compile Include="Containers\SystemContainers\DefaultSystemContainer.cs" />
+    <Compile Include="Containers\SystemContainers\SystemContainer.cs" />
+    <Compile Include="Containers\SystemContainers\Trashcan.cs" />
+    <Compile Include="Containers\VolumeWrapperContainer.cs" />
+    <Compile Include="Deployers\AreaBombDeployer.cs" />
+    <Compile Include="Deployers\ItemDeployer.cs" />
+    <Compile Include="Deployers\ItemDeployerHelper.cs" />
+    <Compile Include="EntityFramework\EntityDefaultReader.cs" />
+    <Compile Include="Zones\DistanceConstants.cs" />
+    <Compile Include="Services\Insurance\InsuranceDescription.cs" />
+    <Compile Include="Services\Insurance\InsuranceHelper.cs" />
+    <Compile Include="Services\Insurance\InsurancePrice.cs" />
+    <Compile Include="Services\Insurance\InsuranceType.cs" />
+    <Compile Include="Groups\Alliances\Alliance.cs" />
+    <Compile Include="Groups\Alliances\AllianceDescription.cs" />
+    <Compile Include="Groups\Alliances\AllianceHelper.cs" />
+    <Compile Include="Groups\Alliances\AllianceRole.cs" />
+    <Compile Include="Groups\Corporations\Applications\CorporationApplication.cs" />
+    <Compile Include="Groups\Corporations\Applications\CorporationApplicationExtensions.cs" />
+    <Compile Include="Groups\Corporations\BulletinHandler.cs" />
+    <Compile Include="Groups\Corporations\CorporateHangar.cs" />
+    <Compile Include="Groups\Corporations\CorporateHangarFolder.cs" />
+    <Compile Include="Groups\Corporations\Corporation.cs" />
+    <Compile Include="Groups\Corporations\Corporation.Helpers.cs" />
+    <Compile Include="Groups\Corporations\CorporationAlias.cs" />
+    <Compile Include="Groups\Corporations\CorporationBulletinEvent.cs" />
+    <Compile Include="Groups\Corporations\CorporationDescription.cs" />
+    <Compile Include="Groups\Corporations\CorporationDocument.cs" />
+    <Compile Include="Groups\Corporations\CorporationDocumentHelper.cs" />
+    <Compile Include="Groups\Corporations\CorporationDocumentType.cs" />
+    <Compile Include="Groups\Corporations\CorporationHandler.cs" />
+    <Compile Include="Groups\Corporations\CorporationData.cs" />
+    <Compile Include="Groups\Corporations\CorporationManager.cs" />
+    <Compile Include="Groups\Corporations\CorporationMember.cs" />
+    <Compile Include="Groups\Corporations\CorporationRole.cs" />
+    <Compile Include="Groups\Corporations\CorporationRoleEx.cs" />
+    <Compile Include="Groups\Corporations\CorporationWallet.cs" />
+    <Compile Include="Groups\Corporations\DefaultCorporation.cs" />
+    <Compile Include="Groups\Corporations\DefaultCorporationDataCache.cs" />
+    <Compile Include="Groups\Corporations\Loggers\CorporationLogEvent.cs" />
+    <Compile Include="Groups\Corporations\Loggers\CorporationLogger.cs" />
+    <Compile Include="Groups\Corporations\Loggers\CorporationLogType.cs" />
+    <Compile Include="Groups\Corporations\PresetCorporationRoles.cs" />
+    <Compile Include="Groups\Corporations\PrivateCorporation.cs" />
+    <Compile Include="Groups\Corporations\VoteHandler.cs" />
+    <Compile Include="Groups\Gangs\Gang.cs" />
+    <Compile Include="Groups\Gangs\GangRole.cs" />
+    <Compile Include="Groups\Gangs\GangUpdatePacketBuilder.cs" />
+    <Compile Include="Items\ItemEnablerExtensionChecker.cs" />
+    <Compile Include="Items\ItemErrorNotifier.cs" />
+    <Compile Include="Items\ItemExtensions.cs" />
+    <Compile Include="Items\ItemPacker.cs" />
+    <Compile Include="Items\ItemRepairer.cs" />
+    <Compile Include="Items\ItemUnpacker.cs" />
+    <Compile Include="Items\PriceCalculator.cs" />
+    <Compile Include="Items\Templates\ItemTemplate.cs" />
+    <Compile Include="Items\Templates\ModuleTemplate.cs" />
+    <Compile Include="Items\Templates\RobotComponentTemplate.cs" />
+    <Compile Include="Items\Templates\RobotInventoryTemplate.cs" />
+    <Compile Include="Items\Templates\RobotTemplate.cs" />
+    <Compile Include="Modules\ActiveModule.Ammo.cs" />
+    <Compile Include="Modules\ActiveModule.cs" />
+    <Compile Include="Modules\ActiveModule.States.cs" />
+    <Compile Include="Modules\ArmorRepairModule.cs" />
+    <Compile Include="Modules\BlobEmissionModulatorModule.cs" />
+    <Compile Include="Modules\CoreBoosterModule.cs" />
+    <Compile Include="Modules\DrillerModule.cs" />
+    <Compile Include="Modules\EffectModules\ArmorHardenerModule.cs" />
+    <Compile Include="Modules\EffectModules\DetectionModule.cs" />
+    <Compile Include="Modules\EffectModules\EccmModule.cs" />
+    <Compile Include="Modules\EffectModules\EffectModule.cs" />
+    <Compile Include="Modules\EffectModules\RemoteSensorBoosterModule.cs" />
+    <Compile Include="Modules\EffectModules\SensorBoosterModule.cs" />
+    <Compile Include="Modules\EffectModules\SensorDampenerModule.cs" />
+    <Compile Include="Modules\EffectModules\ShieldGeneratorModule.cs" />
+    <Compile Include="Modules\EffectModules\ShieldHardenerModule.cs" />
+    <Compile Include="Modules\EffectModules\StealthModule.cs" />
+    <Compile Include="Modules\EffectModules\TargetPainterModule.cs" />
+    <Compile Include="Modules\EffectModules\WebberModule.cs" />
+    <Compile Include="Modules\EnergyDispersionModule.cs" />
+    <Compile Include="Modules\EnergyNeutralizerModule.cs" />
+    <Compile Include="Modules\EnergyTransfererModule.cs" />
+    <Compile Include="Modules\EnergyVampireModule.cs" />
+    <Compile Include="Modules\GangModule.cs" />
+    <Compile Include="Modules\HarvesterModule.cs" />
+    <Compile Include="Modules\Module.cs" />
+    <Compile Include="Modules\Neuralyzer.cs" />
+    <Compile Include="Modules\RemoteArmorRepairModule.cs" />
+    <Compile Include="Modules\SensorJammerModule.cs" />
+    <Compile Include="Modules\SiegeHackModule.cs" />
+    <Compile Include="Modules\SlotFlags.cs" />
+    <Compile Include="Modules\Terraforming\TerraformingMultiModule.cs" />
+    <Compile Include="Modules\Terraforming\WallBuilderModule.cs" />
+    <Compile Include="Modules\Weapons\Damage.cs" />
+    <Compile Include="Modules\Weapons\DamageType.cs" />
+    <Compile Include="Modules\Weapons\MissileWeaponModule.cs" />
+    <Compile Include="Modules\Weapons\WeaponAmmo.cs" />
+    <Compile Include="Modules\Weapons\WeaponModule.cs" />
+    <Compile Include="Players\ExtensionMethods\PlayerExtensions.cs" />
+    <Compile Include="Players\Player.cs" />
+    <Compile Include="Players\PlayerDeathLogger.cs" />
+    <Compile Include="Robots\Fitting\CharacterFittingPresetRepository.cs" />
+    <Compile Include="Robots\Fitting\CorporationFittingPresetRepository.cs" />
+    <Compile Include="Robots\Fitting\FittingPreset.cs" />
+    <Compile Include="Robots\Fitting\FittingPresetRepositoryBase.cs" />
+    <Compile Include="Robots\Fitting\IFittingPresetRepository.cs" />
+    <Compile Include="Robots\Robot.cs" />
+    <Compile Include="Robots\Robot.Helpers.cs" />
+    <Compile Include="Robots\Robot.Locking.cs" />
+    <Compile Include="Robots\Robot.Properties.cs" />
+    <Compile Include="Robots\RobotComponent.cs" />
+    <Compile Include="Robots\RobotComponentType.cs" />
+    <Compile Include="Robots\RobotInventory.cs" />
+    <Compile Include="Robots\RobotSetup.cs" />
+    <Compile Include="Units\DockingBases\DockingBase.cs" />
+    <Compile Include="Units\DockingBases\DockingBaseHelper.cs" />
+    <Compile Include="Units\FieldTerminals\FieldTerminal.cs" />
+    <Compile Include="Units\Unit.cs" />
+    <Compile Include="Units\Unit.States.cs" />
+    <Compile Include="Units\Unit.Visibility.cs" />
+    <Compile Include="Units\UnitProperty.cs" />
+    <Compile Include="Units\UnitStateFlags.cs" />
+    <Compile Include="Units\WreckBeamBuilder.cs" />
+    <Compile Include="Zones\Artifacts\Artifact.cs" />
+    <Compile Include="Zones\Artifacts\ArtifactInfo.cs" />
+    <Compile Include="Zones\Artifacts\ArtifactLoot.cs" />
+    <Compile Include="Zones\Artifacts\Generators\CompositeArtifactGenerator.cs" />
+    <Compile Include="Zones\Artifacts\Generators\IArtifactGenerator.cs" />
+    <Compile Include="Zones\Artifacts\Generators\Loot\ArtifactLootGenerator.cs" />
+    <Compile Include="Zones\Artifacts\Generators\Loot\ArtifactLootItems.cs" />
+    <Compile Include="Zones\Artifacts\Generators\Loot\IArtifactLootGenerator.cs" />
+    <Compile Include="Zones\Artifacts\Generators\Loot\TrainingArtifactLootGenerator.cs" />
+    <Compile Include="Zones\Artifacts\Generators\NonPersistentArtifactGenerator.cs" />
+    <Compile Include="Zones\Artifacts\Generators\NullArtifactGenerator.cs" />
+    <Compile Include="Zones\Artifacts\Generators\PersistentArtifactGenerator.cs" />
+    <Compile Include="Zones\Artifacts\Repositories\ArtifactRepository.cs" />
+    <Compile Include="Zones\Artifacts\Repositories\IArtifactRepository.cs" />
+    <Compile Include="Zones\Artifacts\Repositories\TrainingZoneArtifactRepository.cs" />
+    <Compile Include="Zones\Artifacts\Repositories\ZoneArtifactRepository.cs" />
+    <Compile Include="Zones\Artifacts\Scanners\ArtifactScanner.cs" />
+    <Compile Include="Zones\Artifacts\Scanners\ArtifactScannerFactory.cs" />
+    <Compile Include="Zones\Artifacts\Scanners\ArtifactScanResult.cs" />
+    <Compile Include="Zones\Artifacts\Scanners\IArtifactScanner.cs" />
+    <Compile Include="Zones\Beams\Beam.cs" />
+    <Compile Include="Zones\Beams\BeamBuilder.cs" />
+    <Compile Include="Zones\Beams\BeamService.cs" />
+    <Compile Include="Zones\Beams\BeamHelper.cs" />
+    <Compile Include="Zones\Beams\BeamPacketBuilder.cs" />
+    <Compile Include="Zones\Beams\BeamState.cs" />
+    <Compile Include="Zones\Beams\IBeamService.cs" />
+    <Compile Include="Zones\Blobs\BlobEmitters\BlobEmitter.cs" />
+    <Compile Include="Zones\Blobs\BlobEmitters\BlobEmitterUnit.cs" />
+    <Compile Include="Zones\Blobs\BlobEmitters\IBlobEmitter.cs" />
+    <Compile Include="Zones\Blobs\BlobHandler.cs" />
+    <Compile Include="Zones\Blobs\IBlobableUnit.cs" />
+    <Compile Include="Zones\Blobs\IBlobHandler.cs" />
+    <Compile Include="Zones\DamageProcessors\DamageProcessor.cs" />
+    <Compile Include="Zones\DamageProcessors\DamageTakenEventArgs.cs" />
+    <Compile Include="Zones\Decors\DecorDescription.cs" />
+    <Compile Include="Zones\Decors\DecorHandler.cs" />
+    <Compile Include="Zones\Decors\IDecorHandler.cs" />
+    <Compile Include="Zones\Effects\AuraEffect.cs" />
+    <Compile Include="Zones\Effects\CorporationEffect.cs" />
+    <Compile Include="Zones\Effects\COTEffect.cs" />
+    <Compile Include="Zones\Effects\Effect.cs" />
+    <Compile Include="Zones\Effects\EffectBuilder.cs" />
+    <Compile Include="Zones\Effects\EffectHandler.cs" />
+    <Compile Include="Zones\Effects\EffectHelper.cs" />
+    <Compile Include="Zones\Effects\EffectInfo.cs" />
+    <Compile Include="Zones\Effects\EffectPacketBuilder.cs" />
+    <Compile Include="Zones\Effects\EffectToken.cs" />
+    <Compile Include="Zones\Effects\GangEffect.cs" />
+    <Compile Include="Zones\Effects\InvulnerableEffect.cs" />
+    <Compile Include="Zones\Eggs\AreaBomb.cs" />
+    <Compile Include="Zones\Eggs\Egg.cs" />
+    <Compile Include="Zones\Environments\EntityEnvironment.cs" />
+    <Compile Include="Zones\Environments\EntityEnvironmentDescription.cs" />
+    <Compile Include="Zones\Environments\IEnvironmentHandler.cs" />
+    <Compile Include="Zones\Environments\ZoneEnvironmentHandler.cs" />
+    <Compile Include="Zones\Teleporting\TeleportDescriptionBuilder.cs" />
+    <Compile Include="Zones\Teleporting\TeleportWorldTargetHelper.cs" />
+    <Compile Include="Zones\Terrains\Materials\MaterialHelper.cs" />
+    <Compile Include="Zones\Terrains\Materials\MaterialInfo.cs" />
+    <Compile Include="Zones\ZoneExtensions.Beam.cs" />
+    <Compile Include="Zones\ZoneExtensions.Bitmap.cs" />
+    <Compile Include="Zones\ZoneExtensions.Container.cs" />
+    <Compile Include="Zones\ZoneExtensions.cs" />
+    <Compile Include="Zones\ZoneExtensions.Environment.cs" />
+    <Compile Include="Zones\ZoneExtensions.Gang.cs" />
+    <Compile Include="Zones\ZoneExtensions.Npc.cs" />
+    <Compile Include="Zones\ZoneExtensions.Player.cs" />
+    <Compile Include="Zones\ZoneExtensions.Terrain.cs" />
+    <Compile Include="Zones\ZoneExtensions.Unit.cs" />
+    <Compile Include="Zones\Finders\IAreaFinder.cs" />
+    <Compile Include="Zones\Finders\IPositionFinder.cs" />
+    <Compile Include="Zones\Finders\PositionFinderExtensions.cs" />
+    <Compile Include="Zones\Finders\PositionFinders\ClosestWalkablePositionFinder.cs" />
+    <Compile Include="Zones\Finders\PositionFinders\RandomPassablePositionFinder.cs" />
+    <Compile Include="Zones\Finders\ZonePositionFinder.cs" />
+    <Compile Include="Zones\Gates\Gate.cs" />
+    <Compile Include="Zones\Gates\GateDeployer.cs" />
+    <Compile Include="Zones\Intrusion\ActiveHackingSAP.cs" />
+    <Compile Include="Zones\Intrusion\DestructionSAP.cs" />
+    <Compile Include="Zones\Intrusion\IntrusionEvents.cs" />
+    <Compile Include="Zones\Intrusion\IntrusionHelper.cs" />
+    <Compile Include="Zones\Intrusion\IntrusionSiteInfo.cs" />
+    <Compile Include="Zones\Intrusion\Outpost.cs" />
+    <Compile Include="Zones\Intrusion\PassiveHackingSAP.cs" />
+    <Compile Include="Zones\Intrusion\SAP.cs" />
+    <Compile Include="Zones\Intrusion\SAPInfo.cs" />
+    <Compile Include="Zones\Intrusion\SpecimenProcessingSAP.cs" />
+    <Compile Include="Zones\Intrusion\StabilityBonusThreshold.cs" />
+    <Compile Include="Zones\Intrusion\StabilityBonusType.cs" />
+    <Compile Include="Zones\IZone.cs" />
+    <Compile Include="Zones\IZoneSession.cs" />
+    <Compile Include="Zones\Locking\LockHandler.cs" />
+    <Compile Include="Zones\Locking\LockPacketBuilder.cs" />
+    <Compile Include="Zones\Locking\LockState.cs" />
+    <Compile Include="Zones\Locking\Locks\Lock.cs" />
+    <Compile Include="Zones\Locking\Locks\TerrainLock.cs" />
+    <Compile Include="Zones\Locking\Locks\UnitLock.cs" />
+    <Compile Include="Zones\Locking\LockType.cs" />
+    <Compile Include="Zones\Locking\LockValidator.cs" />
+    <Compile Include="Zones\Locking\LockVisitor.cs" />
+    <Compile Include="Zones\MiningLogHandler.cs" />
+    <Compile Include="Zones\Movements\Movement.cs" />
+    <Compile Include="Zones\Movements\PathMovement.cs" />
+    <Compile Include="Zones\Movements\RandomMovement.cs" />
+    <Compile Include="Zones\Movements\WaypointMovement.cs" />
+    <Compile Include="Zones\NpcSystem\Creature.cs" />
+    <Compile Include="Zones\NpcSystem\Flocks\Flock.cs" />
+    <Compile Include="Zones\NpcSystem\Flocks\FlockConfiguration.cs" />
+    <Compile Include="Zones\NpcSystem\Flocks\FlockExtensions.cs" />
+    <Compile Include="Zones\NpcSystem\Flocks\NormalFlock.cs" />
+    <Compile Include="Zones\NpcSystem\Npc.cs" />
+    <Compile Include="Zones\NpcSystem\NpcEgg.cs" />
+    <Compile Include="Zones\NpcSystem\NpcTemplateType.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\DirectPresence.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\DynamicPoolPresence.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\DynamicPresence.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\INotifyPresenceExpired.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\PathFinders\FreeRoamingPathFinder.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\PathFinders\IRoamingPathFinder.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\PathFinders\NormalRoamingPathFinder.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\Presence.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\PresenceConfiguration.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\PresenceExtensions.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\PresenceFactory.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\PresenceType.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\RandomPresence.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\RoamingPresence.cs" />
+    <Compile Include="Zones\NpcSystem\SafeSpawnPoints\ISafeSpawnPointsRepository.cs" />
+    <Compile Include="Zones\NpcSystem\SafeSpawnPoints\NpcSafeSpawnPointsRepository.cs" />
+    <Compile Include="Zones\NpcSystem\SafeSpawnPoints\SafeSpawnPoint.cs" />
+    <Compile Include="Zones\NpcSystem\ThreatManager.cs" />
+    <Compile Include="Zones\NpcSystem\Turret.cs" />
+    <Compile Include="Zones\NullZoneSession.cs" />
+    <Compile Include="Zones\Packet.cs" />
+    <Compile Include="Zones\PBS\ArmorRepairers\PBSArmorRepairerNode.cs" />
+    <Compile Include="Zones\PBS\CharactersRegisterHelper.cs" />
+    <Compile Include="Zones\PBS\Connections\PBSConnection.cs" />
+    <Compile Include="Zones\PBS\Connections\PBSConnectionHandler.cs" />
+    <Compile Include="Zones\PBS\Connections\PBSConnectionType.cs" />
+    <Compile Include="Zones\PBS\ConstructionModule.cs" />
+    <Compile Include="Zones\PBS\ControlTower\PBSControlTower.cs" />
+    <Compile Include="Zones\PBS\CoreAcceptHandler.cs" />
+    <Compile Include="Zones\PBS\CorePumpHandler.cs" />
+    <Compile Include="Zones\PBS\CoreTransmitters\PBSCoreTransmitter.cs" />
+    <Compile Include="Zones\PBS\CoreUseHandler.cs" />
+    <Compile Include="Zones\PBS\DockingBases\PBSDockingBase.cs" />
+    <Compile Include="Zones\PBS\EffectNodes\PBSEffectEmitter.cs" />
+    <Compile Include="Zones\PBS\EffectNodes\PBSEffectNode.cs" />
+    <Compile Include="Zones\PBS\EffectNodes\PBSEffectSupplier.cs" />
+    <Compile Include="Zones\PBS\EffectNodes\PBSMiningTower.cs" />
+    <Compile Include="Zones\PBS\EnergyWell\PBSEnergyWell.cs" />
+    <Compile Include="Zones\PBS\HighwayNode\PBSHighwayNode.cs" />
+    <Compile Include="Zones\PBS\IPBSEventHandler.cs" />
+    <Compile Include="Zones\PBS\PBSActiveObject.cs" />
+    <Compile Include="Zones\PBS\PBSDeployer.cs" />
+    <Compile Include="Zones\PBS\PBSDockingBaseVisibility.cs" />
+    <Compile Include="Zones\PBS\PBSEgg.cs" />
+    <Compile Include="Zones\PBS\PBSEnergyState.cs" />
+    <Compile Include="Zones\PBS\PBSEventArgs.cs" />
+    <Compile Include="Zones\PBS\PBSEventType.cs" />
+    <Compile Include="Zones\PBS\PBSHelper.cs" />
+    <Compile Include="Zones\PBS\PBSHighwayHandler.cs" />
+    <Compile Include="Zones\PBS\PBSInterfaces.cs" />
+    <Compile Include="Zones\PBS\PBSLogType.cs" />
+    <Compile Include="Zones\PBS\PBSObject.cs" />
+    <Compile Include="Zones\PBS\PBSObjectHelper.cs" />
+    <Compile Include="Zones\PBS\PBSObjectSaver.cs" />
+    <Compile Include="Zones\PBS\PBSReinforceHandler.cs" />
+    <Compile Include="Zones\PBS\PBSStandingControlledHelper.cs" />
+    <Compile Include="Zones\PBS\PBSTerritorialVisibilityHelper.cs" />
+    <Compile Include="Zones\PBS\ProductionNodes\PBSFacilityUpgradeNode.cs" />
+    <Compile Include="Zones\PBS\ProductionNodes\PBSProductionFacilityNode.cs" />
+    <Compile Include="Zones\PBS\ProductionNodes\PBSProductionFacilityNodeHelper.cs" />
+    <Compile Include="Zones\PBS\ProductionNodes\ProductionEnablerNodes.cs" />
+    <Compile Include="Zones\PBS\Reactors\PBSReactor.cs" />
+    <Compile Include="Zones\PBS\Turrets\PBSTurret.cs" />
+    <Compile Include="Zones\PlantTools\PlantSeedDeployer.cs" />
+    <Compile Include="Zones\PlantTools\WallHealerDeployer.cs" />
+    <Compile Include="Zones\ProximityProbes\ProximityProbe.cs" />
+    <Compile Include="Zones\ProximityProbes\ProximityProbeDeployer.cs" />
+    <Compile Include="Zones\PunchBags\PunchBag.cs" />
+    <Compile Include="Zones\PunchBags\PunchBagDeployer.cs" />
+    <Compile Include="Zones\PveZone.cs" />
+    <Compile Include="Zones\PvpZone.cs" />
+    <Compile Include="Zones\Scanning\Ammos\ArtifactScannerAmmo.cs" />
+    <Compile Include="Zones\Scanning\Ammos\DirectionalScannerAmmo.cs" />
+    <Compile Include="Zones\Scanning\Ammos\GeoScannerAmmo.cs" />
+    <Compile Include="Zones\Scanning\Ammos\IntrusionScannerAmmo.cs" />
+    <Compile Include="Zones\Scanning\Ammos\OneTileScannerAmmo.cs" />
+    <Compile Include="Zones\Scanning\Ammos\TileScannerAmmo.cs" />
+    <Compile Include="Zones\Scanning\MaterialProbeType.cs" />
+    <Compile Include="Zones\Scanning\Modules\ContainerScannerModule.cs" />
+    <Compile Include="Zones\Scanning\Modules\GeoScannerModule.cs" />
+    <Compile Include="Zones\Scanning\Modules\ItemScannerModule.cs" />
+    <Compile Include="Zones\Scanning\Modules\UnitScannerModule.cs" />
+    <Compile Include="Zones\Scanning\Results\MineralScanResult.cs" />
+    <Compile Include="Zones\Scanning\Results\MineralScanResultBuilder.cs" />
+    <Compile Include="Zones\Scanning\Results\MineralScanResultItem.cs" />
+    <Compile Include="Zones\Scanning\Results\MineralScanResultRepository.cs" />
+    <Compile Include="Zones\Scanning\Scanners\Scanner.Artifact.cs" />
+    <Compile Include="Zones\Scanning\Scanners\Scanner.cs" />
+    <Compile Include="Zones\Scanning\Scanners\Scanner.Directional.cs" />
+    <Compile Include="Zones\Scanning\Scanners\Scanner.Intrusion.cs" />
+    <Compile Include="Zones\Scanning\Scanners\Scanner.OneTile.cs" />
+    <Compile Include="Zones\Scanning\Scanners\Scanner.Tile.cs" />
+    <Compile Include="Zones\Teleporting\ITeleportDescriptionRepository.cs" />
+    <Compile Include="Zones\Teleporting\MobileTeleport.cs" />
+    <Compile Include="Zones\Teleporting\MobileTeleportDeployer.cs" />
+    <Compile Include="Zones\Teleporting\MobileWorldTeleport.cs" />
+    <Compile Include="Zones\Teleporting\Strategies\ITeleportStrategy.cs" />
+    <Compile Include="Zones\Teleporting\Strategies\TeleportToAnotherZone.cs" />
+    <Compile Include="Zones\Teleporting\Strategies\TeleportWithinZone.cs" />
+    <Compile Include="Zones\Teleporting\Strategies\TrainingExitStrategy.cs" />
+    <Compile Include="Zones\Teleporting\Teleport.cs" />
+    <Compile Include="Zones\Teleporting\TeleportColumn.cs" />
+    <Compile Include="Zones\Teleporting\TeleportDescription.cs" />
+    <Compile Include="Zones\Teleporting\TeleportDescriptionType.cs" />
+    <Compile Include="Zones\Teleporting\TeleportDescriptionRepository.cs" />
+    <Compile Include="Zones\Teleporting\TeleportRepositoryExtensions.cs" />
+    <Compile Include="Zones\Teleporting\TeleportVisitor.cs" />
+    <Compile Include="Zones\TerraformProjects\ReadWriteRole.cs" />
+    <Compile Include="Zones\Terrains\AltitudeLayer.cs" />
+    <Compile Include="Zones\Terrains\BlockingFlags.cs" />
+    <Compile Include="Zones\Terrains\BlockingInfo.cs" />
+    <Compile Include="Zones\Terrains\GroundType.cs" />
+    <Compile Include="Zones\Terrains\ILayer.cs" />
+    <Compile Include="Zones\Terrains\INotifyLayerUpdated.cs" />
+    <Compile Include="Zones\Terrains\ITerrain.cs" />
+    <Compile Include="Zones\Terrains\IUpdateableLayer.cs" />
+    <Compile Include="Zones\Terrains\Layer.cs" />
+    <Compile Include="Zones\Terrains\LayerExtensions.cs" />
+    <Compile Include="Zones\Terrains\LayerHelper.cs" />
+    <Compile Include="Zones\Terrains\IntervalLayerSaver.cs" />
+    <Compile Include="Zones\Terrains\LayerType.cs" />
+    <Compile Include="Zones\Terrains\LayerTypeFlags.cs" />
+    <Compile Include="Zones\Terrains\ILayerAction.cs" />
+    <Compile Include="Zones\Terrains\Materials\IMaterialLayer.cs" />
+    <Compile Include="Zones\Terrains\Materials\MaterialType.cs" />
+    <Compile Include="Zones\Terrains\Materials\MaterialTypeExtensions.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\Actions\DeleteMineralNode.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\Actions\GenerateMineralNode.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\Actions\SaveMineralNode.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\ActiveLayer.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\Generators\IMineralNodeGenerator.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\Generators\IMineralNodeGeneratorFactory.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\Generators\MineralNodeGeneratorBase.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\Generators\MineralNodeGeneratorFactory.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\Generators\RandomWalkMineralNodeGenerator.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\GravelLayer.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\IMineralNodeRepository.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\LiquidLayer.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\MineralConfiguration.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\MineralExtractionType.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\MineralExtractor.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\MineralLayer.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\MineralLayerVisitor.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\MineralNode.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\MineralNodeRepository.cs" />
+    <Compile Include="Zones\Terrains\Materials\Minerals\OreLayer.cs" />
+    <Compile Include="Zones\Terrains\Materials\Plants\ExtensionsMethods\PlantInfoExtensions.cs" />
+    <Compile Include="Zones\Terrains\Materials\Plants\Harvesters\IPlantHarvester.cs" />
+    <Compile Include="Zones\Terrains\Materials\Plants\Harvesters\PlantHarvester.cs" />
+    <Compile Include="Zones\Terrains\Materials\Plants\PlantHandler.cs" />
+    <Compile Include="Zones\Terrains\Materials\Plants\PlantInfo.cs" />
+    <Compile Include="Zones\Terrains\Materials\Plants\PlantRule.cs" />
+    <Compile Include="Zones\Terrains\Materials\Plants\PlantRuleExtensions.cs" />
+    <Compile Include="Zones\Terrains\Materials\Plants\PlantRuleLoader.cs" />
+    <Compile Include="Zones\Terrains\Materials\Plants\PlantScannerMode.cs" />
+    <Compile Include="Zones\Terrains\Materials\Plants\PlantType.cs" />
+    <Compile Include="Zones\Terrains\Materials\RareMaterialHandler.cs" />
+    <Compile Include="Zones\Terrains\NatureCube.cs" />
+    <Compile Include="Zones\Terrains\PassableMapBuilder.cs" />
+    <Compile Include="Zones\Terrains\SlopeLayer.cs" />
+    <Compile Include="Zones\Terrains\TerraformableAltitude.cs" />
+    <Compile Include="Zones\Terrains\Terraforming\ITerraformHandler.cs" />
+    <Compile Include="Zones\Terrains\Terraforming\Operations\BlurTerraformingOperation.cs" />
+    <Compile Include="Zones\Terrains\Terraforming\Operations\LevelTerraformingOperation.cs" />
+    <Compile Include="Zones\Terrains\Terraforming\Operations\SimpleTileTerraformingOperation.cs" />
+    <Compile Include="Zones\Terrains\Terraforming\Operations\TerraformingOperation.cs" />
+    <Compile Include="Zones\Terrains\Terraforming\TerraformHandler.cs" />
+    <Compile Include="Zones\Terrains\Terraforming\TerrainDegradeOperation.cs" />
+    <Compile Include="Zones\Terrains\Terrain.cs" />
+    <Compile Include="Zones\Terrains\TerrainCondition.cs" />
+    <Compile Include="Zones\Terrains\TerrainControlFlags.cs" />
+    <Compile Include="Zones\Terrains\TerrainControlInfo.cs" />
+    <Compile Include="Zones\Terrains\TerrainExtensions.cs" />
+    <Compile Include="Zones\Terrains\TerrainUpdateMonitor.cs" />
+    <Compile Include="Zones\Terrains\TerrainUpdateNotifier.cs" />
+    <Compile Include="Zones\TrainingZone.cs" />
+    <Compile Include="Zones\Training\Reward\ITrainingRewardRepository.cs" />
+    <Compile Include="Zones\Training\Reward\TrainingReward.cs" />
+    <Compile Include="Zones\Training\Reward\TrainingRewardBuilder.cs" />
+    <Compile Include="Zones\Training\Reward\TrainingRewardRepository.cs" />
+    <Compile Include="Zones\Training\TrainingDockingBase.cs" />
+    <Compile Include="Zones\Training\TrainingExitTeleportColumn.cs" />
+    <Compile Include="Zones\Training\TrainingKillSwitch.cs" />
+    <Compile Include="Zones\Visibility.cs" />
+    <Compile Include="Zones\WeatherInfo.cs" />
+    <Compile Include="Zones\WeatherService.cs" />
+    <Compile Include="Zones\Zone.cs" />
+    <Compile Include="Zones\ZoneCommand.cs" />
+    <Compile Include="Zones\ZoneConfiguration.cs" />
+    <Compile Include="Zones\ZoneEnterInfo.cs" />
+    <Compile Include="Zones\ZoneEnterQueueService.cs" />
+    <Compile Include="Zones\ZoneEnterType.cs" />
+    <Compile Include="Zones\ZoneEntityRepositories\DefaultZoneUnitReader.cs" />
+    <Compile Include="Zones\ZoneEntityRepositories\DefaultZoneUnitRepository.cs" />
+    <Compile Include="Zones\ZoneEntityRepositories\IZoneUnitReader.cs" />
+    <Compile Include="Zones\ZoneEntityRepositories\IZoneUnitRepository.cs" />
+    <Compile Include="Zones\ZoneEntityRepositories\UserZoneUnitRepository.cs" />
+    <Compile Include="Zones\ZoneEntityRepositories\ZoneUnitReader.cs" />
+    <Compile Include="Zones\ZoneEntityRepositories\ZoneUnitService.cs" />
+    <Compile Include="Zones\ZoneExitType.cs" />
+    <Compile Include="Zones\ZoneManager.cs" />
+    <Compile Include="Zones\ZoneSession.cs" />
+    <Compile Include="Zones\ZoneSessionExtensions.cs" />
+    <Compile Include="Zones\ZoneStorage.cs" />
+    <Compile Include="Zones\ZoneTicket.cs" />
+    <Compile Include="Zones\ZoneType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Perpetuum.ExportedTypes\Perpetuum.ExportedTypes.csproj">
+      <Project>{e322bf83-76b8-4395-9ff2-26df13f6816c}</Project>
+      <Name>Perpetuum.ExportedTypes</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Groups\Corporations\RequestHandlers\" />
+    <Folder Include="Properties\" />
+    <Folder Include="Services\ProductionEngine\Methods\" />
+    <Folder Include="Services\Relay\RequestHandlers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+</Project>

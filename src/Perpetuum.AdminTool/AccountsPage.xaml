@@ -1,0 +1,131 @@
+﻿<UserControl x:Class="Perpetuum.AdminTool.AccountsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignWidth="600" d:DesignHeight="400">
+    <Grid>
+        <Grid.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                    <ResourceDictionary Source="StylesResource.xaml" />
+                </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary>
+        </Grid.Resources>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.5*" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <ListView x:Name="accountListView" HorizontalContentAlignment="Stretch" SelectionChanged="AccountsListView_SelectionChanged">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical" Background="{Binding ListBackgroundBrush}">
+                        
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Email}" Foreground="Black" FontSize="12" FontWeight="Bold" Margin="0 0 5 3" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="id:" Foreground="DarkBlue" Margin="0 0 5 0" FontSize="9"/>
+                                <TextBlock Text="{Binding Id}" Foreground="DarkBlue" Margin="0 0 5 0" FontSize="9" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="state:" Foreground="DarkBlue" Margin="0 0 5 0" FontSize="9"/>
+                                <TextBlock Text="{Binding StateDisplay}" Foreground="DarkBlue" Margin="0 0 5 0" FontSize="9" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="characters:" Foreground="DarkBlue" Margin="0 0 5 0" FontSize="9"/>
+                                <TextBlock Text="{Binding Nicks}" Foreground="DarkBlue" Margin="0 0 5 0" FontSize="9" />
+                            </StackPanel>
+
+                        <StackPanel Orientation="Vertical">
+                            <Separator HorizontalContentAlignment="Stretch" Foreground="DarkSlateGray" />
+                        </StackPanel>
+
+                    </StackPanel>
+                   
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <GridSplitter Grid.Column="1" Cursor="SizeWE" />
+        <Grid Grid.Column="2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="0.5*" MinWidth="120" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition Width="0.03*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="1" x:Name="buttonStack">
+                    <Border >
+                        <StackPanel>
+                            <Button Content="List accounts" Style="{StaticResource ButtonStyle}" HorizontalAlignment="Stretch"
+                                    Margin="0,0,0,0"
+                                    Click="GetAccountList_Click" Background="#FF50CED4" />
+                        </StackPanel>
+                    </Border>
+                    <Border Background="LightGray">
+                        <StackPanel>
+
+                            <TextBlock Text="search  " Style="{StaticResource LabelStyle}" />
+                            <TextBox x:Name="filterBox" TextChanged="FilterBox_TextChanged" Margin="0,-3,0,0" />
+
+                        </StackPanel>
+                    </Border>
+
+                 
+
+                    <Border>
+
+                        <StackPanel x:Name="banStack" Background="LightGray">
+
+                            <Button Content="Ban selected" Style="{StaticResource ButtonStyle}" HorizontalAlignment="Stretch" Background="#FF50CED4"
+                                    Margin="0,0,0,0"
+                                    Click="Ban_Click" />
+                            <TextBlock Text="ban duration seconds  " Style="{StaticResource LabelStyle}" />
+                            <ComboBox x:Name="banLengthCombo" Style="{StaticResource ComboBoxStyle}" MinWidth="0"
+                                      Margin="0,-3,0,0" IsEditable="True" />
+
+                            <TextBlock Text="banning note  " Style="{StaticResource LabelStyle}" />
+                            <TextBox x:Name="banNoteBox" Style="{StaticResource InputStyle}" FontSize="10" Background="White"
+                                     MinWidth="0" Margin="0,-3,0,1" Height="Auto"
+                                     TextWrapping="Wrap" HorizontalScrollBarVisibility="Auto"
+                                     VerticalScrollBarVisibility="Auto" />
+
+                        </StackPanel>
+                    </Border>
+
+                    <Border>
+                        <StackPanel>
+                            <Button x:Name="unbanButton" Content="Unban selected" Style="{StaticResource ButtonStyle}" HorizontalAlignment="Stretch" Margin="0,0,0,0" Click="Unban_Click" Background="#FF50CED4"/>
+                        </StackPanel>
+                    </Border>
+                    <Border>
+                        <StackPanel>
+                            <Button Content="Create account" Style="{StaticResource ButtonStyle}" HorizontalAlignment="Stretch"
+                                    Margin="0,0,0,0"
+                                    Click="CreateAccount_Click" Background="#FF2AD18C" />
+
+                        </StackPanel>
+                    </Border>
+                    <Border>
+                        <StackPanel>
+                            <Button Content="Delete selected" Style="{StaticResource ButtonStyle}" HorizontalAlignment="Stretch" Margin="0,0,0,0" Click="Destroy_Click" Background="#FFE68727" />
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+                <GridSplitter Grid.Column="2" Cursor="SizeWE" />
+
+                <Grid x:Name="accountPropertiesRoot" Grid.Column="3" />
+                <GridSplitter Grid.Column="4" Cursor="SizeWE" />
+            </Grid>
+        </Grid>
+    </Grid>
+</UserControl>

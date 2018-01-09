@@ -1,0 +1,82 @@
+﻿<Window x:Class="Perpetuum.AdminTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        x:Name="adminToolMainWindow"
+        Icon="icon.ico"
+        Title="Perpetuum AdminTool" Height="480" Width="730" Closing="MainWindow_OnClosing">
+    <Grid x:Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="22" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="5" />
+            <RowDefinition Height="0.005*" />
+            <RowDefinition Height="22" />
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" Height="22" VerticalAlignment="Top">
+            <MenuItem Header="Action">
+                <MenuItem Click="MenuDisconnect_Click">
+                    <MenuItem.Header>Disconnect</MenuItem.Header>
+                </MenuItem>
+                <MenuItem Click="MenuClearLog_Click">
+                    <MenuItem.Header>Clear log</MenuItem.Header>
+                </MenuItem>
+                <MenuItem Click="MenuChangeMyPassword_Click">
+                    <MenuItem.Header>Change my password</MenuItem.Header>
+                </MenuItem>
+                <MenuItem Click="MenuExit_Click">
+                    <MenuItem.Header>Exit</MenuItem.Header>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem>
+                    <MenuItem.Header>About</MenuItem.Header>
+                </MenuItem>
+            </MenuItem>
+
+        </Menu>
+        <TabControl x:Name="tabControl" Margin="0,5,0,0" Grid.Row="1" Background="{x:Null}">
+            <TabItem x:Name="localServerTab" Header="Local server">
+                <Grid x:Name="localServerPageRoot"/>
+            </TabItem>
+            <TabItem x:Name="authTab" Header="Authentication">
+                <Grid x:Name="authPageRoot" />
+            </TabItem>
+            <TabItem x:Name="accountsTab" Header="Manage accounts">
+                <Grid x:Name="accountsPageRoot" />
+            </TabItem>
+            <TabItem x:Name="serverInfoTab" Header="Server info">
+                <Grid x:Name="serverInfoPageRoot"/>
+            </TabItem>
+        </TabControl>
+        <GridSplitter Grid.Row="2" Cursor="SizeNS" HorizontalAlignment="Stretch" ResizeDirection="Rows"
+                      Foreground="#FF556655" />
+        <Grid x:Name="logRoot" Grid.Row="3" />
+
+        <StatusBar Height="22" Grid.Row="4" Margin="0">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem>
+                <Grid x:Name="ledRoot" />
+            </StatusBarItem>
+            <Separator Grid.Column="1" />
+            <StatusBarItem Grid.Column="2" HorizontalContentAlignment="Stretch">
+                <Grid x:Name="statusTextRoot" />
+            </StatusBarItem>
+        </StatusBar>
+
+    </Grid>
+</Window>
+

@@ -1,0 +1,3 @@
+namespace Perpetuum.Zones.Training
+{
+}

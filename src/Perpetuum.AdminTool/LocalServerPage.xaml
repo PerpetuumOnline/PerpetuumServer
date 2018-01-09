@@ -1,0 +1,125 @@
+﻿<UserControl x:Class="Perpetuum.AdminTool.LocalServerPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Perpetuum.AdminTool"
+             mc:Ignorable="d"
+             d:DesignWidth="600" d:DesignHeight="400">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="200"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+    <Grid Row="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="400" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.Resources>
+            <ResourceDictionary>
+                <ResourceDictionary.MergedDictionaries>
+                    <ResourceDictionary Source="StylesResource.xaml" />
+                </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary>
+        </Grid.Resources>
+
+        <StackPanel Grid.Column="0">
+            <TextBlock Text="" Style="{StaticResource TitleStyle}" />
+            <TextBlock Text="Executable" Style="{StaticResource LabelStyle}" />
+            <TextBlock Text="Game root" Style="{StaticResource   LabelStyle}" />
+            <TextBlock Text="Status" Style="{StaticResource   LabelStyle}" />
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" DataContext="{Binding LocalServerStateViewModel, Source={StaticResource Locator}}">
+            <TextBlock x:Name="connectTitle" Text="LOCAL SERVER" Style="{StaticResource TitleStyle}" />
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="executablePathTxtBox" Style="{StaticResource InputStyle}" Width="295"
+                         TextChanged="ExePath_Changed" />
+                <Button Content="Browse" Style="{StaticResource ButtonStyle}" Click="BrowseExe_click" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="gameRootPathTxtBox" Style="{StaticResource InputStyle}" Width="295"
+                         TextChanged="GameRoot_Changed" />
+                <Button Content="Browse" Style="{StaticResource ButtonStyle}" Click="BrowseGameRoot_click" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal">
+            <TextBlock Margin="4 2 0 0" Height="18" FontSize="10" VerticalAlignment="Center" HorizontalAlignment="Left"
+                       FontWeight="Black">
+
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Text" Value="" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding State}" Value="unknown">
+                                <Setter Property="Text" Value="Not running." />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding State}" Value="starting">
+                                <Setter Property="Text" Value="Starting up." />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding State}" Value="listening">
+                                <Setter Property="Text"
+                                        Value="Running." />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding State}" Value="shutdownok">
+                                <Setter Property="Text" Value="Server was shut down properly." />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding State}" Value="exitwitherror">
+                                <Setter Property="Text" Value="Exit with error" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+                <TextBlock Text="{Binding ProbeText}" Width="25" Margin="10,0,0,0" FontWeight="Black"/>
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" >
+                <Button Content="Start local server" Style="{StaticResource ButtonStyle}" Click="ButtonRunLocal_click"
+                        Width="120"
+                        IsEnabled="{Binding IsRunEnabled}" />
+
+                <Button Content="Kill local server" Style="{StaticResource ButtonStyle}" Click="ButtonKill_click"
+                        Width="120"
+                        IsEnabled="{Binding IsKillEnabled}" />
+               
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" >
+                    <TextBlock Text="{Binding VerboseMessage}" Style="{StaticResource LabelStyle}" TextWrapping="Wrap" Width="400" Height="Auto"
+                           HorizontalAlignment="Stretch" VerticalAlignment="Top" TextAlignment="Justify"/>
+            </StackPanel >
+
+           
+
+        </StackPanel>
+    </Grid>
+    <Grid Row="1">
+         
+            <TextBox x:Name="processLogTextBox" Background="{x:Null}"
+                     FontFamily="Consolas" FontSize="12" TextWrapping= "NoWrap" MaxHeight="700" 
+                     HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" AllowDrop="False" HorizontalContentAlignment="Stretch" />
+         
+        </Grid>
+    </Grid>
+
+</UserControl>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
