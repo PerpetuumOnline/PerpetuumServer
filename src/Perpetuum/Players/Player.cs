@@ -318,6 +318,12 @@ namespace Perpetuum.Players
             ApplyEffect(builder);
         }
 
+        public void RemoveInvulnerableEffect()
+        {
+            EffectHandler.RemoveEffectsByType(EffectType.effect_invulnerable);
+        }
+
+
         public void ApplyTeleportSicknessEffect()
         {
             var zone = Zone;
