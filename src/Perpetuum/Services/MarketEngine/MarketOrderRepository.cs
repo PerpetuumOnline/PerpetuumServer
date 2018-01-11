@@ -38,7 +38,7 @@ namespace Perpetuum.Services.MarketEngine
 
     public class MarketOrderRepository : IMarketOrderRepository
     {
-        private const string ORDER_COLUMNS = "marketitemid, marketeid, itemeid, itemdefinition, submittereid, submitted, duration, isSell, price, quantity, usecorporationwallet, isvendoritem, formembersof FROM marketitems ";
+        private const string ORDER_COLUMNS = "marketitems.marketitemid, marketitems.marketeid, marketitems.itemeid, marketitems.itemdefinition, marketitems.submittereid, marketitems.submitted, marketitems.duration, marketitems.isSell, marketitems.price, marketitems.quantity, marketitems.usecorporationwallet, marketitems.isvendoritem, marketitems.formembersof FROM marketitems ";
         private const string ORDER_SELECT = "SELECT " + ORDER_COLUMNS;
         private const string TOP1_SELECT = "SELECT TOP (1) " + ORDER_COLUMNS;
         private readonly MarketOrder.Factory _marketOrderFactory;
@@ -155,7 +155,9 @@ namespace Perpetuum.Services.MarketEngine
 
         public IEnumerable<MarketOrder> GetAllByDefinition(int definition)
         {
-            const string cmd = ORDER_SELECT + @"where itemdefinition = @definition";
+            // this is an example as to why we should not have a table that references itself.
+            // the purpose of this is to not return market items on disabled zones.
+            const string cmd = ORDER_SELECT + @"INNER JOIN entities as childentity on (marketitems.marketeid=childentity.eid) INNER JOIN entities parent on (childentity.eid=parent.eid) INNER JOIN zoneentities on (parent.parent=zoneentities.eid) INNER JOIN zones on (zoneentities.zoneid=zones.id) where itemdefinition = @definition and zones.enabled=1";
 
             return Db.Query().CommandText(cmd)
                            .SetParameter("@definition", definition)
