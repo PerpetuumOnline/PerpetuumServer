@@ -61,6 +61,8 @@ namespace Perpetuum.Services.RiftSystem
         private readonly TimeRange _spawnTime;
         private readonly RiftSpawnPositionFinder _spawnPositionFinder;
         private readonly IEntityServices _entityServices;
+        private bool StrongHoldRiftGenerated { get; set; } = false;
+        private Random r;
 
         private readonly LinkedList<TimeTracker> _nextRiftSpawns = new LinkedList<TimeTracker>();
 
@@ -70,18 +72,21 @@ namespace Perpetuum.Services.RiftSystem
             _spawnTime = spawnTime;
             _spawnPositionFinder = spawnPositionFinder;
             _entityServices = entityServices;
+            r = new Random();
         }
 
         private int _riftCounts;
 
         public void Update(TimeSpan time)
         {
-            while (_riftCounts < 20)
+            // FIXME: this needs to be in the database.
+            // do not spawn rifts on zone 16 (the stronghold)
+            while (_riftCounts < 40 && _zone.Id != 16)
             {
                 _nextRiftSpawns.AddLast(new TimeTracker(FastRandom.NextTimeSpan(_spawnTime)));
                 Interlocked.Increment(ref _riftCounts);
             }
-            
+         
             _nextRiftSpawns.RemoveAll(t =>
             {
                 t.Update(time);
@@ -100,9 +105,17 @@ namespace Perpetuum.Services.RiftSystem
             rift.SetDespawnTime(TimeSpan.FromHours(3));
             rift.RemovedFromZone += OnRiftRemovedFromZone;
 
+            // only generate one stronghold teleport and make it random chance.
+            int rand = r.Next(0, 3);
+            if (rand == 2 && !StrongHoldRiftGenerated)
+            {
+                rift.IsDestinationStronghold = true;
+                this.StrongHoldRiftGenerated = true;
+            }
+
             var spawnPosition = _spawnPositionFinder.FindSpawnPosition().ToPosition();
             rift.AddToZone(_zone, spawnPosition, ZoneEnterType.NpcSpawn);
-            Logger.Info("Rift spawned. " + rift.ED.Name + " (" + rift.CurrentPosition + ")");
+            Logger.Info("Rift spawned. " + rift.ED.Name + " (" + rift.CurrentPosition + ") Stronghold:" + rift.IsDestinationStronghold);
         }
 
         private void OnRiftRemovedFromZone(Unit unit)
