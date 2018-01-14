@@ -81,7 +81,7 @@ namespace Perpetuum.Services.RiftSystem
         {
             // FIXME: this needs to be in the database.
             // do not spawn rifts on zone 16 (the stronghold)
-            while (_riftCounts < 40 && _zone.Id != 16)
+            while (_riftCounts < 10 && _zone.Id != 16)
             {
                 _nextRiftSpawns.AddLast(new TimeTracker(FastRandom.NextTimeSpan(_spawnTime)));
                 Interlocked.Increment(ref _riftCounts);
@@ -106,11 +106,10 @@ namespace Perpetuum.Services.RiftSystem
             rift.RemovedFromZone += OnRiftRemovedFromZone;
 
             // only generate one stronghold teleport and make it random chance.
-            int rand = r.Next(0, 3);
+            int rand = r.Next(0, 10);
             if (rand == 2 && !StrongHoldRiftGenerated)
             {
                 rift.IsDestinationStronghold = true;
-                this.StrongHoldRiftGenerated = true;
             }
 
             var spawnPosition = _spawnPositionFinder.FindSpawnPosition().ToPosition();
