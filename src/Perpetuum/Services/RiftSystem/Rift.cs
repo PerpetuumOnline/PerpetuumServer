@@ -131,6 +131,8 @@ namespace Perpetuum.Services.RiftSystem
             _blobEmitter = new BlobEmitter(this);
         }
 
+        public bool IsDestinationStronghold { get; set; } = false;
+
         public void SetDespawnTime(TimeSpan despawnTime)
         {
             _despawnHelper = UnitDespawnHelper.Create(this,despawnTime);
@@ -175,17 +177,30 @@ namespace Perpetuum.Services.RiftSystem
         {
             player.HasTeleportSicknessEffect.ThrowIfTrue(ErrorCodes.TeleportTimerStillRunning);
             player.HasPvpEffect.ThrowIfTrue(ErrorCodes.CantBeUsedInPvp);
-            player.CurrentPosition.IsInRangeOf3D(CurrentPosition, 8).ThrowIfFalse(ErrorCodes.TeleportOutOfRange);
 
-            var nearestRift = Zone.Units.OfType<Rift>().Where(rift => rift != this).GetNearestUnit(CurrentPosition);
-            if (nearestRift == null)
-                throw new PerpetuumException(ErrorCodes.WTFErrorMedicalAttentionSuggested);
+            IZone destination = player.Character.GetZone(16);
 
-            var teleport = _teleportStrategyFactories.TeleportWithinZoneFactory();
-            teleport.TargetPosition = nearestRift.CurrentPosition;
-            teleport.ApplyTeleportSickness = true;
-            teleport.ApplyInvulnerable = true;
-            teleport.DoTeleportAsync(player);
+            // teleport player to stronghold
+            // stronghold zone must be active.
+            if (this.IsDestinationStronghold && destination != null)
+            {
+                var teleport = _teleportStrategyFactories.TeleportToAnotherZoneFactory(destination);
+                teleport.DoTeleportAsync(player);
+            }
+            else
+            {
+                player.CurrentPosition.IsInRangeOf3D(CurrentPosition, 8).ThrowIfFalse(ErrorCodes.TeleportOutOfRange);
+
+                var nearestRift = Zone.Units.OfType<Rift>().Where(rift => rift != this).GetNearestUnit(CurrentPosition);
+                if (nearestRift == null)
+                    throw new PerpetuumException(ErrorCodes.WTFErrorMedicalAttentionSuggested);
+
+                var teleport = _teleportStrategyFactories.TeleportWithinZoneFactory();
+                teleport.TargetPosition = nearestRift.CurrentPosition;
+                teleport.ApplyTeleportSickness = true;
+                teleport.ApplyInvulnerable = true;
+                teleport.DoTeleportAsync(player);
+            }
         }
 
         public double BlobEmission => _blobEmitter.BlobEmission;
