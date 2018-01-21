@@ -162,8 +162,23 @@ namespace Perpetuum.Services.MissionEngine.Missions
             var positiveAllianceEid = _missionLocation.Agent.OwnerAlliance.Eid;
             var opposingAllianceEid = DefaultCorporationDataCache.SelectOpposingAlliance(positiveAllianceEid);
 
-            _standingChanges = new[] {new MissionStandingChange(positiveAllianceEid, standingValue), new MissionStandingChange(opposingAllianceEid, negativeValue) };
-           
+
+            //TODO: Fixme: I am a hack for Syndicatification
+            if (this._missionLocation.zoneId == 0 || this._missionLocation.zoneId == 8) //For New Virginia and Hershfield
+            {
+                //Implementation: Add reputation for all factions equally -- No factional bias!
+                IEnumerable<long> allianceEids = DefaultCorporationDataCache.GetMegaCorporationEids();
+                List<MissionStandingChange> standingChangeForSyndicatification = new List<MissionStandingChange>();
+                foreach(long id in allianceEids)
+                {
+                    standingChangeForSyndicatification.Add(new MissionStandingChange(id, standingValue));
+                }
+                _standingChanges = standingChangeForSyndicatification.ToArray();
+            }//--end hack--
+            else
+            {
+                _standingChanges = new[] { new MissionStandingChange(positiveAllianceEid, standingValue), new MissionStandingChange(opposingAllianceEid, negativeValue) };
+            }
         }
 
     }
