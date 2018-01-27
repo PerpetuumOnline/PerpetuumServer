@@ -14,12 +14,13 @@ namespace Perpetuum.Services.ItemShop
         private readonly int _tmcoin;
         private readonly int _icscoin;
         private readonly int _asicoin;
+        private readonly int _unicoin;
         private readonly double _credit;
         private readonly int? _globalLimit;
         private readonly int _purchaseCount;
         private readonly double? _standing;
 
-        public ItemShopEntry(int id,EntityDefault targetItemED,int targetItemAmount,int tmcoin, int icscoin, int asicoin, double credit, int? globalLimit, int purchaseCount,double? standing)
+        public ItemShopEntry(int id, EntityDefault targetItemED, int targetItemAmount, int tmcoin, int icscoin, int asicoin, int unicoin, double credit, int? globalLimit, int purchaseCount, double? standing)
         {
             _id = id;
             _targetItemED = targetItemED;
@@ -27,6 +28,7 @@ namespace Perpetuum.Services.ItemShop
             _tmcoin = tmcoin;
             _icscoin = icscoin;
             _asicoin = asicoin;
+            _unicoin = unicoin;
             _credit = credit;
             _purchaseCount = purchaseCount;
             _globalLimit = globalLimit;
@@ -53,18 +55,20 @@ namespace Perpetuum.Services.ItemShop
             get { return _tmcoin; }
         }
 
-
         public int AsiCoin
         {
             get { return _asicoin; }
         }
-
 
         public int IcsCoin
         {
             get { return _icscoin; }
         }
 
+        public int UniCoin
+        {
+            get { return _unicoin; }
+        }
 
         public double Credit
         {
@@ -78,7 +82,7 @@ namespace Perpetuum.Services.ItemShop
 
         public Dictionary<string, object> ToDictionary()
         {
-            var d = new Dictionary<string,object>();
+            var d = new Dictionary<string, object>();
 
             d[k.ID] = _id;
             d[k.targetDefinition] = _targetItemED.Definition;
@@ -90,10 +94,11 @@ namespace Perpetuum.Services.ItemShop
             d[k.tmcoin] = _tmcoin;
             d[k.icscoin] = _icscoin;
             d[k.asicoin] = _asicoin;
+            d[k.unicoin] = _unicoin;
             return d;
         }
 
-        public Item CreateTargetItem(Character owner,int quantity)
+        public Item CreateTargetItem(Character owner, int quantity)
         {
             var targetItem = (Item)Entity.Factory.CreateWithRandomEID(TargetItemED);
             targetItem.Owner = owner.Eid;
@@ -110,7 +115,7 @@ namespace Perpetuum.Services.ItemShop
             if (GlobalLimit <= PurchaseCount)
                 throw new PerpetuumException(ErrorCodes.OutOfItemGlobally);
 
-            var availableAmount = (int) GlobalLimit - PurchaseCount;
+            var availableAmount = (int)GlobalLimit - PurchaseCount;
 
             //clamp to the available maximum
             if (availableAmount < quantity)
@@ -135,6 +140,12 @@ namespace Perpetuum.Services.ItemShop
             if (_asicoin > 0)
             {
                 var ac = Coin.CreateASICoin(_asicoin);
+                ac.RemoveFromContainer(container, quantity);
+            }
+
+            if (_unicoin > 0)
+            {
+                var ac = Coin.CreateUniversalCoin(_unicoin);
                 ac.RemoveFromContainer(container, quantity);
             }
         }
