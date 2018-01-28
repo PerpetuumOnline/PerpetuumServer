@@ -315,8 +315,15 @@ namespace Perpetuum.Players
         public void ApplyInvulnerableEffect()
         {
             var builder = NewEffectBuilder().SetType(EffectType.effect_invulnerable);
+            builder.WithDurationModifier(0.75); //Reduce span of syndicate protection
             ApplyEffect(builder);
         }
+
+        public void RemoveInvulnerableEffect()
+        {
+            EffectHandler.RemoveEffectsByType(EffectType.effect_invulnerable);
+        }
+
 
         public void ApplyTeleportSicknessEffect()
         {

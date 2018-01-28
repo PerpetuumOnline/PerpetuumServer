@@ -1,4 +1,5 @@
 ﻿using Perpetuum.Accounting;
+using Perpetuum.Data;
 using Perpetuum.Host.Requests;
 using Perpetuum.Services.Relay;
 
@@ -40,6 +41,11 @@ namespace Perpetuum.RequestHandlers.AdminTools
             }
 
             _accountRepository.Insert(account);
+
+            Db.Query().CommandText("extensionPointsInject")
+                .SetParameter("@accountID", account.Id)
+                .SetParameter("@points", 40000)
+                .ExecuteNonQuery();
 
             Message.Builder.FromRequest(request).SetData(k.account, account.ToDictionary()).Send();
         }

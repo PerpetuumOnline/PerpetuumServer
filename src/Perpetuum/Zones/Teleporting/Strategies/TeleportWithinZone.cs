@@ -53,8 +53,15 @@ namespace Perpetuum.Zones.Teleporting.Strategies
                 player.AddToZone(zone,validPosition,ZoneEnterType.LocalTeleport);
                 player.SendInitSelf();
 
-                if ( ApplyTeleportSickness )
+                if (ApplyTeleportSickness)
+                {
                     player.ApplyTeleportSicknessEffect();
+                }
+                if (ApplyInvulnerable)
+                {
+                    player.RemoveInvulnerableEffect(); // remove previous effect.
+                    player.ApplyInvulnerableEffect(); // re-add effect to restart counter.
+                }
 
                 // mozoghat, fade out
                 player.States.InMoveable = false;

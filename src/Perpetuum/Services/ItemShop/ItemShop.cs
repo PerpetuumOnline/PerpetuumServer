@@ -19,7 +19,7 @@ namespace Perpetuum.Services.ItemShop
         private readonly IStandingHandler _standingHandler;
         private readonly CharacterWalletFactory _characterWalletFactory;
 
-        public ItemShop(IStandingHandler standingHandler,CharacterWalletFactory characterWalletFactory)
+        public ItemShop(IStandingHandler standingHandler, CharacterWalletFactory characterWalletFactory)
         {
             _standingHandler = standingHandler;
             _characterWalletFactory = characterWalletFactory;
@@ -42,7 +42,7 @@ namespace Perpetuum.Services.ItemShop
                                     JOIN itemshoplocations sl ON its.presetid = sl.presetid
                                     WHERE sl.locationeid = @eid AND its.id = @id";
 
-            var record = Db.Query().CommandText(qryStr).SetParameter("@eid",Eid).SetParameter("@id", entryID).ExecuteSingleRow();
+            var record = Db.Query().CommandText(qryStr).SetParameter("@eid", Eid).SetParameter("@id", entryID).ExecuteSingleRow();
             if (record == null)
                 return null;
 
@@ -56,7 +56,7 @@ namespace Perpetuum.Services.ItemShop
                                     JOIN itemshoplocations sl ON its.presetid = sl.presetid
                                     WHERE sl.locationeid = @eid";
 
-            var records = Db.Query().CommandText(qryStr).SetParameter("@eid",Eid).Execute();
+            var records = Db.Query().CommandText(qryStr).SetParameter("@eid", Eid).Execute();
 
             var entries = new List<ItemShopEntry>();
 
@@ -82,11 +82,9 @@ namespace Perpetuum.Services.ItemShop
             var tmCoin = record.GetValue<int?>("tmCoin") ?? 0;
             var icsCoin = record.GetValue<int?>("icscoin") ?? 0;
             var asiCoin = record.GetValue<int?>("asicoin") ?? 0;
+            var uniCoin = record.GetValue<int?>("unicoin") ?? 0;
 
-
-         
-
-            return new ItemShopEntry(id, EntityDefault.Get(targetDefinition), targetAmount, tmCoin,icsCoin,asiCoin , price, globalLimit, purchaseCount,standing);
+            return new ItemShopEntry(id, EntityDefault.Get(targetDefinition), targetAmount, tmCoin, icsCoin, asiCoin, uniCoin, price, globalLimit, purchaseCount, standing);
         }
 
         public Dictionary<string, object> EntriesToDictionary()
@@ -96,7 +94,7 @@ namespace Perpetuum.Services.ItemShop
 
         private void CheckStanding(Character character, ItemShopEntry shopEntry)
         {
-            if ( shopEntry.Standing == null)
+            if (shopEntry.Standing == null)
                 return;
 
             var standing = _standingHandler.GetStanding(Owner, character.Eid);
@@ -114,7 +112,7 @@ namespace Perpetuum.Services.ItemShop
                 throw new PerpetuumException(ErrorCodes.ItemNotFound);
 
             entry.CheckGlobalLimit(quantity);
-            CheckStanding(character,entry);
+            CheckStanding(character, entry);
 
             entry.RemoveFromContainer(container, quantity);
 
@@ -135,14 +133,14 @@ namespace Perpetuum.Services.ItemShop
             var targetItem = entry.CreateTargetItem(character, quantity);
             container.AddItem(targetItem, true);
 
-            UpdateGlobalPurchaseCount(targetItem.Definition,targetItem.Quantity);
+            UpdateGlobalPurchaseCount(targetItem.Definition, targetItem.Quantity);
 
             if (entry.TmCoin > 0)
-            character.LogTransaction(TransactionLogEvent.Builder()
-                .SetTransactionType(TransactionType.ItemShopTake)
-                .SetCharacter(character)
-                .SetContainer(container)
-                .SetItem(EntityDefault.GetByName(DefinitionNames.TM_MISSION_COIN).Definition, entry.TmCoin * quantity));
+                character.LogTransaction(TransactionLogEvent.Builder()
+                    .SetTransactionType(TransactionType.ItemShopTake)
+                    .SetCharacter(character)
+                    .SetContainer(container)
+                    .SetItem(EntityDefault.GetByName(DefinitionNames.TM_MISSION_COIN).Definition, entry.TmCoin * quantity));
 
             if (entry.IcsCoin > 0)
                 character.LogTransaction(TransactionLogEvent.Builder()
@@ -157,6 +155,13 @@ namespace Perpetuum.Services.ItemShop
                     .SetCharacter(character)
                     .SetContainer(container)
                     .SetItem(EntityDefault.GetByName(DefinitionNames.ASI_MISSION_COIN).Definition, entry.AsiCoin * quantity));
+
+            if (entry.UniCoin > 0)
+                character.LogTransaction(TransactionLogEvent.Builder()
+                    .SetTransactionType(TransactionType.ItemShopTake)
+                    .SetCharacter(character)
+                    .SetContainer(container)
+                    .SetItem(EntityDefault.GetByName(DefinitionNames.UNIVERSAL_MISSION_COIN).Definition, entry.UniCoin * quantity));
 
 
             character.LogTransaction(TransactionLogEvent.Builder()
