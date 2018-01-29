@@ -218,6 +218,11 @@ namespace Perpetuum.Bootstrapper
             m.Shutdown(delay);
         }
 
+        public IContainer GetContainer()
+        {
+            return _container;
+        }
+
         public void WaitForStop()
         {
             var are = new AutoResetEvent(false);
