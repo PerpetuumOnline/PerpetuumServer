@@ -13,6 +13,7 @@ namespace Perpetuum.Network
         {
             using (var client = new WebClient())
             {
+                client.Headers.Add("User-Agent", "PerpetuumServer/1.0");
                 var response = client.UploadValues(address, data.ToNameValueCollecion());
                 return Encoding.UTF8.GetString(response);
             }
