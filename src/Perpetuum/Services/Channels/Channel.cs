@@ -13,6 +13,7 @@ namespace Perpetuum.Services.Channels
         public string Name { get; private set; }
         public string Topic { get; private set; }
         public string Password { get; private set; }
+        public GameAdminCommands AdminCommands = new GameAdminCommands();
 
         public IChannelLogger Logger { get; private set; }
 
@@ -198,7 +199,7 @@ namespace Perpetuum.Services.Channels
             {
                 switch (Type)
                 {
-                    case ChannelType.Public:
+                    case ChannelType.Public | ChannelType.Admin:
                         return false;
                 }
 

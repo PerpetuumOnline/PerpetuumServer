@@ -18,7 +18,7 @@ namespace Perpetuum.RequestHandlers.Channels
             var message = request.Data.GetOrDefault<string>(k.message);
 
             var character = request.Session.Character;
-            _channelManager.Talk(channelName, character, message);
+            _channelManager.Talk(channelName, character, message, request);
             Message.Builder.FromRequest(request).WithOk().Send();
         }
     }
