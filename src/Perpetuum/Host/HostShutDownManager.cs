@@ -35,6 +35,9 @@ namespace Perpetuum.Host
             _isInShutDown = false;
             _shutDownTime = default(DateTime);
 
+            // create the cancellation token, logs, etc.
+            CancelShutdown();
+
             //send all clients the cancellation
             SendToAll(command);
         }
