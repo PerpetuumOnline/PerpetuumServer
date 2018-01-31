@@ -169,6 +169,17 @@ namespace Perpetuum.Services.Sessions
             return _sessions.Values.FirstOrDefault(s => s.AccountId == accountId);
         }
 
+        [CanBeNull]
+        public ISession GetByCharacter(int characterid)
+        {
+            if (characterid == 0)
+            {
+                return null;
+            }
+            return _sessions.Values.FirstOrDefault(s => s.Character.Id == characterid);
+        }
+
+
         public bool IsOnline(Character character)
         {
             return _charactersIndex.ContainsKey(character);

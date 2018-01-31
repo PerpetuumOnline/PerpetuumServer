@@ -3,7 +3,9 @@ using Perpetuum.GenXY;
 using Perpetuum.Host.Requests;
 using Perpetuum.Services.Sessions;
 using Perpetuum.Zones.Locking.Locks;
+using Perpetuum.Zones.Teleporting.Strategies;
 using Perpetuum.Zones.Terrains;
+using Perpetuum.Zones.Terrains.Materials.Plants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,22 +80,47 @@ namespace Perpetuum.Services.Channels
             {
                 bool err = false;
                 err = !int.TryParse(command[1], out int characterID);
-                err = !int.TryParse(command[2], out int x);
-                err = !int.TryParse(command[3], out int y);
+                err = !int.TryParse(command[2], out int zoneID);
+                err = !int.TryParse(command[3], out int x);
+                err = !int.TryParse(command[4], out int y);
                 if (err)
                 {
                     throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
                 }
+                
+                // get the target character's session.
+                var charactersession = sessionManager.GetByCharacter(characterID);    
 
-                Dictionary<string, object> dictionary = new Dictionary<string, object>()
+                if (charactersession.Character.ZoneId == null)
                 {
-                    { "characterID" , characterID },
-                    { "x" , x },
-                    { "y" , y }
-                };
+                    channel.SendMessageToAll(sessionManager, sender, string.Format("ERR: Character with ID {0} does not have a zone. Are they docked?", characterID));
+                    return;
+                }
+                
+                // get destination zone.
+                var zone = request.Session.ZoneMgr.GetZone(zoneID);
 
-                string cmd = string.Format("zoneMoveUnit:zone_{0}:{1}", sender.ZoneId, GenxyConverter.Serialize(dictionary));
-                request.Session.HandleLocalRequest(request.Session.CreateLocalRequest(cmd));
+                if (charactersession.Character.ZoneId == null)
+                {
+                    channel.SendMessageToAll(sessionManager, sender, string.Format("ERR: Invalid Zone ID {0}", zoneID));
+                    return;
+                }
+
+                // get a teleporter object to teleport the player.
+                TeleportToAnotherZone tp = new TeleportToAnotherZone(zone);
+
+                // we need the player (robot, etc) to teleport on the origin zone
+                var player = request.Session.ZoneMgr.GetZone((int)charactersession.Character.ZoneId).GetPlayer(charactersession.Character.ActiveRobotEid);
+                //var player = zone.GetPlayer(charactersession.Character.Eid);
+
+                // set the position.
+                tp.TargetPosition = new Position(x, y);
+
+                // do it.
+                tp.DoTeleportAsync(player);
+                tp = null;
+
+                channel.SendMessageToAll(sessionManager, sender, string.Format("Moved Character {0}-{1} to Zone {2} @ {3},{4}", characterID, charactersession.Character.Nick, zone.Id, x, y));
             }
 
             if (command[0] == "#currentzonecleanobstacleblocking")
@@ -488,6 +515,88 @@ namespace Perpetuum.Services.Channels
                 channel.SendMessageToAll(sessionManager, sender, string.Format("Altered state of control layer on {0} Tiles (Roaming)", lockedtiles.Count));
             }
 
+            if (command[0] == "#zonetilesPBSTerraformProtected")
+            {
+
+                bool.TryParse(command[1], out bool adddelete);
+                bool.TryParse(command[2], out bool keeplock);
+
+                var character = request.Session.Character;
+                var zone = request.Session.ZoneMgr.GetZone((int)character.ZoneId);
+                var player = zone.GetPlayer(character.ActiveRobotEid);
+
+                var lockedtiles = player.GetLocks();
+
+                using (new TerrainUpdateMonitor(zone))
+                {
+                    foreach (Lock item in lockedtiles)
+                    {
+                        Position pos = (item as TerrainLock).Location;
+                        TerrainControlInfo ti = zone.Terrain.Controls.GetValue(pos);
+                        ti.PBSTerraformProtected = adddelete;
+                        zone.Terrain.Controls.SetValue(pos, ti);
+                        if (!keeplock)
+                        {
+                            item.Cancel(); // cancel this lock. we processed it.
+                        }
+                    }
+                }
+                channel.SendMessageToAll(sessionManager, sender, string.Format("Altered state of control layer on {0} Tiles (PBSTerraformProtected)", lockedtiles.Count));
+            }
+
+            if (command[0] == "#getlockedtileproperties")
+            {
+
+                var character = request.Session.Character;
+                var zone = request.Session.ZoneMgr.GetZone((int)character.ZoneId);
+                var player = zone.GetPlayer(character.ActiveRobotEid);
+
+                var lockedtile = player.GetPrimaryLock();
+                
+                TerrainControlInfo ti = zone.Terrain.Controls.GetValue((lockedtile as TerrainLock).Location);
+
+                channel.SendMessageToAll(sessionManager, sender, string.Format("Tile at {0},{1} has the following flags..", (lockedtile as TerrainLock).Location.X, (lockedtile as TerrainLock).Location.Y));
+                channel.SendMessageToAll(sessionManager, sender, "TerrainControlFlags:");
+                foreach (TerrainControlFlags f in Enum.GetValues(typeof(TerrainControlFlags)))
+                {
+                    if (ti.Flags.HasFlag(f) && f != TerrainControlFlags.Undefined)
+                    {
+                        channel.SendMessageToAll(sessionManager, sender, string.Format("{0}", f.ToString()));
+                    }
+                }
+
+                BlockingInfo bi = zone.Terrain.Blocks.GetValue((lockedtile as TerrainLock).Location);
+
+                channel.SendMessageToAll(sessionManager, sender, "BlockingFlags:");
+                foreach (BlockingFlags f in Enum.GetValues(typeof(BlockingFlags)))
+                {
+                    if (bi.Flags.HasFlag(f) && f != BlockingFlags.Undefined)
+                    {
+                        channel.SendMessageToAll(sessionManager, sender, string.Format("{0}", f.ToString()));
+                    }
+                }
+
+                PlantInfo pi = zone.Terrain.Plants.GetValue((lockedtile as TerrainLock).Location);
+
+                channel.SendMessageToAll(sessionManager, sender, "PlantType:");
+                foreach (PlantType f in Enum.GetValues(typeof(PlantType)))
+                {
+                    if (pi.type.HasFlag(f) && f != PlantType.NotDefined)
+                    {
+                        channel.SendMessageToAll(sessionManager, sender, string.Format("{0}", f.ToString()));
+                    }
+                }
+
+                channel.SendMessageToAll(sessionManager, sender, "GroundType:");
+                foreach (GroundType f in Enum.GetValues(typeof(GroundType)))
+                {
+                    if (pi.groundType.HasFlag(f))
+                    {
+                        channel.SendMessageToAll(sessionManager, sender, string.Format("{0}", f.ToString()));
+                    }
+                }
+
+            }
         }
     }
 }

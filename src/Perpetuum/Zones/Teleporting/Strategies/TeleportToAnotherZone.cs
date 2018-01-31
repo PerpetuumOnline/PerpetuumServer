@@ -42,8 +42,13 @@ namespace Perpetuum.Zones.Teleporting.Strategies
         [CanBeNull]
         public Task DoTeleportAsync(Player player)
         {
-            // FIXME: this needs to calculate a proper position but the server does not have the altitude data for this map
-            var validPosition = new Position(1120, 1039);
+            // get a valid position to teleport to.
+            var position = new ClosestWalkablePositionFinder(_targetZone, TargetPosition);
+            if (!position.Find(out Position validPosition))
+            {
+                return null;
+            }
+
             player.States.Teleport = true;
             Entity.Repository.ForceUpdate(player);
             var character = player.Character;
