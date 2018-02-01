@@ -6,7 +6,7 @@ namespace Perpetuum.Services.Channels
 {
     public class Channel
     {
-        private Dictionary<Character,ChannelMember> _members = new Dictionary<Character, ChannelMember>();
+        private Dictionary<Character, ChannelMember> _members = new Dictionary<Character, ChannelMember>();
 
         public int Id { get; private set; }
         public ChannelType Type { get; private set; }
@@ -19,17 +19,17 @@ namespace Perpetuum.Services.Channels
 
         private Channel()
         {
-            
+
         }
 
-        public Channel(int id,ChannelType type,string name,string topic,string password,IChannelLogger logger) : this(type,name,logger)
+        public Channel(int id, ChannelType type, string name, string topic, string password, IChannelLogger logger) : this(type, name, logger)
         {
             Id = id;
             Topic = topic;
             Password = password;
         }
 
-        public Channel(ChannelType type, string name,IChannelLogger logger)
+        public Channel(ChannelType type, string name, IChannelLogger logger)
         {
             Type = type;
             Name = name;
@@ -61,7 +61,7 @@ namespace Perpetuum.Services.Channels
 
         public Channel SetTopic(string topic)
         {
-            if ( !string.IsNullOrEmpty(topic) && topic.Length > 200)
+            if (!string.IsNullOrEmpty(topic) && topic.Length > 200)
                 topic = topic.Substring(0, 199);
 
             if (topic == Topic)
@@ -101,7 +101,7 @@ namespace Perpetuum.Services.Channels
             if (member == null)
                 return this;
 
-            var members = new Dictionary<Character, ChannelMember>(_members) {[member.character] = member};
+            var members = new Dictionary<Character, ChannelMember>(_members) { [member.character] = member };
 
             return new Channel
             {
@@ -114,6 +114,19 @@ namespace Perpetuum.Services.Channels
                 _members = members
             };
         }
+
+        public void SetAdmin(bool isadminchannel)
+        {
+            if (isadminchannel)
+            {
+                this.Type = ChannelType.Admin;
+            }
+            else
+            {
+                this.Type = ChannelType.Public;
+            }
+        }
+
 
         public Channel RemoveMember(Character member)
         {

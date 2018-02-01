@@ -264,12 +264,12 @@ namespace Perpetuum.Services.Channels
 
             m.CanTalk.ThrowIfFalse(ErrorCodes.CharacterIsMuted);
             channel.SendMessageToAll(_sessionManager, sender, message);
-            // this is an admin or GM command sent on an admin channel.
-            if (message.Substring(0,1) == "#" && channel.Type == ChannelType.Admin)
+            // this is an admin or GM command.
+            if (message.Substring(0, 1) == "#" && sender.AccessLevel == AccessLevel.toolAdmin)
             {
-                channel.AdminCommands.ParseAdminCommand(sender, message, request, channel, _sessionManager);
+                channel.AdminCommands.ParseAdminCommand(sender, message, request, channel, _sessionManager, this);
             }
-            
+
         }
 
         public void KickOrBan(string channelName, Character issuer, Character character, string message, bool ban)
