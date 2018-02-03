@@ -842,6 +842,7 @@
     <Compile Include="Zones\Environments\EntityEnvironmentDescription.cs" />
     <Compile Include="Zones\Environments\IEnvironmentHandler.cs" />
     <Compile Include="Zones\Environments\ZoneEnvironmentHandler.cs" />
+    <Compile Include="Zones\StrongHoldZone.cs" />
     <Compile Include="Zones\Teleporting\TeleportDescriptionBuilder.cs" />
     <Compile Include="Zones\Teleporting\TeleportWorldTargetHelper.cs" />
     <Compile Include="Zones\Terrains\Materials\MaterialHelper.cs" />
