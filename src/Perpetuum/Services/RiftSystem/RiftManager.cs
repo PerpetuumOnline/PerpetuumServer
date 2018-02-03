@@ -123,14 +123,13 @@ namespace Perpetuum.Services.RiftSystem
             rift.SetDespawnTime(TimeSpan.FromHours(3));
             rift.RemovedFromZone += OnRiftRemovedFromZone;
 
-            // only generate one stronghold teleport and make it random chance.
-            //int rand = r.Next(0, 10);
-            //if (rand == 2 && !StrongHoldRiftGenerated)
-            //{
+            // generate a stronghold teleport and make it random chance.
+            int rand = r.Next(0, 10);
+            if (rand == 2 && !StrongHoldRiftGenerated)
+            {
                 rift.DestinationStrongholdZone = GetRandomStrongHoldZone();
                 rift.OriginZone = this._zone.Id;
-                //StrongHoldRiftGenerated = true;
-            //}
+            }
 
             var spawnPosition = _spawnPositionFinder.FindSpawnPosition().ToPosition();
             rift.AddToZone(_zone, spawnPosition, ZoneEnterType.NpcSpawn);
