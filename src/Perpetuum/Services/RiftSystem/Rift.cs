@@ -185,6 +185,7 @@ namespace Perpetuum.Services.RiftSystem
             if (this.IsDestinationStronghold && destination != null)
             {
                 var teleport = _teleportStrategyFactories.TeleportToAnotherZoneFactory(destination);
+                teleport.TargetPosition = new Position(1120, 1039);
                 teleport.DoTeleportAsync(player);
             }
             else
