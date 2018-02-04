@@ -5,6 +5,7 @@
         Undefined = 0,
         Pve,
         Pvp,
-        Training
+        Training,
+        Stronghold
     }
 }

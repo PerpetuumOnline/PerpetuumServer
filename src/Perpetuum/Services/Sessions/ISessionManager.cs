@@ -10,6 +10,7 @@ namespace Perpetuum.Services.Sessions
         ISession GetByCharacter(Character character);
         ISession GetByAccount(Account account);
         ISession GetByAccount(int accountId);
+        ISession GetByCharacter(int characterid);
         IEnumerable<ISession> Sessions { get;}
         IEnumerable<Character> SelectedCharacters { get; }
         bool Contains(SessionID sessionId);

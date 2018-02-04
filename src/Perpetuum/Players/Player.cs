@@ -156,6 +156,7 @@ namespace Perpetuum.Players
         public long CorporationEid { get; set; }
         public IZoneSession Session { get; private set; }
         public Character Character { get; set; } = Character.None;
+        public bool HasGMStealth { get; set; }
 
         public void SetSession(IZoneSession session)
         {
