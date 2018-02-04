@@ -3,6 +3,7 @@ using Perpetuum.ExportedTypes;
 using Perpetuum.GenXY;
 using Perpetuum.Host.Requests;
 using Perpetuum.Players;
+using Perpetuum.Services.RiftSystem;
 using Perpetuum.Services.Sessions;
 using Perpetuum.Zones;
 using Perpetuum.Zones.Locking.Locks;
@@ -44,8 +45,7 @@ namespace Perpetuum.Services.Channels
 
                 channel.SendMessageToAll(sessionManager, sender, "Channel must be secured before sending commands.");
                 return;
-            }
-            
+            }            
 
             if (command[0] == "#shutdown")
             {
@@ -717,6 +717,32 @@ namespace Perpetuum.Services.Channels
                 channelmanager.LeaveChannel(channel.Name, c.Character);
 
                 channel.SendMessageToAll(sessionManager, sender, string.Format("Removed character {0} from channel ", c.Character.Nick));
+
+            }
+
+            if (command[0] == "#listrifts")
+            {
+                foreach (IZone z in request.Session.ZoneMgr.Zones)
+                {
+                    var rift = z.Units.OfType<Rift>();
+                    foreach (Rift r in rift)
+                    {
+                        channel.SendMessageToAll(sessionManager, sender, string.Format("Rift - Zone: {0}, Position: ({1}), Destination Zone:{2}", r.Zone, r.CurrentPosition, r.DestinationStrongholdZone));
+                    }
+                }
+            }
+
+
+            if (command[0] == "#flagplayernameoffensive")
+            {
+                bool err = false;
+                err = !int.TryParse(command[1], out int characterID);
+                err = !bool.TryParse(command[2], out bool isoffensive);
+
+                var charactersession = sessionManager.GetByCharacter(characterID);
+                charactersession.Character.IsOffensiveNick = isoffensive;
+
+                channel.SendMessageToAll(sessionManager, sender, string.Format("Player with nick {0} is offensive:{1}", charactersession.Character.Nick, charactersession.Character.IsOffensiveNick));
 
             }
 
