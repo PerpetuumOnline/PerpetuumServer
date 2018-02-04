@@ -71,7 +71,9 @@ namespace Perpetuum.Zones.Teleporting.Strategies
             var sparkToActivate = _sparkHelper.ConvertCharacterWizardSparkIdToSpark(info.sparkId);
             _sparkHelper.ActivateSpark(character, sparkToActivate);
 
-            var dockingBase = newCorporation.GetDockingBase();
+            //Grab TM-UAS docking base for New Virginia
+            var hardCodeTMACorp = DefaultCorporation.GetBySchool(1, 1);
+            var dockingBase = hardCodeTMACorp.GetDockingBase();
             dockingBase.CreateStarterRobotForCharacter(character, true);
             dockingBase.DockIn(character, TimeSpan.Zero, ZoneExitType.TrainingExitTeleport);
 
