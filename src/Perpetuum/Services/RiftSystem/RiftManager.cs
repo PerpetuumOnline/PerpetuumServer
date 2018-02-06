@@ -124,11 +124,15 @@ namespace Perpetuum.Services.RiftSystem
             rift.RemovedFromZone += OnRiftRemovedFromZone;
 
             // generate a stronghold teleport and make it random chance.
-            int rand = r.Next(0, 10);
-            if (rand == 2 && !StrongHoldRiftGenerated)
+            // make sure we have at least one stronghold enabled.
+            if (_zonemanager.Zones.OfType<StrongHoldZone>().Count() > 0)
             {
-                rift.DestinationStrongholdZone = GetRandomStrongHoldZone();
-                rift.OriginZone = this._zone.Id;
+                int rand = r.Next(0, 10);
+                if (rand == 2 && !StrongHoldRiftGenerated)
+                {
+                    rift.DestinationStrongholdZone = GetRandomStrongHoldZone();
+                    rift.OriginZone = this._zone.Id;
+                }
             }
 
             var spawnPosition = _spawnPositionFinder.FindSpawnPosition().ToPosition();
