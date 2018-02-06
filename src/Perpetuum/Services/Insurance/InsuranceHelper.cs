@@ -410,20 +410,15 @@ namespace Perpetuum.Services.Insurance
             insurancePayOut = 0;
 
             InsurancePrice insurancePrice;
-            if (_insurancePrices.TryGetValue(definition, out insurancePrice))
+
+            // get insurance price from cache.
+            _insurancePrices.TryGetValue(definition, out insurancePrice);
+
+            // not in cache. 
+            // get record from the database and store in our cache.
+            if (insurancePrice == null)
             {
-
-                if (insurancePrice == null)
-                {
-                    return ErrorCodes.WTFErrorMedicalAttentionSuggested;
-                }
-
-
-            }
-            else
-            {
-                var record = Db.Query().CommandText("select fee,payout from insuranceprices where definition=@definition").SetParameter("@definition", definition)
-                                     .ExecuteSingleRow();
+                var record = Db.Query().CommandText("select fee,payout from insuranceprices where definition=@definition").SetParameter("@definition", definition).ExecuteSingleRow();
 
                 if (record == null)
                 {
@@ -433,14 +428,13 @@ namespace Perpetuum.Services.Insurance
                 }
 
                 insurancePrice = new InsurancePrice
-                    {
-                        definition = definition,
-                        fee = record.GetValue<double>(0),
-                        payOut = record.GetValue<double>(1)
-                    };
+                {
+                    definition = definition,
+                    fee = record.GetValue<double>(0),
+                    payOut = record.GetValue<double>(1)
+                };
 
-
-                _insurancePrices.AddOrUpdate(definition, insurancePrice, (k, v) => v);
+                _insurancePrices.AddOrUpdate(definition, insurancePrice, (k, v) => insurancePrice);
             }
 
             insuranceFee = insurancePrice.fee;
