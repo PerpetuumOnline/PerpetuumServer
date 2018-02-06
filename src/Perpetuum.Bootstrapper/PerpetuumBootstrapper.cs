@@ -1582,7 +1582,7 @@ namespace Perpetuum.Bootstrapper
 
             _builder.RegisterType<TradeService>().SingleInstance().As<ITradeService>();
 
-            _builder.RegisterType<HostShutDownManager>();
+            _builder.RegisterType<HostShutDownManager>().SingleInstance();
 
             _builder.RegisterType<HighScoreService>().As<IHighScoreService>();
             _builder.RegisterType<CorporationHandler>();
