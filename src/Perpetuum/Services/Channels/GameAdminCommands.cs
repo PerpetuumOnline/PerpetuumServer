@@ -229,9 +229,9 @@ namespace Perpetuum.Services.Channels
                 Dictionary<string, object> dictionary = new Dictionary<string, object>()
                 {
                     { "definition", definition },
-                    { "x", x*255 },
-                    { "y", y*255 },
-                    { "z", z },
+                    { "x", x*256 },
+                    { "y", y*256 },
+                    { "z", z*256 },
                     { "quaternionX", qx },
                     { "quaternionY", qy },
                     { "quaternionZ", qz },
@@ -257,9 +257,9 @@ namespace Perpetuum.Services.Channels
                     return;
                 }
 
-                int x = terrainLock.Location.intX;
-                int y = terrainLock.Location.intY;
-                int z = terrainLock.Location.intZ;
+                double x = terrainLock.Location.X;
+                double y = terrainLock.Location.Y;
+                double z = terrainLock.Location.Z;
 
                 bool err = !double.TryParse(command[2], out double scale);
                 err = !int.TryParse(command[1], out int definition);
@@ -272,9 +272,9 @@ namespace Perpetuum.Services.Channels
                 Dictionary<string, object> dictionary = new Dictionary<string, object>()
                 {
                     { "definition", definition },
-                    { "x", x*255 },
-                    { "y", y*255 },
-                    { "z", z*255 },
+                    { "x", (int)x*256 },
+                    { "y", (int)y*256 },
+                    { "z", (int)z*256 },
                     { "quaternionX", (double)0 },
                     { "quaternionY", (double)0 },
                     { "quaternionZ", (double)0 },
@@ -671,14 +671,12 @@ namespace Perpetuum.Services.Channels
 
                 int.TryParse(command[1], out int zoneid);
 
-                var zone = request.Session.ZoneMgr.GetZone((int)zoneid);
-
-                channel.SendMessageToAll(sessionManager, sender, string.Format("Players On Zone {0}", zone.Id));
+                channel.SendMessageToAll(sessionManager, sender, string.Format("Players On Zone {0}", zoneid));
                 channel.SendMessageToAll(sessionManager, sender, string.Format("  AccountId    CharacterId    Nick    Access Level    Docked?    DockedAt    Position"));
-                foreach (Character c in sessionManager.SelectedCharacters)
+                foreach (Character c in sessionManager.SelectedCharacters.Where(x => x.ZoneId == zoneid))
                 {
                     channel.SendMessageToAll(sessionManager, sender, string.Format("   {0}       {1}        {2}        {3}       {4}       {5}      {6}",
-                        c.AccountId, c.Id, c.Nick, c.AccessLevel, c.IsDocked, c.GetCurrentDockingBase().Eid, c.ZonePosition));
+                        c.AccountId, c.Id, c.Nick, c.AccessLevel, c.IsDocked, c.GetCurrentDockingBase().Eid, c.GetPlayerRobotFromZone().CurrentPosition));
                 }
             }
 
