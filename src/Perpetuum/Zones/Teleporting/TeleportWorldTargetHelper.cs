@@ -38,7 +38,8 @@ namespace Perpetuum.Zones.Teleporting
                     .SetTargetZone(teleportColumn.Zone)
                     .SetTargetTeleport(teleportColumn)
                     .SetTargetRange(7)
-                    .SetListable(true);
+                    .SetListable(true)
+                    .SetActive(teleportColumn.IsEnabled);
 
                 var td = builder.Build();
                 result.Add(td);
