@@ -68,7 +68,7 @@ namespace Perpetuum.Services.MissionEngine.Missions
 
         private double ZoneFactor
         {
-            get { return _missionInProgress.myLocation.ZoneConfig.IsAlpha ? 1 : 3; }
+            get { return _missionInProgress.myLocation.ZoneConfig.IsAlpha ? 1 : 2; }  //TODO: Beta multiplier!
         }
 
 

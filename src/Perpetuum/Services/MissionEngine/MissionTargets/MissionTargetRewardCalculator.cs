@@ -67,7 +67,8 @@ namespace Perpetuum.Services.MissionEngine.MissionTargets
 
         }
 
-        public static readonly double[] PayOutMultipliers = new double[] { 25, 50, 100, 250, 500, 750, 1000, 1500, 2500, 4000 };
+        //Changed for Economy!
+        public static readonly double[] PayOutMultipliers = new double[] { 50, 75, 125, 250, 450, 600, 750, 1000, 1500, 2000 };
 
         private void PayReward()
         {
