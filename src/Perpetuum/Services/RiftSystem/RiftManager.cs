@@ -68,7 +68,7 @@ namespace Perpetuum.Services.RiftSystem
 
         private readonly LinkedList<TimeTracker> _nextRiftSpawns = new LinkedList<TimeTracker>();
 
-        public RiftManager(IZone zone,TimeRange spawnTime,RiftSpawnPositionFinder spawnPositionFinder,IEntityServices entityServices, ZoneManager zoneManager)
+        public RiftManager(IZone zone, TimeRange spawnTime, RiftSpawnPositionFinder spawnPositionFinder, IEntityServices entityServices, ZoneManager zoneManager)
         {
             _zone = zone;
             _spawnTime = spawnTime;
@@ -87,7 +87,14 @@ namespace Perpetuum.Services.RiftSystem
                 _nextRiftSpawns.AddLast(new TimeTracker(FastRandom.NextTimeSpan(_spawnTime)));
                 Interlocked.Increment(ref _riftCounts);
             }
-         
+            
+            //If exit rift dies on stronghold, respawn it
+            if (_riftCounts < 1 && _zone is StrongHoldZone)
+            {
+                _nextRiftSpawns.AddLast(new TimeTracker(FastRandom.NextTimeSpan(_spawnTime)));
+                Interlocked.Increment(ref _riftCounts);
+            }
+
             _nextRiftSpawns.RemoveAll(t =>
             {
                 t.Update(time);
@@ -136,6 +143,13 @@ namespace Perpetuum.Services.RiftSystem
             }
 
             var spawnPosition = _spawnPositionFinder.FindSpawnPosition().ToPosition();
+
+            if (_zone is StrongHoldZone)
+            {
+                //TODO: Fixme for I should be a DB table for valid spawn locations on strongholds
+                spawnPosition = new Position(1120, 1039);
+            }
+
             rift.AddToZone(_zone, spawnPosition, ZoneEnterType.NpcSpawn);
             Logger.Info(string.Format("Rift spawned on zone {0} {1} ({2}) Stronghold Zone ID: {3}", _zone.Id, rift.ED.Name, rift.CurrentPosition, rift.DestinationStrongholdZone));
         }
