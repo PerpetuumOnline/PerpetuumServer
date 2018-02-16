@@ -559,7 +559,7 @@ namespace Perpetuum.Bootstrapper
 
             _builder.RegisterType<LootService>().As<ILootService>().SingleInstance().OnActivated(e => e.Instance.Init());
             _builder.RegisterType<ItemPriceHelper>().SingleInstance();
-            _builder.RegisterType<PriceCalculator>().SingleInstance();
+            _builder.RegisterType<PriceCalculator>(); // this doesn't appear to be something that should be a singleton.
 
 
             _builder.RegisterType<CharacterExtensions>().As<ICharacterExtensions>().SingleInstance();
