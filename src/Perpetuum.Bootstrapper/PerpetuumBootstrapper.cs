@@ -288,7 +288,7 @@ namespace Perpetuum.Bootstrapper
             CorporationData.CorporationManager = _container.Resolve<ICorporationManager>();
 
             Character.CharacterFactory = _container.Resolve<CharacterFactory>();
-            Character.CharacterCache = _container.Resolve<Func<string, ObjectCache>>().Invoke("CharacterCache");
+            Character.CharacterCache = _container.Resolve<Func<string, ObjectCache>>().Invoke("CharacterCache");            
 
             MissionHelper.Init(_container.Resolve<MissionDataCache>(), _container.Resolve<IStandingHandler>());
             MissionHelper.MissionProcessor = _container.Resolve<MissionProcessor>();
@@ -354,6 +354,12 @@ namespace Perpetuum.Bootstrapper
 
             DefaultCorporationDataCache.LoadAll();
             _container.Resolve<MissionDataCache>().CacheMissionData();
+            // initialize our markets.
+            // this is dependent on all zones being loaded.
+            _container.Resolve<MarketHelper>().Init();
+            _container.Resolve<MarketHandler>().Init();
+
+
         }
 
         public bool TryInitUpnp(out bool success)
@@ -1516,12 +1522,9 @@ namespace Perpetuum.Bootstrapper
         }
 
         private void InitRelayManager()
-        {
-            _builder.RegisterType<MarketHelper>().SingleInstance().OnActivated(e => e.Instance.Init());
-            _builder.RegisterType<MarketHandler>().OnActivated(e =>
-            {
-                e.Instance.Init();
-            }).SingleInstance();
+        {            
+            _builder.RegisterType<MarketHelper>().SingleInstance();
+            _builder.RegisterType<MarketHandler>().SingleInstance();
 
             _builder.RegisterType<MarketOrder>();
             _builder.RegisterType<MarketOrderRepository>().As<IMarketOrderRepository>();
