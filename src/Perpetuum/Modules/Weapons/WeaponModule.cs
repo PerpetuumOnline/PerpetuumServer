@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Perpetuum.EntityFramework;
 using Perpetuum.ExportedTypes;
+using Perpetuum.Services.RiftSystem;
 using Perpetuum.Units;
 using Perpetuum.Zones;
 using Perpetuum.Zones.Beams;
@@ -76,6 +77,11 @@ namespace Perpetuum.Modules.Weapons
                     throw new PerpetuumException(err);
 
                 victim.IsInvulnerable.ThrowIfTrue(ErrorCodes.TargetIsInvulnerable);
+
+                if (victim is Rift && (_weapon.ParentRobot.Zone is StrongHoldZone))
+                {
+                    throw new PerpetuumException(ErrorCodes.TargetIsNonAttackable);
+                }
 
                 _weapon.ConsumeAmmo();
 

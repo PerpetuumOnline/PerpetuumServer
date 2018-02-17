@@ -100,9 +100,9 @@ namespace Perpetuum.Accounting
             return lockedEp;
         }
 
-        private const double BOOSTMULTIPLIERMAX = 50;
-        private const double BOOSTEXPONENT = 2.0;
-        private const double SERVER_DESIRED_EP_LEVEL = 3000000;
+        private const double BOOSTMULTIPLIERMAX = 25;
+        private const double BOOSTEXPONENT = 1.5;
+        private const double SERVER_DESIRED_EP_LEVEL = 500000;
 
         public IDictionary<string,object> GetEPData(Account account,Character character)
         {

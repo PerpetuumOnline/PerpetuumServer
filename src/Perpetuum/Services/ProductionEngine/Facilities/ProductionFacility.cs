@@ -14,6 +14,7 @@ using Perpetuum.Services.MissionEngine.MissionDataCacheObjects;
 using Perpetuum.Services.Standing;
 using Perpetuum.Units.DockingBases;
 using Perpetuum.Zones;
+using Perpetuum.Zones.Intrusion;
 
 namespace Perpetuum.Services.ProductionEngine.Facilities
 {
@@ -35,11 +36,23 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
         public MissionDataCache MissionDataCache { get; set; }
         public DockingBaseHelper DockingBaseHelper { get; set; }
         public ProductionInProgress.Factory ProductionInProgressFactory { get; set; }
-        public RobotHelper RobotHelper { protected get; set; }
+        public RobotHelper RobotHelper { protected get; set; }        
 
         public override string ToString()
         {
             return $"{ED.Name} {ED.Definition} {Eid}";
+        }
+
+        private int GetFacilityBonus()
+        {
+            int modifier = 0;
+            var dockingbase = GetDockingBase();
+            if (dockingbase is Outpost)
+            {
+                ProductionFacility facility = (dockingbase as Outpost).GetProductionFacilities().Where(x => x.Eid == this.Eid).First();
+                modifier = Outpost.GetFacilityLevelFromStack(facility.Eid) * 25;
+            }
+            return modifier;
         }
 
         public virtual Dictionary<string, object> GetFacilityInfo(Character character)
@@ -137,7 +150,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
 
         protected virtual int GetFacilityPoint()
         {
-            return ED.Options.Points;
+            return ED.Options.Points + GetFacilityBonus();
         }
 
         protected int GetPercentageFromAdditiveComponent(int additiveComponent)

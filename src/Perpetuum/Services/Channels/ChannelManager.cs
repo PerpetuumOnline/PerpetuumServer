@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using Perpetuum.Accounting.Characters;
 using Perpetuum.Common.Loggers;
+using Perpetuum.Host.Requests;
 using Perpetuum.Services.Sessions;
 
 namespace Perpetuum.Services.Channels
@@ -249,7 +250,7 @@ namespace Perpetuum.Services.Channels
             channel.SendToAll(_sessionManager, n);
         }
 
-        public void Talk(string channelName, Character sender, string message)
+        public void Talk(string channelName, Character sender, string message, IRequest request)
         {
             Channel channel;
             if ( !_channels.TryGetValue(channelName,out channel))
@@ -262,7 +263,13 @@ namespace Perpetuum.Services.Channels
             channel.Logger.LogMessage(sender, message);
 
             m.CanTalk.ThrowIfFalse(ErrorCodes.CharacterIsMuted);
-            channel.SendMessageToAll(_sessionManager,sender,message);
+            channel.SendMessageToAll(_sessionManager, sender, message);
+            // this is an admin or GM command.
+            if (message.Substring(0, 1) == "#" && sender.AccessLevel == AccessLevel.toolAdmin)
+            {
+                channel.AdminCommands.ParseAdminCommand(sender, message, request, channel, _sessionManager, this);
+            }
+
         }
 
         public void KickOrBan(string channelName, Character issuer, Character character, string message, bool ban)

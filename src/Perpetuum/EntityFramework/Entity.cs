@@ -84,7 +84,7 @@ namespace Perpetuum.EntityFramework
         [CanBeNull]
         public Entity GetOrLoadParentEntity()
         {
-            if (_parentEntity == null && Parent > 0)
+            if ((_parentEntity == null || _parentEntity.Eid <= 0) && Parent > 0)
             {
                 _parentEntity = LoadParentEntity(Parent);
             }

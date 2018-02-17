@@ -6,6 +6,7 @@
         Highlighted,
         Corporation,
         Gang,
-        Station
+        Station,
+        Admin
     }
 }

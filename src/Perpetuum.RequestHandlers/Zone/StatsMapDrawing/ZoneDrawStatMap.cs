@@ -25,16 +25,15 @@ namespace Perpetuum.RequestHandlers.Zone.StatsMapDrawing
 {
     public partial class ZoneDrawStatMap : IRequestHandler<IZoneRequest>
     {
-        private readonly IZone _zone;
+        private IZone _zone;
         private readonly IFileSystem _fileSystem;
         private readonly SaveBitmapHelper _saveBitmapHelper;
         private readonly MissionDataCache _missionDataCache;
         private readonly Dictionary<string, Action<IRequest>> _actions = new Dictionary<string, Action<IRequest>>();
         private string _typeString;
 
-        public ZoneDrawStatMap(IZone zone,IFileSystem fileSystem,SaveBitmapHelper saveBitmapHelper,MissionDataCache missionDataCache)
+        public ZoneDrawStatMap(IFileSystem fileSystem,SaveBitmapHelper saveBitmapHelper,MissionDataCache missionDataCache)
         {
-            _zone = zone;
             _fileSystem = fileSystem;
             _saveBitmapHelper = saveBitmapHelper;
             _missionDataCache = missionDataCache;
@@ -86,6 +85,7 @@ namespace Perpetuum.RequestHandlers.Zone.StatsMapDrawing
 
         public void HandleRequest(IZoneRequest request)
         {
+            _zone = request.Zone;
             var type = request.Data.GetOrDefault<string>(k.type);
             _typeString = type; //save for later use
 

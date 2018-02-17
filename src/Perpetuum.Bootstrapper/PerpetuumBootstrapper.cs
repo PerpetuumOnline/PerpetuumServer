@@ -218,6 +218,11 @@ namespace Perpetuum.Bootstrapper
             m.Shutdown(delay);
         }
 
+        public IContainer GetContainer()
+        {
+            return _container;
+        }
+
         public void WaitForStop()
         {
             var are = new AutoResetEvent(false);
@@ -554,7 +559,7 @@ namespace Perpetuum.Bootstrapper
 
             _builder.RegisterType<LootService>().As<ILootService>().SingleInstance().OnActivated(e => e.Instance.Init());
             _builder.RegisterType<ItemPriceHelper>().SingleInstance();
-            _builder.RegisterType<PriceCalculator>().SingleInstance();
+            _builder.RegisterType<PriceCalculator>(); // this doesn't appear to be something that should be a singleton.
 
 
             _builder.RegisterType<CharacterExtensions>().As<ICharacterExtensions>().SingleInstance();
@@ -1575,9 +1580,9 @@ namespace Perpetuum.Bootstrapper
             _builder.RegisterType<RelayStateService>().As<IRelayStateService>().SingleInstance();
             _builder.RegisterType<RelayInfoBuilder>();
 
-            _builder.RegisterType<TradeService>().As<ITradeService>();
+            _builder.RegisterType<TradeService>().SingleInstance().As<ITradeService>();
 
-            _builder.RegisterType<HostShutDownManager>();
+            _builder.RegisterType<HostShutDownManager>().SingleInstance();
 
             _builder.RegisterType<HighScoreService>().As<IHighScoreService>();
             _builder.RegisterType<CorporationHandler>();
@@ -2349,6 +2354,8 @@ namespace Perpetuum.Bootstrapper
             RegisterZone<PveZone>(ZoneType.Pve);
             RegisterZone<PvpZone>(ZoneType.Pvp);
             RegisterZone<TrainingZone>(ZoneType.Training);
+            RegisterZone<StrongHoldZone>(ZoneType.Stronghold);
+
 
             _builder.RegisterType<SettingsLoader>();
             _builder.RegisterType<PlantRuleLoader>();

@@ -151,8 +151,9 @@ namespace Perpetuum.Zones.Locking
             {
                 if (locks.Any(l => l.Equals(newLock)))
                     continue;
-
-                if (locks.Count >= MaxLockedTargets)
+                // if you are a tooladmin then lock up anything you want.
+                // this is easier than making special bots to work with terrain.
+                if (locks.Count >= MaxLockedTargets && _owner.GetCharacter().AccessLevel != AccessLevel.toolAdmin)
                 {
                     OnLockError(newLock,ErrorCodes.MaxLockedTargetExceed);
                     continue;

@@ -57,8 +57,14 @@ namespace Perpetuum.Units
 
             if (InZone && target.InZone)
             {
-                if ( IsDetected(target) )
+                if (target.IsPlayer() && (target as Player).HasGMStealth)
+                {
+                    visibility = Visibility.Invisible;
+                }
+                else if (IsDetected(target))
+                {
                     visibility = Visibility.Visible;
+                }
             }
 
             UnitVisibility info;
