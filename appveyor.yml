@@ -1,0 +1,13 @@
+version: 1.0.0.{build}
+configuration: Release
+
+clone_depth: 50
+os: Visual Studio 2017
+
+before_build:
+  - nuget restore
+
+build:
+  project: Perpetuum.sln
+  parallel: true
+  verbosity: minimal
