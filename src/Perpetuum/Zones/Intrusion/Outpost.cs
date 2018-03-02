@@ -434,16 +434,16 @@ namespace Perpetuum.Zones.Intrusion
 
         private readonly Dictionary<TransactionType,double> _refundMultipliers = new Dictionary<TransactionType, double>
         {
-            {TransactionType.hangarRent, 0.5},
-            {TransactionType.hangarRentAuto, 0.5},
-            {TransactionType.marketFee, 1.0},
-            {TransactionType.MarketTax, 1.0},
-            {TransactionType.ProductionManufacture, 0.5},
-            {TransactionType.ProductionResearch, 0.5},
-            {TransactionType.ProductionMultiItemRepair, 0.75},
-            {TransactionType.ItemRepair, 0.75},
-            {TransactionType.ProductionPrototype, 0.5},
-            {TransactionType.ProductionMassProduction, 0.5},
+            {TransactionType.hangarRent, 0.25},
+            {TransactionType.hangarRentAuto, 0.25},
+            {TransactionType.marketFee, 0.5},
+            {TransactionType.MarketTax, 0.5},
+            {TransactionType.ProductionManufacture, 0.25},
+            {TransactionType.ProductionResearch, 0.25},
+            {TransactionType.ProductionMultiItemRepair, 0.35},
+            {TransactionType.ItemRepair, 0.35},
+            {TransactionType.ProductionPrototype, 0.25},
+            {TransactionType.ProductionMassProduction, 0.25},
         };
 
         public override double GetOwnerRefundMultiplier(TransactionType transactionType)

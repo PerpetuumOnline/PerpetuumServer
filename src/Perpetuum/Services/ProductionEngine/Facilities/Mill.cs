@@ -29,8 +29,8 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
             infoDict.Add(k.percentageMaterial, GetPercentageFromAdditiveComponent(additiveComponentMaterial));
             infoDict.Add(k.percentageTime, GetPercentageFromAdditiveComponent(additiveComponentTime));
 
-            infoDict.Add(k.materialExtensionPoints, (int) GetMaterialExtensionBonus(character));
-            infoDict.Add(k.timeExtensionPoints, (int) GetTimeExtensionBonus(character));
+            infoDict.Add(k.materialExtensionPoints, (int)GetMaterialExtensionBonus(character));
+            infoDict.Add(k.timeExtensionPoints, (int)GetTimeExtensionBonus(character));
 
             infoDict.Add(k.cycle, 1);
             infoDict.Add(k.rounds, GetMaxRounds(character));
@@ -42,7 +42,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
             get { return ProductionFacilityType.MassProduce; }
         }
 
-        public static Mill CreateWithRandomEID(string  definitionName)
+        public static Mill CreateWithRandomEID(string definitionName)
         {
             var mill = (Mill)Factory.CreateWithRandomEID(definitionName);
             mill.CreateSystemStorage();
@@ -67,13 +67,13 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
             //
             double extensionBonus = GetSlotExtensionBonus(character);
 
-            return 1 + (int) (extensionBonus * (1 + standingRatio));
+            return 1 + (int)(extensionBonus * (1 + standingRatio));
         }
 
 
         public override int GetSlotExtensionBonus(Character character)
         {
-            return (int) character.GetExtensionsBonusSummary(ExtensionNames.PRODUCTION_MAX_MILL_SLOTS_BASIC, ExtensionNames.PRODUCTION_MAX_MILL_SLOTS_ADVANCED, ExtensionNames.PRODUCTION_MAX_MILL_SLOTS_EXPERT);
+            return (int)character.GetExtensionsBonusSummary(ExtensionNames.PRODUCTION_MAX_MILL_SLOTS_BASIC, ExtensionNames.PRODUCTION_MAX_MILL_SLOTS_ADVANCED, ExtensionNames.PRODUCTION_MAX_MILL_SLOTS_EXPERT);
         }
 
         public override double GetMaterialExtensionBonus(Character character)
@@ -94,7 +94,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
             var standingPoints = GetStandingOfOwnerToCharacter(character) * 20;
             var facilityPoints = GetFacilityPoint();
 
-            return (int) (facilityPoints + standingPoints + extensionPoint);
+            return (int)(facilityPoints + standingPoints + extensionPoint);
         }
 
 
@@ -104,7 +104,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
             var standingComponent = GetStandingOfOwnerToCharacter(character) * 20;
             var facilityPoints = GetFacilityPoint();
 
-            return (int) (facilityPoints + extensionComponent + standingComponent);
+            return (int)(facilityPoints + extensionComponent + standingComponent);
         }
 
 
@@ -145,7 +145,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
 
             var facilityProductionTime = GetProductionTimeSeconds();
 
-            return (int) (facilityProductionTime * multiplier * durationModifier);
+            return (int)(facilityProductionTime * multiplier * durationModifier);
         }
 
         public IDictionary<string, object> CalibrateLine(Character character, long calibrationEid, Container container)
@@ -155,18 +155,18 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
 
             lineCount.ThrowIfGreaterOrEqual(maxSlots, ErrorCodes.MaximumAmountOfProducionsReached);
 
-            var calibrationItem = (CalibrationProgram) container.GetItemOrThrow(calibrationEid);
+            var calibrationItem = (CalibrationProgram)container.GetItemOrThrow(calibrationEid);
             calibrationItem.Quantity.ThrowIfNotEqual(1, ErrorCodes.ServerError);
 
             var targetDefinition = calibrationItem.TargetDefinition;
             targetDefinition.ThrowIfEqual(0, ErrorCodes.CPRGNotProducible);
             var targetDefault = EntityDefault.Get(targetDefinition);
-            
+
             calibrationItem.HasComponents.ThrowIfFalse(ErrorCodes.CPRGNotProducible);
-            
+
 
             //no mission stuff here
-            if (calibrationItem.IsMissionRelated || targetDefault.CategoryFlags.IsCategory(CategoryFlags.cf_random_items) )
+            if (calibrationItem.IsMissionRelated || targetDefault.CategoryFlags.IsCategory(CategoryFlags.cf_random_items))
             {
                 if (this.GetDockingBase().IsOnGammaZone())
                 {
@@ -243,7 +243,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
                 //so it can ask less that in the mission but never more
                 var preMatMult = materialMultiplier;
                 materialMultiplier = materialMultiplier.Clamp();
-                
+
                 Logger.Info("pre material multiplier:" + preMatMult + " -> " + materialMultiplier);
             }
 
@@ -273,7 +273,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
             newProduction.resultDefinition = productionLine.TargetDefinition;
             newProduction.totalProductionTimeSeconds = productionTimeSeconds;
             newProduction.baseEID = Parent;
-            newProduction.pricePerSecond = cprg.IsMissionRelated ? 0.0 : GetPricePerSecond();
+            newProduction.pricePerSecond = cprg.IsMissionRelated ? 0.0 : GetPricePerSecond(productionLine.TargetDefinition);
             newProduction.ReservedEids = reservedEids;
             newProduction.amountOfCycles = cycles;
             newProduction.useCorporationWallet = useCorporationWallet;
@@ -339,8 +339,8 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
 
                 ProductionLine.GetDecalibratedEfficiencies(lineOrCPRGMaterialPoints, lineOrCPRGTimePoints, decalibration.decrease, ref newMaterialEfficiency, ref newTimeEfficiency);
 
-                lineOrCPRGMaterialPoints = (int) newMaterialEfficiency;
-                lineOrCPRGTimePoints = (int) newTimeEfficiency;
+                lineOrCPRGMaterialPoints = (int)newMaterialEfficiency;
+                lineOrCPRGTimePoints = (int)newTimeEfficiency;
             }
 
             bool hasBonus;
@@ -350,22 +350,21 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
             {
                 materialMultiplier = materialMultiplier.Clamp(); //never ask more than what we have in the mission
             }
-            
+
             var materials = ProductionDescription.GetRequiredComponentsInfo(ProductionInProgressType.massProduction, 1, materialMultiplier, calibrationProgram.Components);
 
             materials.Count.ThrowIfEqual(0, ErrorCodes.WTFErrorMedicalAttentionSuggested);
 
             var productionTimeSeconds = CalculateFinalProductionTimeSeconds(character, targetDefintion, lineOrCPRGTimePoints);
 
-            var price = CalculateProductionPrice(productionTimeSeconds);
+            var price = CalculateProductionPrice(productionTimeSeconds, targetDefintion);
 
             if (calibrationProgram.IsMissionRelated)
             {
                 //mission stuff is fixed
-                price = 0; 
+                price = 0;
                 productionTimeSeconds = 10;
             }
-
 
             result.Add(k.materials, materials);
             result.Add(k.productionTime, productionTimeSeconds);
@@ -378,9 +377,9 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
         }
 
 
-        private long CalculateProductionPrice(int productionTime)
+        private long CalculateProductionPrice(int productionTime, int targetDefinition)
         {
-            return (long) (productionTime * GetPricePerSecond());
+            return (long)(productionTime * GetPricePerSecond(targetDefinition));
         }
 
         public override IDictionary<string, object> EndProduction(ProductionInProgress productionInProgress, bool forced)
@@ -407,7 +406,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
             var outputDefinition = productionInProgress.resultDefinition;
 
             //load container
-            var container = (PublicContainer) Container.GetOrThrow(PublicContainerEid);
+            var container = (PublicContainer)Container.GetOrThrow(PublicContainerEid);
 
             container.ReloadItems(productionInProgress.character);
 
@@ -455,9 +454,9 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
                 {
                     //set it from the ct
                     resultItem.Quantity = randomCalibrationProgram.TargetQuantity;
-                    Logger.Info("mission quantity is forced from CPRG:" + randomCalibrationProgram.Eid  + " qty:" + randomCalibrationProgram.TargetQuantity);
+                    Logger.Info("mission quantity is forced from CPRG:" + randomCalibrationProgram.Eid + " qty:" + randomCalibrationProgram.TargetQuantity);
                 }
-            
+
             }
 
             container.Save();
@@ -474,7 +473,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
                 {k.lineCount, linesList.Count}
             };
 
-            ProductionProcessor.EnqueueProductionMissionTarget(MissionTargetType.massproduce, productionInProgress.character, MyMissionLocationId(),  resultItem.Definition, resultItem.Quantity);
+            ProductionProcessor.EnqueueProductionMissionTarget(MissionTargetType.massproduce, productionInProgress.character, MyMissionLocationId(), resultItem.Definition, resultItem.Quantity);
             return replyDict;
         }
 
@@ -540,7 +539,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
                         err = gex.error;
                     }
 
-                    character.CreateErrorMessage(Commands.ProductionLineStart,err).Send();
+                    character.CreateErrorMessage(Commands.ProductionLineStart, err).Send();
 
                     Logger.Info("production next round start failed: " + err + " characterId:" + character.Id + " lineId:" + productionLineId + " facility:" + this);
 
@@ -592,12 +591,12 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
             //this CPRG drives the production
             cprg = productionLine.GetOrCreateCalibrationProgram(this);
 
-           
+
             // mission mechanism 
             if (cprg.IsMissionRelated)
             {
                 //kill the line, delete cprg
-                
+
                 wasLineDead = true;
 
                 ProductionLine.DeleteById(productionLine.Id);
@@ -648,7 +647,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
             return productionLine;
         }
 
-       
+
 
 
         public static int GetMaxRounds(Character character)
@@ -660,7 +659,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
                 return 1;
             }
 
-            return (int) character.GetExtensionBonusByName(ExtensionNames.LONGTERM_PRODUCTION);
+            return (int)character.GetExtensionBonusByName(ExtensionNames.LONGTERM_PRODUCTION);
         }
 
         public override void OnRemoveFromGame()
@@ -669,7 +668,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
 
             Logger.Info(linesDeleted + " production lines were deleted from " + this);
 
-            var q = 
+            var q =
 @"DELETE dbo.runningproductionreserveditem WHERE runningid in
 (SELECT id FROM dbo.runningproduction WHERE facilityEID=@facilityEid);
 DELETE dbo.runningproduction WHERE facilityEID=@facilityEid";

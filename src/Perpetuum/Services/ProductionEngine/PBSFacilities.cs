@@ -699,7 +699,7 @@ namespace Perpetuum.Services.ProductionEngine
             productionInProgress.character = character;
             productionInProgress.facilityEID = Eid;
             productionInProgress.finishTime = DateTime.Now.AddSeconds(forgeTimeSeconds);
-            productionInProgress.pricePerSecond = GetPricePerSecond();
+            productionInProgress.pricePerSecond = GetPricePerSecond(targetDefinition);
             productionInProgress.ReservedEids = reservedEids;
             productionInProgress.resultDefinition = targetDefinition;
             productionInProgress.startTime = DateTime.Now;
