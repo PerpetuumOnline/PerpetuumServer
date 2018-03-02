@@ -28,6 +28,7 @@ namespace Perpetuum.Services.Sessions
         Character Character { get; }
         AccessLevel AccessLevel { get; }
         IZoneManager ZoneMgr { get; }
+        bool AccountCreatedInSession { get; set; }
 
         void SendMessage(MessageBuilder builder);
         void SendMessage(IMessage message);
@@ -132,6 +133,11 @@ namespace Perpetuum.Services.Sessions
         public event SessionEventHandler Disconnected;
 
         public event SessionEventHandler RsaKeyReceived;
+        
+        /// <summary>
+        /// mitigate account creation spam. now must disconnect before trying to make another account.
+        /// </summary>
+        public bool AccountCreatedInSession { get; set; }
 
         public void SendMessage(MessageBuilder messageBuilder)
         {

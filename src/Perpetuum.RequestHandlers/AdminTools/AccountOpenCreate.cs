@@ -26,6 +26,12 @@ namespace Perpetuum.RequestHandlers.AdminTools
             if (!si.IsOpen)
                 throw new PerpetuumException(ErrorCodes.InviteOnlyServer);
 
+            // if an account was already created using this session, reject this creation attempt.
+            if (request.Session.AccountCreatedInSession)
+            {
+                throw new PerpetuumException(ErrorCodes.AccountAlreadyExists);
+            }
+
             var account = new Account
             {
                 Email = email,
@@ -41,6 +47,9 @@ namespace Perpetuum.RequestHandlers.AdminTools
             }
 
             _accountRepository.Insert(account);
+
+            // if we get this far, make sure we can't sit here and make accounts.
+            request.Session.AccountCreatedInSession = true;
 
             Db.Query().CommandText("extensionPointsInject")
                 .SetParameter("@accountID", account.Id)
