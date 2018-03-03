@@ -30,6 +30,7 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
                 component.ChangeModuleOrThrow(sourceSlot, targetSlot);
 
                 player.Initialize(character);
+
                 player.Save();
 
                 Transaction.Current.OnCommited(() =>

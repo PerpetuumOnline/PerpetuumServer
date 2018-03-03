@@ -436,8 +436,8 @@ namespace Perpetuum.Players
             return Task.Run(() => HandlePlayerDead(zone, killer));
         }
 
-        public const int ARKHE_REQUEST_TIMER_MINUTES_PVP = 10;
-        public const int ARKHE_REQUEST_TIMER_MINUTES_NPC = 5;
+        public const int ARKHE_REQUEST_TIMER_MINUTES_PVP = 3;
+        public const int ARKHE_REQUEST_TIMER_MINUTES_NPC = 1;
 
 
         //ennek mindenkepp vegig kell futnia

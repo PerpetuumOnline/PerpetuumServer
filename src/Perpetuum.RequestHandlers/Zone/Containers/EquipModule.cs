@@ -25,6 +25,8 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
             {
                 var character = request.Session.Character;
                 var player = request.Zone.GetPlayerOrThrow(character);
+                //Store ratios before transaction
+                var hpRatio = player.ArmorPercentage;
 
                 CheckPvpState(player).ThrowIfError();
                 CheckCombatState(player).ThrowIfError();
@@ -35,6 +37,7 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
 
                 CheckContainerType(container).ThrowIfError();
                 CheckFieldTerminalRange(player, container).ThrowIfError();
+                
 
                 player.EnlistTransaction();
                 container.EnlistTransaction();
@@ -59,10 +62,14 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
 
                 var moduleEid = request.Data.GetOrDefault<long>(k.moduleEID);
                 var module = (Module)container.GetItemOrThrow(moduleEid).Unstack(1);
+                module.CheckEnablerExtensionsAndThrowIfFailed(player.Character);
                 component.EquipModuleOrThrow(module, slot);
 
                 player.Initialize(character);
                 player.CheckEnergySystemAndThrowIfFailed();
+
+                //Apply original armor ratio after equip-action
+                player.Armor = player.ArmorMax * hpRatio;
 
                 player.Save();
                 container.Save();

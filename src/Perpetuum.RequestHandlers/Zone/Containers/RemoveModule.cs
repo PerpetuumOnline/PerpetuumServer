@@ -15,6 +15,8 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
             {
                 var character = request.Session.Character;
                 var player = request.Zone.GetPlayerOrThrow(character);
+                //Store ratios before transaction
+                var hpRatio = player.ArmorPercentage;
 
                 CheckPvpState(player).ThrowIfError();
                 CheckCombatState(player).ThrowIfError();
@@ -50,6 +52,9 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
 
                 player.Initialize(character);
                 player.CheckEnergySystemAndThrowIfFailed();
+
+                //Apply original armor ratio after unequip-action
+                player.Armor = player.ArmorMax * hpRatio;
 
                 player.Save();
                 container.Save();
