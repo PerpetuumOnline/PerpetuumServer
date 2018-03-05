@@ -17,6 +17,7 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
                 var player = request.Zone.GetPlayerOrThrow(character);
                 //Store ratios before transaction
                 var hpRatio = player.ArmorPercentage;
+                var apRatio = player.CorePercentage;
 
                 CheckPvpState(player).ThrowIfError();
                 CheckCombatState(player).ThrowIfError();
@@ -34,6 +35,11 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
                 Transaction.Current.OnCompleted(completed =>
                 {
                     player.Initialize(character);
+
+                    //Apply original ratios after equip-action
+                    player.Armor = player.ArmorMax * hpRatio;
+                    player.Core = player.CoreMax * apRatio;
+
                     player.SendRefreshUnitPacket();
 
                     var result = new Dictionary<string, object>
@@ -41,7 +47,6 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
                         {k.robot, player.ToDictionary()}, 
                         {k.container, container.ToDictionary()}
                     };
-
                     Message.Builder.FromRequest(request).WithData(result).WrapToResult().Send();
                 });
 
@@ -51,10 +56,7 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
                 module.Unequip(container);
 
                 player.Initialize(character);
-                player.CheckEnergySystemAndThrowIfFailed();
-
-                //Apply original armor ratio after unequip-action
-                player.Armor = player.ArmorMax * hpRatio;
+                player.CheckEnergySystemAndThrowIfFailed();  
 
                 player.Save();
                 container.Save();
