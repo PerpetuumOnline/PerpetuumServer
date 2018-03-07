@@ -13,6 +13,7 @@ namespace Perpetuum.RequestHandlers.Channels
                 var character = Character.Get(request.Data.GetOrDefault<int>(k.characterID));
                 var state = request.Data.GetOrDefault<int>(k.state).ToBool();
                 character.GlobalMuted = state;
+                Message.Builder.FromRequest(request).WithOk().Send();
                 scope.Complete();
             }
         }

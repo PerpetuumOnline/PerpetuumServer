@@ -2632,6 +2632,16 @@ namespace Perpetuum
             AccessLevel = AccessLevel.normal
         };
 
+        public static readonly Command ForceDockAdmin = new Command
+        {
+            Text = "forceDockAdmin",
+            AccessLevel = AccessLevel.admin,
+            Arguments =
+            {
+                new Argument<int>(k.characterID)
+            }
+        };
+
         public static readonly Command ZoneSaveLayer = new Command
         {
             Text = "zoneSaveLayer",
