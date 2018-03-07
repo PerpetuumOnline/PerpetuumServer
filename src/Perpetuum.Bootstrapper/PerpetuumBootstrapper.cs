@@ -1969,6 +1969,7 @@ namespace Perpetuum.Bootstrapper
             RegisterRequestHandler<PollGet>(Commands.PollGet);
             RegisterRequestHandler<PollAnswer>(Commands.PollAnswer);
             RegisterRequestHandler<ForceDock>(Commands.ForceDock);
+            RegisterRequestHandler<ForceDockAdmin>(Commands.ForceDockAdmin);
             RegisterRequestHandler<GetItemSummary>(Commands.GetItemSummary);
 
             RegisterRequestHandler<ProductionHistory>(Commands.ProductionHistory);
