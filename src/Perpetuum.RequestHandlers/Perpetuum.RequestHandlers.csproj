@@ -205,6 +205,7 @@
     <Compile Include="CreateItemRequestHandler.cs" />
     <Compile Include="DecorCategoryList.cs" />
     <Compile Include="DockAll.cs" />
+    <Compile Include="UpdateNews.cs" />
     <Compile Include="EnableSelfTeleport.cs" />
     <Compile Include="EpForActivityDailyLog.cs" />
     <Compile Include="EquipAmmo.cs" />

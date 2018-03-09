@@ -942,6 +942,21 @@ namespace Perpetuum
             }
         };
 
+        public static readonly Command UpdateNews = new Command
+        {
+            Text = "updateNews",
+            AccessLevel = AccessLevel.admin,
+            Arguments =
+            {
+                new Argument<string>(k.title),
+                new Argument<string>(k.body),
+                new Argument<int>(k.type),
+                new Argument<int>(k.language),
+                new Argument<int>(k.ID),
+                new Argument<DateTime>(k.time)
+            }
+        };
+
         public static readonly Command CorporationHangarRentExpired = new Command
         {
             Text = "corporationHangarRentExpired",

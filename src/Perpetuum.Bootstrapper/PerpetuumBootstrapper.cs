@@ -1888,6 +1888,7 @@ namespace Perpetuum.Bootstrapper
             RegisterRequestHandler<FreshNewsCount>(Commands.FreshNewsCount);
             RegisterRequestHandler<GetNews>(Commands.GetNews);
             RegisterRequestHandler<AddNews>(Commands.AddNews);
+            RegisterRequestHandler<UpdateNews>(Commands.UpdateNews);
             RegisterRequestHandler<NewsCategory>(Commands.NewsCategory).SingleInstance();
 
             RegisterRequestHandler<EpForActivityDailyLog>(Commands.EpForActivityDailyLog);
