@@ -99,7 +99,7 @@ namespace Perpetuum.RequestHandlers.Characters
                     // training
                     dockingBase = _dockingBaseHelper.GetTrainingDockingBase();
                     corporation = ((TrainingDockingBase)dockingBase).GetTrainingCorporation();
-                    character.SetAllExtensionLevel(5);
+                    character.SetAllExtensionLevel(6);
                     dockingBase.CreateStarterRobotForCharacter(character);
                     character.AddToWallet(TransactionType.CharacterCreate,10000000);
                 }
