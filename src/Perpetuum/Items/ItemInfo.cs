@@ -6,10 +6,14 @@ namespace Perpetuum.Items
 {
     public struct ItemInfo : IEquatable<ItemInfo>
     {
-        public static readonly ItemInfo None = new ItemInfo(0);
+        public static readonly ItemInfo None = new ItemInfo(0,0);
 
         public int Definition { get; private set; }
         public int Quantity { get; set; }
+        // min/max quantity for loot generation
+        public int MinQty { get; set; }
+        public int MaxQty { get; set; }
+        //
         public float Health { get; set; }
         public bool IsRepackaged { get; set; }
 
@@ -18,6 +22,17 @@ namespace Perpetuum.Items
             Definition = definition;
             Quantity = quantity;
             Health = (float) EntityDefault.Health;
+            IsRepackaged = EntityDefault.AttributeFlags.Repackable;
+        }
+
+        // overload, accept min/max quantities for loot items.
+        public ItemInfo(int definition, int minq = 1, int maxq = 1) : this()
+        {
+            Definition = definition;
+            Quantity = minq;
+            MinQty = minq;
+            MaxQty = maxq;
+            Health = (float)EntityDefault.Health;
             IsRepackaged = EntityDefault.AttributeFlags.Repackable;
         }
 

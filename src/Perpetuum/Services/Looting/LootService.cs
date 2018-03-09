@@ -73,7 +73,7 @@ namespace Perpetuum.Services.Looting
             var definition = record.GetValue<int>(k.lootDefinition.ToLower());
             var minq = record.GetValue<int>("minquantity");
             var maxq = record.GetValue<int>(k.quantity);
-            var item = new ItemInfo(definition, FastRandom.NextInt(minq, maxq))
+            var item = new ItemInfo(definition, minq, maxq)
             {
                 IsRepackaged = record.GetValue<bool>(k.repackaged)
             };

@@ -22,7 +22,7 @@ namespace Perpetuum.Services.Looting
 
         public static LootItemBuilder Create(int definition)
         {
-            return new LootItemBuilder(new ItemInfo(definition));
+            return new LootItemBuilder(new ItemInfo(definition,0));
         }
 
         public static LootItemBuilder Create(Item item)
