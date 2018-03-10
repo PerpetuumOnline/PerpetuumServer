@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -152,9 +153,19 @@ namespace Perpetuum.Zones.NpcSystem.Presences
 
             private void FindNextRoamingPosition()
             {
-                _presence.Log("finding new roaming position. current: " + _presence.CurrentRoamingPosition);
+#if DEBUG
+                if (!Debugger.IsAttached)
+                {
+                    _presence.Log("finding new roaming position. current: " + _presence.CurrentRoamingPosition);
+                }
+#endif
                 var nextRoamingPosition = _presence.PathFinder.FindNextRoamingPosition(_presence);
-                _presence.Log("next roaming position: " + nextRoamingPosition + " dist:" + _presence.CurrentRoamingPosition.Distance(nextRoamingPosition));
+#if DEBUG
+                if (!Debugger.IsAttached)
+                {
+                    _presence.Log("next roaming position: " + nextRoamingPosition + " dist:" + _presence.CurrentRoamingPosition.Distance(nextRoamingPosition));
+                }
+#endif
                 _presence.CurrentRoamingPosition = nextRoamingPosition;
 
                 foreach (var npc in _presence.Flocks.GetMembers())
