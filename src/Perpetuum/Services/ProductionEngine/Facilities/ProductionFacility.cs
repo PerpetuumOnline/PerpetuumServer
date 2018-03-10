@@ -42,7 +42,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
         {
             return $"{ED.Name} {ED.Definition} {Eid}";
         }
-
+        
         private int GetFacilityBonus()
         {
             int modifier = 0;
@@ -50,7 +50,8 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
             if (dockingbase is Outpost)
             {
                 ProductionFacility facility = (dockingbase as Outpost).GetProductionFacilities().Where(x => x.Eid == this.Eid).First();
-                modifier = Outpost.GetFacilityLevelFromStack(facility.Eid) * 25;
+                int extrapts = facility.DynamicProperties.GetOrDefault<int>(k.extrapoints); //Entity-property for unique facility base-proficiencies
+                modifier = (Outpost.GetFacilityLevelFromStack(facility.Eid) + extrapts) * 25; //bonus per facility level
             }
             return modifier;
         }
