@@ -39,8 +39,8 @@ namespace Perpetuum.Services.Looting
 
             foreach (var loot in loots)
             {
-                var item = new ItemInfo(loot.itemDefinition,FastRandom.NextInt(loot.quantity));
-                yield return new LootGeneratorItemInfo(item,false,loot.probability);
+                var item = new ItemInfo(loot.itemDefinition, loot.quantity.Min, loot.quantity.Max); //roll random on init
+                yield return new LootGeneratorItemInfo(item, false, loot.probability);
             }
         }
 

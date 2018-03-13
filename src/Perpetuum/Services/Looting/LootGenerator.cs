@@ -20,8 +20,7 @@ namespace Perpetuum.Services.Looting
                     continue;
 
                 var lootItem = LootItemBuilder.Create(info.item).SetDamaged(info.damaged).Build();
-                // set quantity for this item.
-                lootItem.Quantity = (info.item.MinQty != info.item.MaxQty) ? FastRandom.NextInt(info.item.MinQty, info.item.MaxQty) : info.item.MinQty;
+                lootItem.Quantity = lootItem.ItemInfo.randomQuantity(); //roll random on generate
                 yield return lootItem;
             }
         }

@@ -29,11 +29,21 @@ namespace Perpetuum.Items
         public ItemInfo(int definition, int minq = 1, int maxq = 1) : this()
         {
             Definition = definition;
-            Quantity = minq;
             MinQty = minq;
             MaxQty = maxq;
+            Quantity = this.randomQuantity(); //randomize quantity for min-max ranged loots on init
             Health = (float)EntityDefault.Health;
             IsRepackaged = EntityDefault.AttributeFlags.Repackable;
+        }
+
+        //Roll random
+        public int randomQuantity()
+        {
+            if(this.MinQty != this.MaxQty)
+            {
+                return FastRandom.NextInt(this.MinQty, this.MaxQty);
+            }
+            return this.MinQty;
         }
 
         public EntityDefault EntityDefault
