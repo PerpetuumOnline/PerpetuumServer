@@ -29,6 +29,8 @@ namespace Perpetuum.Services.Sessions
         AccessLevel AccessLevel { get; }
         IZoneManager ZoneMgr { get; }
         bool AccountCreatedInSession { get; set; }
+        string ClientVersion { get; set; }
+        int SteamBuild { get; set; }
 
         void SendMessage(MessageBuilder builder);
         void SendMessage(IMessage message);
@@ -93,6 +95,8 @@ namespace Perpetuum.Services.Sessions
         }
 
         public AccessLevel AccessLevel => _accessLevel;
+        public string ClientVersion { get; set; } = string.Empty;
+        public int SteamBuild { get; set; } = 0;
 
         private bool SafeLogOut { get; set; }
 

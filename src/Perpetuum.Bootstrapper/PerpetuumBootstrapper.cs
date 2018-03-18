@@ -627,6 +627,7 @@ namespace Perpetuum.Bootstrapper
 
             RegisterRequestHandler<ChannelCreate>(Commands.ChannelCreate);
             RegisterRequestHandler<ChannelList>(Commands.ChannelList);
+            RegisterRequestHandler<ChannelListAll>(Commands.ChannelListAll);
             RegisterRequestHandler<ChannelMyList>(Commands.ChannelMyList);
             RegisterRequestHandler<ChannelJoin>(Commands.ChannelJoin);
             RegisterRequestHandler<ChannelLeave>(Commands.ChannelLeave);
@@ -1667,6 +1668,7 @@ namespace Perpetuum.Bootstrapper
             RegisterRequestHandlerFactory<IZoneRequest>();
 
             RegisterRequestHandler<GetEnums>(Commands.GetEnums);
+            RegisterRequestHandler<GetCommands>(Commands.GetCommands);
             RegisterRequestHandler<GetEntityDefaults>(Commands.GetEntityDefaults).SingleInstance();
             RegisterRequestHandler<GetAggregateFields>(Commands.GetAggregateFields).SingleInstance();
             RegisterRequestHandler<GetDefinitionConfigUnits>(Commands.GetDefinitionConfigUnits).SingleInstance();
@@ -1708,6 +1710,8 @@ namespace Perpetuum.Bootstrapper
             RegisterRequestHandler<CharacterSetNote>(Commands.CharacterSetNote);
             RegisterRequestHandler<CharacterCorporationHistory>(Commands.CharacterCorporationHistory);
             RegisterRequestHandler<CharacterWizardData>(Commands.CharacterWizardData).SingleInstance();
+            RegisterRequestHandler<CharactersOnline>(Commands.GetCharactersOnline);
+            RegisterRequestHandler<ReimburseItemRequestHandler>(Commands.ReimburseItem);
             RegisterRequestHandler<Chat>(Commands.Chat);
             RegisterRequestHandler<GoodiePackList>(Commands.GoodiePackList);
             RegisterRequestHandler<GoodiePackRedeem>(Commands.GoodiePackRedeem);
@@ -2474,6 +2478,7 @@ namespace Perpetuum.Bootstrapper
             RegisterZoneRequestHandler<TeleportUse>(Commands.TeleportUse);
             RegisterZoneRequestHandler<TeleportQueryWorldChannels>(Commands.TeleportQueryWorldChannels);
             RegisterZoneRequestHandler<JumpAnywhere>(Commands.JumpAnywhere);
+            RegisterZoneRequestHandler<MovePlayer>(Commands.MovePlayer);
             RegisterZoneRequestHandler<ZoneDrawStatMap>(Commands.ZoneDrawStatMap);
             RegisterZoneRequestHandler<MissionStartFromZone>(Commands.MissionStartFromZone);
             RegisterZoneRequestHandler<ZoneItemShopBuy>(Commands.ItemShopBuy);

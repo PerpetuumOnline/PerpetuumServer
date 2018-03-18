@@ -265,7 +265,7 @@ namespace Perpetuum.Services.Channels
             m.CanTalk.ThrowIfFalse(ErrorCodes.CharacterIsMuted);
             channel.SendMessageToAll(_sessionManager, sender, message);
             // this is an admin or GM command.
-            if (message.Substring(0, 1) == "#" && sender.AccessLevel == AccessLevel.toolAdmin)
+            if (message.Substring(0, 1) == "#" && sender.AccessLevel == AccessLevel.admin)
             {
                 channel.AdminCommands.ParseAdminCommand(sender, message, request, channel, _sessionManager, this);
             }
@@ -359,6 +359,11 @@ namespace Perpetuum.Services.Channels
         public IEnumerable<Channel> GetPublicChannels()
         {
             return _channels.Values.Where(c => c.Type == ChannelType.Public || c.Type == ChannelType.Highlighted);
+        }
+
+        public IEnumerable<Channel> GetAllChannels()
+        {
+            return _channels.Values;
         }
     }
 }
