@@ -92,11 +92,23 @@ namespace Perpetuum.Services.RiftSystem
             var maxRiftLevel = 1;
 
             if (zone.Configuration.IsAlpha)
+            {
                 maxRiftLevel = 1;
+            }   
             else if (zone.Configuration.IsBeta)
+            {
                 maxRiftLevel = 2;
+                if (zone.Configuration.Id > 8 && zone.Configuration.Id < 12)
+                {
+                    maxRiftLevel = 3; //TODO fixme move to DB!
+                    Logger.Info("LEVEL 3 RIFT ON BETA!");
+                }
+            }  
             else if (zone.Configuration.IsGamma)
+            {
                 maxRiftLevel = 3;
+            }
+            
 
             if (ED.Tier.level > maxRiftLevel)
                 throw new PerpetuumException(ErrorCodes.RiftLevelMismatch);
