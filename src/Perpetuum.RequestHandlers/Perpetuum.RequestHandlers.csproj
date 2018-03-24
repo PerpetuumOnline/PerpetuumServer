@@ -59,6 +59,7 @@
     <Compile Include="AdminTools\AccountUnban.cs" />
     <Compile Include="AdminTools\ChangeSessionPassword.cs" />
     <Compile Include="AdminTools\AccountUpdate.cs" />
+    <Compile Include="AdminTools\CharactersOnline.cs" />
     <Compile Include="AdminTools\GetAccountsWithCharacters.cs" />
     <Compile Include="AdminTools\ServerInfoGet.cs" />
     <Compile Include="AdminTools\ServerInfoSet.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Channels\ChannelKick.cs" />
     <Compile Include="Channels\ChannelLeave.cs" />
     <Compile Include="Channels\ChannelList.cs" />
+    <Compile Include="Channels\ChannelListAll.cs" />
     <Compile Include="Channels\ChannelMyList.cs" />
     <Compile Include="Channels\ChannelRemoveBan.cs" />
     <Compile Include="Channels\ChannelSetMemberRole.cs" />
@@ -205,6 +207,8 @@
     <Compile Include="CreateItemRequestHandler.cs" />
     <Compile Include="DecorCategoryList.cs" />
     <Compile Include="DockAll.cs" />
+    <Compile Include="GetCommands.cs" />
+    <Compile Include="ReimburseItem.cs" />
     <Compile Include="UpdateNews.cs" />
     <Compile Include="EnableSelfTeleport.cs" />
     <Compile Include="EpForActivityDailyLog.cs" />
@@ -526,6 +530,7 @@
     <Compile Include="Zone\MissionRequests\ZoneDisplayMissionSpots.cs" />
     <Compile Include="Zone\MissionRequests\ZoneUpdateStructure.cs" />
     <Compile Include="Zone\MissionStartFromZone.cs" />
+    <Compile Include="Zone\MovePlayer.cs" />
     <Compile Include="Zone\NPCCheckCondition.cs" />
     <Compile Include="Zone\NpcSafeSpawnPoints\NpcAddSafeSpawnPoint.cs" />
     <Compile Include="Zone\NpcSafeSpawnPoints\NpcDeleteSafeSpawnPoint.cs" />

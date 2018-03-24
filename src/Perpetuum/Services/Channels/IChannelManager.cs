@@ -28,5 +28,6 @@ namespace Perpetuum.Services.Channels
 
         IEnumerable<Channel> GetChannelsByMember(Character member);
         IEnumerable<Channel> GetPublicChannels();
+        IEnumerable<Channel> GetAllChannels();
     }
 }

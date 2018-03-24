@@ -520,6 +520,19 @@ namespace Perpetuum
             }
         };
 
+        public static readonly Command MovePlayer = new Command
+        {
+            Text = "movePlayer",
+            AccessLevel = AccessLevel.admin,
+            Arguments =
+            {
+                new Argument<int>(k.characterID),
+                new Argument<int>(k.zoneID),
+                new Argument<int>(k.x),
+                new Argument<int>(k.y)
+            }
+        };
+
         public static readonly Command MissionTargetUpdate = new Command
         {
             Text = "missionTargetUpdate",
@@ -2804,6 +2817,12 @@ namespace Perpetuum
             AccessLevel = AccessLevel.notDefined
         };
 
+        public static readonly Command GetCommands = new Command
+        {
+            Text = "getCommands",
+            AccessLevel = AccessLevel.notDefined
+        };
+
         public static readonly Command GetZoneInfo = new Command
         {
             Text = "getZoneInfo",
@@ -3234,6 +3253,12 @@ namespace Perpetuum
         {
             Text = "channelList",
             AccessLevel = AccessLevel.normal
+        };
+
+        public static readonly Command ChannelListAll = new Command
+        {
+            Text = "channelListAll",
+            AccessLevel = AccessLevel.admin
         };
 
         public static readonly Command ChannelMyList = new Command
@@ -4178,7 +4203,7 @@ namespace Perpetuum
         public static readonly Command AccountList = new Command
         {
             Text = "accountList",
-            AccessLevel = AccessLevel.toolAdmin
+            AccessLevel = AccessLevel.admin
         };
 
         public static readonly Command AccountGetTransactionHistory = new Command
@@ -4511,7 +4536,7 @@ namespace Perpetuum
         public static readonly Command ZoneSelfDestruct = new Command
         {
             Text = "zoneSelfDestruct",
-            AccessLevel = AccessLevel.normal
+            AccessLevel = AccessLevel.admin
         };
 
         public static readonly Command ZoneGetBuildings = new Command
@@ -5282,13 +5307,19 @@ namespace Perpetuum
         public static readonly Command GetAccountsWithCharacters = new Command
         {
             Text = "getAccountsWithCharacters",
-            AccessLevel = AccessLevel.toolAdmin,
+            AccessLevel = AccessLevel.admin,
+        };
+
+        public static readonly Command GetCharactersOnline = new Command
+        {
+            Text = "getCharactersOnline",
+            AccessLevel = AccessLevel.admin,
         };
 
         public static readonly Command AccountGet = new Command
         {
             Text = "accountGet",
-            AccessLevel = AccessLevel.toolAdmin,
+            AccessLevel = AccessLevel.admin,
             Arguments =
             {
                 new Argument<int>(k.accountID)
@@ -5307,6 +5338,12 @@ namespace Perpetuum
             {
                 new Argument<int>(k.accountID)
             }
+        };
+
+        public static readonly Command ReimburseItem = new Command
+        {
+            Text = "ReimburseItem",
+            AccessLevel = AccessLevel.admin
         };
 
         // creates an account from the tool. 
@@ -5368,7 +5405,7 @@ namespace Perpetuum
         public static readonly Command AccountBan = new Command
         {
             Text = "accountBan",
-            AccessLevel = AccessLevel.toolAdmin,
+            AccessLevel = AccessLevel.admin,
             Arguments =
             {
                 new Argument<int>(k.accountID),
@@ -5379,7 +5416,7 @@ namespace Perpetuum
         public static readonly Command AccountUnban = new Command
         {
             Text = "accountUnban",
-            AccessLevel = AccessLevel.toolAdmin,
+            AccessLevel = AccessLevel.admin,
             Arguments =
             {
                 new Argument<int>(k.accountID),

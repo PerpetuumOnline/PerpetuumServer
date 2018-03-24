@@ -27,9 +27,12 @@ namespace Perpetuum.RequestHandlers
             var account = LoadAccount(request);
             if (account == null)
                 throw new PerpetuumException(ErrorCodes.NoSuchUser);
-            
+
             // ignored in standalone
             //account.EmailConfirmed.ThrowIfFalse(ErrorCodes.EmailNotConfirmed);
+            request.Session.SteamBuild = request.Data.GetOrDefault<int>(k.steambuildid);
+            request.Session.ClientVersion = request.Data.GetOrDefault<string>(k.clientver);
+
 
             var isLoggedIn = account.IsLoggedIn;
             if (isLoggedIn)
