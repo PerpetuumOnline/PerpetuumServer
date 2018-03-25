@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Autofac;
 using Perpetuum.Host;
 using System.Threading;
+using Perpetuum.Log;
 
 namespace Perpetuum.ServerService
 {
@@ -16,14 +17,22 @@ namespace Perpetuum.ServerService
         public PerpServer()
         {
             InitializeComponent();
-            Bootstrapper = new PerpetuumBootstrapper();
+            Bootstrapper = new PerpetuumBootstrapper();            
+
             base.CanShutdown = true;
             base.CanStop = true;
         }
 
         PerpetuumBootstrapper Bootstrapper { get; set; }
+        Autofac.IContainer container { get; set; }
+        IHostStateService hostStateService { get; set; }
 
         protected override void OnStart(string[] args)
+        {
+            ServerStart();
+        }
+
+        public void ServerStart()
         {
             // assumes the server is in the default installation directory.
             string gameroot = Properties.Settings.Default.GameRoot;
@@ -32,50 +41,56 @@ namespace Perpetuum.ServerService
             {
                 Bootstrapper.Init(gameroot);
             }
-            catch
+            catch (Exception ex)
             {
-                // we failed to init. no idea why. we need to log this.
-                // usual reasons are db connection failures because we are running as a user with no privs.
+                Logger.Exception(ex);
                 return;
             }
 
-            // start a task for our server.
-            Task task = Task.Run((Action)StartServer);
-           
+            container = Bootstrapper.GetContainer();
+            hostStateService = container.Resolve<IHostStateService>();
+
+            Task task = Task.Run((Action)StartServer);            
+
         }
 
+        void StartServer()
+        {
+            Bootstrapper.Start();
+            Bootstrapper.WaitForStop(); // this blocks !            
+            base.Stop(); // must call or the service will hang.
+        }
+
+        void StopServer()
+        {
+            // if we are online. stop.
+            if (hostStateService.State == HostState.Online)
+            {
+                // state change from online => stopping
+                Bootstrapper.Stop();
+            }
+            // wait until we are stopped. (off)
+            while (hostStateService.State != HostState.Off)
+            {
+                // we need to wait for a clean shutdown. Windows... Please wait for us :)
+                RequestAdditionalTime(10000); // ask for 10 seconds. usually is not required.
+            }
+
+            Thread.Sleep(10000); // wait 10 seconds for the logging stuff to flush
+        }
+
+        // SCM stopping or server rebooting (?)
         protected override void OnStop()
         {
             StopServer();
         }
 
-        // windows requests this when shutting down.
-        // need to make sure this is called.
+        // this is called when the system is SHUT DOWN. not when it's rebooting ??
+        // either way we need to exit cleanly if possible.
         protected override void OnShutdown()
         {
             StopServer();
         }
 
-        public void StartServer()
-        {            
-            Bootstrapper.Start();
-            Bootstrapper.WaitForStop();
-        }
-
-        private void StopServer()
-        {
-            Autofac.IContainer _container = Bootstrapper.GetContainer();
-
-            Bootstrapper.Stop();
-
-            // get the host container and check it's status.
-            // if we are running still or stopping we ask windows to not kill us.
-            var s = _container.Resolve<IHostStateService>();
-            while (s.State == HostState.Online || s.State == HostState.Stopping)
-            {
-                RequestAdditionalTime(10000); // ask for more time. Hope we get it.
-            }
-            Thread.Sleep(10000); // wait 10 seconds for their logging process to finish.
-        }
     }
 }
