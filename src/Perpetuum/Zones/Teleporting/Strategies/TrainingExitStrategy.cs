@@ -26,7 +26,7 @@ namespace Perpetuum.Zones.Teleporting.Strategies
 
         public delegate TrainingExitStrategy Factory(TeleportDescription description);
 
-        public TrainingExitStrategy(TeleportDescription description,ITrainingRewardRepository trainingRewardRepository,IChannelManager channelManager,CharacterCleaner characterCleaner,SparkHelper sparkHelper)
+        public TrainingExitStrategy(TeleportDescription description, ITrainingRewardRepository trainingRewardRepository, IChannelManager channelManager, CharacterCleaner characterCleaner, SparkHelper sparkHelper)
         {
             _description = description;
             _trainingRewardRepository = trainingRewardRepository;
@@ -45,7 +45,7 @@ namespace Perpetuum.Zones.Teleporting.Strategies
         {
             //Throw if email not confirmed
             player.Character.GetAccount().EmailConfirmed.ThrowIfFalse(ErrorCodes.EmailNotConfirmed);
-            
+
             player.States.Dock = true;
 
             var character = player.Character;
@@ -56,7 +56,7 @@ namespace Perpetuum.Zones.Teleporting.Strategies
 
             var info = GetCharacterWizardInfo();
 
-            var newCorporation = DefaultCorporation.GetBySchool(info.raceId,info.schoolId);
+            var newCorporation = DefaultCorporation.GetBySchool(info.raceId, info.schoolId);
             oldCorporation.RemoveMember(character);
             newCorporation.AddMember(character, CorporationRole.NotDefined, oldCorporation);
 
@@ -123,7 +123,7 @@ namespace Perpetuum.Zones.Teleporting.Strategies
             public int schoolId;
             public int sparkId;
 
-            public CharacterWizardInfo(int raceId,int schoolId,int majorId,int sparkId) : this()
+            public CharacterWizardInfo(int raceId, int schoolId, int majorId, int sparkId) : this()
             {
                 this.majorId = majorId;
                 this.raceId = raceId;

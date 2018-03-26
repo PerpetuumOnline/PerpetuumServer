@@ -61,6 +61,7 @@ namespace Perpetuum.RequestHandlers.Characters
                 if (account.FirstCharacterDate == null)
                 {
                     account.FirstCharacterDate = DateTime.Now;
+                    _accountManager.AddExtensionPoints(account, 40000); //TODO: starting EP - store in DB
                     _accountManager.Repository.Update(account);
                 }
 

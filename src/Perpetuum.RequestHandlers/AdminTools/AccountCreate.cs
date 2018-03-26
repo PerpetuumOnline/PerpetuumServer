@@ -1,6 +1,7 @@
 ﻿using Perpetuum.Accounting;
 using Perpetuum.Data;
 using Perpetuum.Host.Requests;
+using System.Data;
 
 namespace Perpetuum.RequestHandlers.AdminTools
 {
@@ -26,18 +27,14 @@ namespace Perpetuum.RequestHandlers.AdminTools
                 CampaignId = "{\"host\":\"tooladmin\"}"
             };
 
-            if (_accountRepository.Get(account.Email,account.Password) != null)
+            //If email exists - throw error
+            if (_accountRepository.Get(account.Email, account.Password) != null)
             {
                 Message.Builder.FromRequest(request).WithError(ErrorCodes.AccountAlreadyExists).Send();
                 return;
             }
 
             _accountRepository.Insert(account);
-
-            Db.Query().CommandText("extensionPointsInject")
-                .SetParameter("@accountID", account.Id)
-                .SetParameter("@points", 40000)
-                .ExecuteNonQuery();
 
             Message.Builder.FromRequest(request).SetData(k.account, account.ToDictionary()).Send();
         }

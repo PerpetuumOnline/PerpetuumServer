@@ -116,6 +116,15 @@ namespace Perpetuum.Accounting
             return CreateAccountFromRecord(record);
         }
 
+        public Account Get(string email)
+        {
+            var record = Db.Query("select * from accounts where email = @email")
+                                .SetParameter("email", email)
+                                .ExecuteSingleRow();
+
+            return CreateAccountFromRecord(record);
+        }
+
         public Account Get(string email, string password)
         {
             var record = Db.Query("select * from accounts where email = @email and password = @password")
