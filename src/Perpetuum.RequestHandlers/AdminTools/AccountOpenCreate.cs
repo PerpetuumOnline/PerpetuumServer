@@ -31,6 +31,17 @@ namespace Perpetuum.RequestHandlers.AdminTools
                 throw new PerpetuumException(ErrorCodes.MaxIterationsExceeded);
             }
 
+            //If email is not a well-formed email, reject this creation attempt
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+            }
+            catch
+            {
+                //TODO: Client Fixme - Client needs good error code for bad-email input
+                throw new PerpetuumException(ErrorCodes.InvalidAttribute);
+            }
+
             var account = new Account
             {
                 Email = email,
