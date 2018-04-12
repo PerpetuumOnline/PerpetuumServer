@@ -1188,8 +1188,9 @@ namespace Perpetuum
 
 
         public const string email = "email";
+        public const string emailConfirmed = "emailConfirmed";
 
-       
+
         //minerals
         public const string titan = "titan";
         public const string crude = "crude";

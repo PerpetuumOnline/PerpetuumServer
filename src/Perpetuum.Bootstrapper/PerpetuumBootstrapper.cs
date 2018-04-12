@@ -1678,6 +1678,7 @@ namespace Perpetuum.Bootstrapper
             RegisterRequestHandler<SignInSteam>(Commands.SignInSteam);
             RegisterRequestHandler<SignOut>(Commands.SignOut);
             RegisterRequestHandler<SteamListAccounts>(Commands.SteamListAccounts);
+            RegisterRequestHandler<AccountConfirmEmail>(Commands.AccountConfirmEmail);
             RegisterRequestHandler<CharacterList>(Commands.CharacterList);
             RegisterRequestHandler<CharacterCreate>(Commands.CharacterCreate);
             RegisterRequestHandler<CharacterSelect>(Commands.CharacterSelect);

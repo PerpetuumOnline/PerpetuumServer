@@ -47,6 +47,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountConfirmEmail.cs" />
     <Compile Include="AccountEpForActivityHistory.cs" />
     <Compile Include="AccountGetTransactionHistory.cs" />
     <Compile Include="AccountList.cs" />

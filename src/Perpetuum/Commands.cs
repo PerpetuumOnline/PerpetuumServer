@@ -5399,6 +5399,16 @@ namespace Perpetuum
             }
         };
 
+        // confirm email for account. From GM interface.
+        public static readonly Command AccountConfirmEmail = new Command
+        {
+            Text = "accountConfirmEmail",
+            AccessLevel = AccessLevel.admin,
+            Arguments =
+            {
+                new Argument<int>(k.accountID)
+            }
+        };
 
         // ban account and disconnect if online
         //

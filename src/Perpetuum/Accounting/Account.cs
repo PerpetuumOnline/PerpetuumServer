@@ -1,3 +1,4 @@
+using Perpetuum.Data;
 using System;
 using System.Collections.Generic;
 
@@ -40,6 +41,7 @@ namespace Perpetuum.Accounting
                     {k.isEarlyAccess,false},
                     {k.validUntil, ValidUntil},
                     {k.email,Email},
+                    {k.emailConfirmed, EmailConfirmed },
                     {k.credit,Credit},
                     {"twitchAuthToken",TwitchAuthToken},
                     {k.banLength, (int)BanLength.TotalSeconds },
@@ -48,6 +50,18 @@ namespace Perpetuum.Accounting
                 };
 
             return dictionary;
+        }
+
+        /// <summary>
+        /// Force confirmation of an email address in the database.
+        /// </summary>
+        public void ForceConfirmEmail()
+        {
+            Db.Query().CommandText("UPDATE accounts SET EmailConfirmed = 1 WHERE accountID = @id")
+                .SetParameter("@id", this.Id)
+                .ExecuteNonQuery();
+
+            this.EmailConfirmed = true;
         }
     }
 }
