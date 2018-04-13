@@ -28,6 +28,11 @@ namespace Perpetuum.RequestHandlers
             if (account == null)
                 throw new PerpetuumException(ErrorCodes.NoSuchUser);
 
+            if (_relayStateService.State.Equals(RelayState.OpenForAdminsOnly) && !account.AccessLevel.IsAdminOrGm())
+            {
+                throw new PerpetuumException(ErrorCodes.RelayIsClosedForPublic);
+            }
+
             // ignored in standalone
             //account.EmailConfirmed.ThrowIfFalse(ErrorCodes.EmailNotConfirmed);
             request.Session.SteamBuild = request.Data.GetOrDefault<int>(k.steambuildid);
