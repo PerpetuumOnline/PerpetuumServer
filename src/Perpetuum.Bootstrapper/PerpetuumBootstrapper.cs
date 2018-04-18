@@ -270,7 +270,6 @@ namespace Perpetuum.Bootstrapper
             Logger.Info($"GC Latency mode: {GCSettings.LatencyMode}");
             Logger.Info($"Vector is hardware accelerated: {Vector.IsHardwareAccelerated}");
 
-            Db.TransactionScopeFactory = _container.Resolve<Func<TransactionScope>>();
             Db.DbQueryFactory = _container.Resolve<Func<DbQuery>>();
 
             using (var connection = _container.Resolve<DbConnectionFactory>()()) { Logger.Info($"Database: {connection.Database}"); }
@@ -548,15 +547,7 @@ namespace Perpetuum.Bootstrapper
 
             _builder.RegisterType<DbQuery>();
 
-            _builder.Register(x =>
-            {
-                return new TransactionScope(TransactionScopeOption.Required, new TransactionOptions
-                {
-                    IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted
-                });
-            });
-
-
+            
             _builder.RegisterType<SparkTeleport>();
 
             _builder.RegisterType<ExtensionReader>().As<IExtensionReader>().SingleInstance();
