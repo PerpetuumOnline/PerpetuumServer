@@ -191,7 +191,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
             newProduction.resultDefinition = cprgDefiniton;
             newProduction.totalProductionTimeSeconds = researchTimeSeconds;
             newProduction.baseEID = Parent;
-            newProduction.pricePerSecond = GetPricePerSecond();
+            newProduction.pricePerSecond = GetPricePerSecond(sourceItem.Definition);
             newProduction.ReservedEids = (from i in itemsList select i.Eid).ToArray();
             newProduction.useCorporationWallet = useCorporationWallet;
             newProduction.amountOfCycles = 1;
@@ -403,7 +403,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
 
             researchTimeSeconds = GetShortenedProductionTime(researchTimeSeconds);
 
-            var price = missionRelated ? 0.0 : researchTimeSeconds * GetPricePerSecond();
+            var price = missionRelated ? 0.0 : researchTimeSeconds * GetPricePerSecond(targetDefinition);
 
             ProductionDataAccess.GetCalibrationDefault(outputDefinition, out int materialEfficiency, out int timeEfficiency);
 
@@ -421,7 +421,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
             //calculate nominal
             var nominalResearchTimeSeconds = CalculateNominalResearchTimeSeconds(character, itemResearchLevel.researchLevel);
 
-            var nominalPrice = missionRelated ? 0.0 : nominalResearchTimeSeconds * GetPricePerSecond();
+            var nominalPrice = missionRelated ? 0.0 : nominalResearchTimeSeconds * GetPricePerSecond(targetDefinition);
 
             ProductionDataAccess.GetCalibrationDefault(outputDefinition, out int nominalMaterialEfficiency, out int nominalTimeEfficiency);
 

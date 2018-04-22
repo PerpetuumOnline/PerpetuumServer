@@ -34,10 +34,11 @@ namespace Perpetuum.Services.Channels
 
         public void Update(Channel channel)
         {
-            Db.Query().CommandText("update channels set topic = @topic,password = @password where id = @channelid")
+            Db.Query().CommandText("update channels set topic = @topic, password = @password, type=@type where id = @channelid")
                 .SetParameter("@topic", channel.Topic)
                 .SetParameter("@password", channel.Password)
-                .SetParameter("@channelid",channel.Id)
+                .SetParameter("@type", channel.Type)
+                .SetParameter("@channelid",channel.Id)                
                 .ExecuteNonQuery().ThrowIfEqual(0, ErrorCodes.SQLUpdateError);
         }
 

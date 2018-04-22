@@ -115,8 +115,6 @@ namespace Perpetuum.RequestHandlers.Standings
                             .ToCorporation(targetCorporation, roleMask)
                             .Send();
                     }
-
-                    return;
                 }
 
                 Message.Builder.FromRequest(request)

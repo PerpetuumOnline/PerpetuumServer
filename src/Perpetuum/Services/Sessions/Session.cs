@@ -27,9 +27,16 @@ namespace Perpetuum.Services.Sessions
         bool IsAuthenticated { get; }
         Character Character { get; }
         AccessLevel AccessLevel { get; }
+        IZoneManager ZoneMgr { get; }
+        bool AccountCreatedInSession { get; set; }
+        string ClientVersion { get; set; }
+        int SteamBuild { get; set; }
 
         void SendMessage(MessageBuilder builder);
         void SendMessage(IMessage message);
+        // to expose these to our chat command interface.
+        IRequest CreateLocalRequest(string data);
+        void HandleLocalRequest(IRequest request);
 
         void Start();
 
@@ -88,6 +95,8 @@ namespace Perpetuum.Services.Sessions
         }
 
         public AccessLevel AccessLevel => _accessLevel;
+        public string ClientVersion { get; set; } = string.Empty;
+        public int SteamBuild { get; set; } = 0;
 
         private bool SafeLogOut { get; set; }
 
@@ -99,6 +108,14 @@ namespace Perpetuum.Services.Sessions
         public void Start()
         {
             _connection.Receive();
+        }
+
+        public IZoneManager ZoneMgr
+        {
+            get
+            {
+                return _zoneManager;
+            }
         }
 
         public SessionID Id { get; private set; }
@@ -120,6 +137,11 @@ namespace Perpetuum.Services.Sessions
         public event SessionEventHandler Disconnected;
 
         public event SessionEventHandler RsaKeyReceived;
+        
+        /// <summary>
+        /// mitigate account creation spam. now must disconnect before trying to make another account.
+        /// </summary>
+        public bool AccountCreatedInSession { get; set; }
 
         public void SendMessage(MessageBuilder messageBuilder)
         {
@@ -312,6 +334,11 @@ namespace Perpetuum.Services.Sessions
             }
         }
 
+        public void HandleLocalRequest(IRequest request)
+        {
+            HandleRequest(request);
+        }
+
         private void HandleRequest(IRequest request)
         {
             if (request is IZoneRequest zoneRequest)
@@ -326,6 +353,11 @@ namespace Perpetuum.Services.Sessions
 
             var requestHandler = _requestHandlerFactory(request.Command);
             requestHandler.HandleRequest(request);
+        }
+
+        public IRequest CreateLocalRequest(string data)
+        {
+            return CreateRequest(data);
         }
 
         private IRequest CreateRequest(string data)

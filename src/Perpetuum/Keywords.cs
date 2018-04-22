@@ -154,6 +154,7 @@ namespace Perpetuum
         public const string clear = "clear";
         public const string client = "client";
         public const string clientID = "clientID";
+        public const string clientver = "clientVer";
         public const string clockOffset = "clockOffset";
         public const string clockStart = "clockStart";
         public const string clockStop = "clockStop";
@@ -366,6 +367,7 @@ namespace Perpetuum
         public const string extensionLevelRequired = "extensionLevelRequired";
         public const string extensionRemoveAllowed = "extensionRemoveAllowed";
         public const string extra = "extra";
+        public const string extrapoints = "extrapoints";
         public const string extractionType = "extractionType";
         public const string fails = "fails";
         public const string far = "far";
@@ -998,6 +1000,7 @@ namespace Perpetuum
         public const string startedBy = "startedBy";
         public const string startTime = "startTime";
         public const string state = "state";
+        public const string steambuildid = "steamBuildId";
         public const string steps = "steps";
         public const string structureEid = "structureEid";
         public const string sub = "sub";
@@ -1185,8 +1188,9 @@ namespace Perpetuum
 
 
         public const string email = "email";
+        public const string emailConfirmed = "emailConfirmed";
 
-       
+
         //minerals
         public const string titan = "titan";
         public const string crude = "crude";

@@ -14,7 +14,7 @@ namespace Perpetuum.Zones.Teleporting.Strategies
 {
     public class TrainingExitStrategy : ITeleportStrategy
     {
-        private const double CHARACTER_START_CREDIT = 20000;
+        private const double CHARACTER_START_CREDIT = 500000; //TODO: move to DB
         private const int MAX_REWARD_LEVEL = 4;
 
         private readonly TeleportDescription _description;
@@ -26,7 +26,7 @@ namespace Perpetuum.Zones.Teleporting.Strategies
 
         public delegate TrainingExitStrategy Factory(TeleportDescription description);
 
-        public TrainingExitStrategy(TeleportDescription description,ITrainingRewardRepository trainingRewardRepository,IChannelManager channelManager,CharacterCleaner characterCleaner,SparkHelper sparkHelper)
+        public TrainingExitStrategy(TeleportDescription description, ITrainingRewardRepository trainingRewardRepository, IChannelManager channelManager, CharacterCleaner characterCleaner, SparkHelper sparkHelper)
         {
             _description = description;
             _trainingRewardRepository = trainingRewardRepository;
@@ -43,6 +43,9 @@ namespace Perpetuum.Zones.Teleporting.Strategies
 
         public void DoTeleport(Player player)
         {
+            //Throw if email not confirmed
+            player.Character.GetAccount().EmailConfirmed.ThrowIfFalse(ErrorCodes.EmailNotConfirmed);
+
             player.States.Dock = true;
 
             var character = player.Character;
@@ -53,7 +56,7 @@ namespace Perpetuum.Zones.Teleporting.Strategies
 
             var info = GetCharacterWizardInfo();
 
-            var newCorporation = DefaultCorporation.GetBySchool(info.raceId,info.schoolId);
+            var newCorporation = DefaultCorporation.GetBySchool(info.raceId, info.schoolId);
             oldCorporation.RemoveMember(character);
             newCorporation.AddMember(character, CorporationRole.NotDefined, oldCorporation);
 
@@ -71,7 +74,9 @@ namespace Perpetuum.Zones.Teleporting.Strategies
             var sparkToActivate = _sparkHelper.ConvertCharacterWizardSparkIdToSpark(info.sparkId);
             _sparkHelper.ActivateSpark(character, sparkToActivate);
 
-            var dockingBase = newCorporation.GetDockingBase();
+            //Grab TM-UAS docking base for New Virginia
+            var hardCodeTMACorp = DefaultCorporation.GetBySchool(1, 1);
+            var dockingBase = hardCodeTMACorp.GetDockingBase();
             dockingBase.CreateStarterRobotForCharacter(character, true);
             dockingBase.DockIn(character, TimeSpan.Zero, ZoneExitType.TrainingExitTeleport);
 
@@ -118,7 +123,7 @@ namespace Perpetuum.Zones.Teleporting.Strategies
             public int schoolId;
             public int sparkId;
 
-            public CharacterWizardInfo(int raceId,int schoolId,int majorId,int sparkId) : this()
+            public CharacterWizardInfo(int raceId, int schoolId, int majorId, int sparkId) : this()
             {
                 this.majorId = majorId;
                 this.raceId = raceId;

@@ -116,7 +116,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
             productionInProgress.character = character;
             productionInProgress.facilityEID = Eid;
             productionInProgress.finishTime = DateTime.Now.AddSeconds(prototypeTimeSeconds);
-            productionInProgress.pricePerSecond = GetPricePerSecond();
+            productionInProgress.pricePerSecond = GetPricePerSecond(productionDescription.GetPrototypeDefinition());
             productionInProgress.ReservedEids = reservedEids;
             productionInProgress.resultDefinition = productionDescription.GetPrototypeDefinition();
             productionInProgress.startTime = DateTime.Now;
@@ -160,9 +160,9 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
         }
 
 
-        public long CalculatePrototypePrice(int prototypeTime)
+        public long CalculatePrototypePrice(int prototypeTime, int targetDefinition)
         {
-            return (int) (GetPricePerSecond()*prototypeTime);
+            return (int) (GetPricePerSecond(targetDefinition) * prototypeTime);
         }
 
 

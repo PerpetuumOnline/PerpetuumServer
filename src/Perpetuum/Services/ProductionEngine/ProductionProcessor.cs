@@ -278,22 +278,23 @@ namespace Perpetuum.Services.ProductionEngine
        
         private int CalculateEp(ProductionFacility facility, ProductionInProgress productionInProgress)
         {
-
-            
-            var ep = Math.Ceiling(productionInProgress.TotalProductionTime.TotalHours );
-
-            // dev cheat
-            if (productionInProgress.character.AccessLevel.IsAdminOrGm())
-            {
-                ep = Math.Ceiling(productionInProgress.TotalProductionTime.TotalSeconds);
-            }
-
             var dockingBase = facility.GetDockingBase();
             if (dockingBase.Zone is TrainingZone)
+            {
                 return 0;
-
+            }
+                
+            var ep = productionInProgress.TotalProductionTime.TotalHours;
             if (dockingBase.Zone.Configuration.IsBeta)
+            {
                 ep *= BETA_EP_MULTIPLIER;
+            }
+            
+            //For <1hr jobs, give EP at a rate that would equate to 1 per hour
+            if (ep < 1 && FastRandom.NextDouble() < ep)
+            {
+                ep = 1;
+            }
 
             return (int) ep;
         }
@@ -849,7 +850,7 @@ namespace Perpetuum.Services.ProductionEngine
 
             var facilityInfo = prototyper.GetFacilityInfo(character);
             var prototypeTimeSeconds = prototyper.CalculatePrototypeTimeSeconds(character, targetDefinition);
-            var price = prototyper.CalculatePrototypePrice(prototypeTimeSeconds);
+            var price = prototyper.CalculatePrototypePrice(prototypeTimeSeconds, targetDefinition);
             bool hasBonus;
             var materialMultiplier = prototyper.CalculateMaterialMultiplier(character, targetDefinition, out hasBonus);
             var materials = ProductionDescription.GetRequiredComponentsInfo(  ProductionInProgressType.prototype, 1, materialMultiplier, productionDescription.Components.ToList());

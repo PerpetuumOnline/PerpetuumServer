@@ -520,6 +520,19 @@ namespace Perpetuum
             }
         };
 
+        public static readonly Command MovePlayer = new Command
+        {
+            Text = "movePlayer",
+            AccessLevel = AccessLevel.admin,
+            Arguments =
+            {
+                new Argument<int>(k.characterID),
+                new Argument<int>(k.zoneID),
+                new Argument<int>(k.x),
+                new Argument<int>(k.y)
+            }
+        };
+
         public static readonly Command MissionTargetUpdate = new Command
         {
             Text = "missionTargetUpdate",
@@ -939,6 +952,21 @@ namespace Perpetuum
                 new Argument<string>(k.body),
                 new Argument<int>(k.type),
                 new Argument<int>(k.language)
+            }
+        };
+
+        public static readonly Command UpdateNews = new Command
+        {
+            Text = "updateNews",
+            AccessLevel = AccessLevel.admin,
+            Arguments =
+            {
+                new Argument<string>(k.title),
+                new Argument<string>(k.body),
+                new Argument<int>(k.type),
+                new Argument<int>(k.language),
+                new Argument<int>(k.ID),
+                new Argument<DateTime>(k.time)
             }
         };
 
@@ -2632,6 +2660,16 @@ namespace Perpetuum
             AccessLevel = AccessLevel.normal
         };
 
+        public static readonly Command ForceDockAdmin = new Command
+        {
+            Text = "forceDockAdmin",
+            AccessLevel = AccessLevel.admin,
+            Arguments =
+            {
+                new Argument<int>(k.characterID)
+            }
+        };
+
         public static readonly Command ZoneSaveLayer = new Command
         {
             Text = "zoneSaveLayer",
@@ -2776,6 +2814,12 @@ namespace Perpetuum
         public static readonly Command GetEnums = new Command
         {
             Text = "getEnums",
+            AccessLevel = AccessLevel.notDefined
+        };
+
+        public static readonly Command GetCommands = new Command
+        {
+            Text = "getCommands",
             AccessLevel = AccessLevel.notDefined
         };
 
@@ -3209,6 +3253,12 @@ namespace Perpetuum
         {
             Text = "channelList",
             AccessLevel = AccessLevel.normal
+        };
+
+        public static readonly Command ChannelListAll = new Command
+        {
+            Text = "channelListAll",
+            AccessLevel = AccessLevel.admin
         };
 
         public static readonly Command ChannelMyList = new Command
@@ -4153,7 +4203,7 @@ namespace Perpetuum
         public static readonly Command AccountList = new Command
         {
             Text = "accountList",
-            AccessLevel = AccessLevel.toolAdmin
+            AccessLevel = AccessLevel.admin
         };
 
         public static readonly Command AccountGetTransactionHistory = new Command
@@ -4486,7 +4536,7 @@ namespace Perpetuum
         public static readonly Command ZoneSelfDestruct = new Command
         {
             Text = "zoneSelfDestruct",
-            AccessLevel = AccessLevel.normal
+            AccessLevel = AccessLevel.admin
         };
 
         public static readonly Command ZoneGetBuildings = new Command
@@ -5257,13 +5307,19 @@ namespace Perpetuum
         public static readonly Command GetAccountsWithCharacters = new Command
         {
             Text = "getAccountsWithCharacters",
-            AccessLevel = AccessLevel.toolAdmin,
+            AccessLevel = AccessLevel.admin,
+        };
+
+        public static readonly Command GetCharactersOnline = new Command
+        {
+            Text = "getCharactersOnline",
+            AccessLevel = AccessLevel.admin,
         };
 
         public static readonly Command AccountGet = new Command
         {
             Text = "accountGet",
-            AccessLevel = AccessLevel.toolAdmin,
+            AccessLevel = AccessLevel.admin,
             Arguments =
             {
                 new Argument<int>(k.accountID)
@@ -5282,6 +5338,12 @@ namespace Perpetuum
             {
                 new Argument<int>(k.accountID)
             }
+        };
+
+        public static readonly Command ReimburseItem = new Command
+        {
+            Text = "ReimburseItem",
+            AccessLevel = AccessLevel.admin
         };
 
         // creates an account from the tool. 
@@ -5337,13 +5399,23 @@ namespace Perpetuum
             }
         };
 
+        // confirm email for account. From GM interface.
+        public static readonly Command AccountConfirmEmail = new Command
+        {
+            Text = "accountConfirmEmail",
+            AccessLevel = AccessLevel.admin,
+            Arguments =
+            {
+                new Argument<int>(k.accountID)
+            }
+        };
 
         // ban account and disconnect if online
         //
         public static readonly Command AccountBan = new Command
         {
             Text = "accountBan",
-            AccessLevel = AccessLevel.toolAdmin,
+            AccessLevel = AccessLevel.admin,
             Arguments =
             {
                 new Argument<int>(k.accountID),
@@ -5354,7 +5426,7 @@ namespace Perpetuum
         public static readonly Command AccountUnban = new Command
         {
             Text = "accountUnban",
-            AccessLevel = AccessLevel.toolAdmin,
+            AccessLevel = AccessLevel.admin,
             Arguments =
             {
                 new Argument<int>(k.accountID),

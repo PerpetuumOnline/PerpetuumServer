@@ -6,7 +6,6 @@ namespace Perpetuum.Data
 {
     public sealed class Db
     {
-        public static Func<TransactionScope> TransactionScopeFactory { get; set; }
         public static Func<DbQuery> DbQueryFactory { get; set; }
 
         public static DbQuery Query()
@@ -33,7 +32,10 @@ namespace Perpetuum.Data
 
         public static TransactionScope CreateTransaction()
         {
-            return TransactionScopeFactory();
+            return new TransactionScope(TransactionScopeOption.Required, new TransactionOptions
+            {
+                IsolationLevel = IsolationLevel.ReadCommitted
+            });
         }
     }
 }

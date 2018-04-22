@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -25,16 +26,17 @@ namespace Perpetuum.RequestHandlers.Zone.StatsMapDrawing
 {
     public partial class ZoneDrawStatMap : IRequestHandler<IZoneRequest>
     {
-        private readonly IZone _zone;
+        private IZone _zone;
         private readonly IFileSystem _fileSystem;
+        private IRequest _request;
         private readonly SaveBitmapHelper _saveBitmapHelper;
         private readonly MissionDataCache _missionDataCache;
         private readonly Dictionary<string, Action<IRequest>> _actions = new Dictionary<string, Action<IRequest>>();
         private string _typeString;
+        private bool _sendtoclient;
 
-        public ZoneDrawStatMap(IZone zone,IFileSystem fileSystem,SaveBitmapHelper saveBitmapHelper,MissionDataCache missionDataCache)
+        public ZoneDrawStatMap(IFileSystem fileSystem,SaveBitmapHelper saveBitmapHelper,MissionDataCache missionDataCache)
         {
-            _zone = zone;
             _fileSystem = fileSystem;
             _saveBitmapHelper = saveBitmapHelper;
             _missionDataCache = missionDataCache;
@@ -47,6 +49,7 @@ namespace Perpetuum.RequestHandlers.Zone.StatsMapDrawing
             RegisterCreator("decorblock", CreateDecorBlockingMap);
             RegisterCreator("electroplant", CreateElectroPlantMap);
             RegisterCreator("structures", CreateStructuresMap);
+            RegisterCreator("players", CreatePlayersMap);
             RegisterCreator("wall", CreateWallMap);
             RegisterCreator("wallpossible", CreateWallPossibleMap);
             RegisterCreator("wallplaces", CreateWallPlaces);
@@ -73,7 +76,7 @@ namespace Perpetuum.RequestHandlers.Zone.StatsMapDrawing
             _actions[type] = (r) => CreateAndSave(type, bitmapFactory);
         }
 
-        private void CreateAndSave(string postfix,Func<Bitmap> bitmapFactory)
+        private void CreateAndSave(string postfix, Func<Bitmap> bitmapFactory)
         {
             var bmp = bitmapFactory();
             if (bmp == null)
@@ -81,13 +84,30 @@ namespace Perpetuum.RequestHandlers.Zone.StatsMapDrawing
 
             bmp.WithGraphics(g => g.DrawString(_zone.Configuration.Name, new Font("Tahoma", 20), Brushes.Red, new PointF(10, 10)));
             var fileName = "stat_" + postfix;
-            _saveBitmapHelper.SaveBitmap(_zone,bmp,fileName );
+
+            if (_sendtoclient) // send to client.
+            {
+                using (var ms = new MemoryStream())
+                {
+                    bmp.Save(ms, ImageFormat.Png);
+                    var Base64 = Convert.ToBase64String(ms.GetBuffer());
+                    Message.Builder.FromRequest(_request).SetData("name", fileName).SetData("img", Base64).Send();
+                }
+            }
+            else // save locally.
+            {
+                _saveBitmapHelper.SaveBitmap(_zone, bmp, fileName);
+            }
         }
 
         public void HandleRequest(IZoneRequest request)
         {
+            _zone = request.Zone;
+            _request = request;
             var type = request.Data.GetOrDefault<string>(k.type);
+            bool sendtoclient = request.Data.GetOrDefault<int>("sendtoclient").ToBool();
             _typeString = type; //save for later use
+            _sendtoclient = sendtoclient;
 
             var action = _actions.GetOrDefault(type);
             if (action != null)
@@ -130,6 +150,86 @@ namespace Perpetuum.RequestHandlers.Zone.StatsMapDrawing
                     case "targetlog":
                     {
                         DrawMissionTargetLog(request);
+                        break;
+                    }
+                    case "PlantBonsai":
+                    {
+                        CreatePlantMap(PlantType.Bonsai);
+                        break;
+                    }
+                    case "PlantBushA":
+                    {
+                        CreatePlantMap(PlantType.BushA);
+                        break;
+                    }
+                    case "PlantBushB":
+                    {
+                        CreatePlantMap(PlantType.BushB);
+                        break;
+                    }
+                    case "PlantDevrinol":
+                    {
+                        CreatePlantMap(PlantType.Devrinol);
+                        break;
+                    }
+                    case "PlantGrassA":
+                    {
+                        CreatePlantMap(PlantType.GrassA);
+                        break;
+                    }
+                    case "PlantGrassB":
+                    {
+                        CreatePlantMap(PlantType.GrassB);
+                        break;
+                    }
+                    case "PlantNanoWheat":
+                    {
+                        CreatePlantMap(PlantType.NanoWheat);
+                        break;
+                    }
+                    case "PlantPineTree":
+                    {
+                        CreatePlantMap(PlantType.PineTree);
+                        break;
+                    }
+                    case "PlantPoffeteg":
+                    {
+                        CreatePlantMap(PlantType.Poffeteg);
+                        break;
+                    }
+                    case "PlantQuag":
+                    {
+                        CreatePlantMap(PlantType.Quag);
+                        break;
+                    }
+                    case "PlantRango":
+                    {
+                        CreatePlantMap(PlantType.Rango);
+                        break;
+                    }
+                    case "PlantReed":
+                    {
+                        CreatePlantMap(PlantType.Reed);
+                        break;
+                    }
+                    case "PlantRustBush":
+                    {
+                        CreatePlantMap(PlantType.RustBush);
+                        break;
+                    }
+                    case "PlantSlimeRoot":
+                    {
+                        CreatePlantMap(PlantType.SlimeRoot);
+                        break;
+                    }
+                    case "PlantTitanPlant":
+                    {
+                        CreatePlantMap(PlantType.TitanPlant);
+                        break;
+                    }
+                    case "PlantTreeIron":
+                    {
+                        CreatePlantMap(PlantType.TreeIron);
                         break;
                     }
                 }
@@ -219,8 +319,25 @@ namespace Perpetuum.RequestHandlers.Zone.StatsMapDrawing
             });
         }
 
+        private Bitmap CreatePlayersMap()
+        {
+            return CreateAltitudeBitmap().WithGraphics(g =>
+            {
+                foreach (var unit in _zone.GetCharacters())
+                {
+                    var size = 12;
+                    var pen = Pens.Red;
 
+                    var x = unit.GetPlayerRobotFromZone().CurrentPosition.intX - (size / 2);
+                    var y = unit.GetPlayerRobotFromZone().CurrentPosition.intY - (size / 2);
 
+                    g.DrawEllipse(pen, x, y, size, size);
+                    const int width = 4;
+                    g.DrawEllipse(Pens.BlueViolet, x, y, width, width);
+                    g.DrawString(unit.Nick, new Font("Tahoma", 12), Brushes.Red, x + 10, y + 10);
+                }
+            });
+        }
 
         private Bitmap CreateNPCMap()
         {
@@ -236,7 +353,7 @@ namespace Perpetuum.RequestHandlers.Zone.StatsMapDrawing
             foreach (var presence in _zone.PresenceManager.GetPresences().OfType<RoamingPresence>())
             {
                 graphics.DrawRectangle(Pens.Blue, presence.Area.X1, presence.Area.Y1, presence.Area.Width, presence.Area.Height);
-                graphics.DrawString(presence.Configuration.name, new Font("Tahoma", 8), Brushes.White, presence.Area.X1, presence.Area.Y1);
+                graphics.DrawString(presence.Configuration.name, new Font("Tahoma", 8), Brushes.Red, presence.Area.X1, presence.Area.Y1);
             }
         }
 
@@ -254,6 +371,7 @@ namespace Perpetuum.RequestHandlers.Zone.StatsMapDrawing
 
                 graphics.DrawEllipse(Pens.BlueViolet, txSpawnMax, tySpawnMax, widthSpawnMax, widthSpawnMax);
                 graphics.DrawEllipse(Pens.Red, txHomeRange, tyHomeRange, widthHome, widthHome);
+                graphics.DrawString(flock.Configuration.Name, new Font("Tahoma", 10), Brushes.Red, txSpawnMax, tySpawnMax);
             }
         }
 
@@ -308,6 +426,28 @@ namespace Perpetuum.RequestHandlers.Zone.StatsMapDrawing
                 var plantInfo = _zone.Terrain.Plants.GetValue(x, y);
 
                 if (plantInfo.type != PlantType.ElectroPlant)
+                    return;
+
+                var r = ((255 / 5) * (plantInfo.state)).Clamp(0, 255);
+                var color = Color.FromArgb(255, r, 128, 0);
+
+                if (plantInfo.state == 0)
+                {
+                    color = Color.FromArgb(255, 255, 0, 30);
+                }
+
+                bmp.SetPixel(x, y, color);
+            });
+
+        }
+
+        private Bitmap CreatePlantMap(PlantType plantType)
+        {
+            return CreateAltitudeBitmap().ForEach((bmp, x, y) =>
+            {
+                var plantInfo = _zone.Terrain.Plants.GetValue(x, y);
+
+                if (plantInfo.type != plantType)
                     return;
 
                 var r = ((255 / 5) * (plantInfo.state)).Clamp(0, 255);

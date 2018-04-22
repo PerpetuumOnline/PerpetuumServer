@@ -39,8 +39,8 @@ namespace Perpetuum.Services.Looting
 
             foreach (var loot in loots)
             {
-                var item = new ItemInfo(loot.itemDefinition,FastRandom.NextInt(loot.quantity));
-                yield return new LootGeneratorItemInfo(item,false,loot.probability);
+                var item = new ItemInfo(loot.itemDefinition, loot.quantity.Min, loot.quantity.Max); //roll random on init
+                yield return new LootGeneratorItemInfo(item, false, loot.probability);
             }
         }
 
@@ -73,7 +73,7 @@ namespace Perpetuum.Services.Looting
             var definition = record.GetValue<int>(k.lootDefinition.ToLower());
             var minq = record.GetValue<int>("minquantity");
             var maxq = record.GetValue<int>(k.quantity);
-            var item = new ItemInfo(definition, FastRandom.NextInt(minq, maxq))
+            var item = new ItemInfo(definition, minq, maxq)
             {
                 IsRepackaged = record.GetValue<bool>(k.repackaged)
             };

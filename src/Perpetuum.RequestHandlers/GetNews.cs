@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Perpetuum.Data;
 using Perpetuum.Host.Requests;
 
@@ -11,8 +12,19 @@ namespace Perpetuum.RequestHandlers
         {
             var newsAmount = request.Data.GetOrDefault<int>(k.amount);
             var newsLanguage = request.Data.GetOrDefault<int>(k.language);
+            var all = request.Data.GetOrDefault<int>(k.all).ToBool();
 
-            var result = Db.Query().CommandText("select top(@amount) title,body,ntime,type,idx,language from news where language=@language or language=0 order by idx desc")
+            StringBuilder stringBuilder = new StringBuilder("select top(@amount) title, body, ntime, type, idx, language from news ");
+            if (all)
+            {
+                stringBuilder.Append("order by idx desc");
+            }
+            else
+            {
+                stringBuilder.Append("where language = @language or language = 0 order by idx desc");
+            }
+
+            var result = Db.Query().CommandText(stringBuilder.ToString())
                 .SetParameter("@amount", newsAmount)
                 .SetParameter("@language", newsLanguage)
                 .Execute()

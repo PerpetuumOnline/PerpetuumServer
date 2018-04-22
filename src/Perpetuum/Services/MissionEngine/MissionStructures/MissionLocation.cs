@@ -225,6 +225,12 @@ VALUES  ( @agentId,
          */
         public int GetRaceSpecificCoinDefinition()
         {
+            //TODO: Fixme: I am a hack for Syndicatification
+            if(this.zoneId==0 || this.zoneId == 8) //For New Virginia and Hershfield
+            {
+                return EntityDefault.GetByName(DefinitionNames.UNIVERSAL_MISSION_COIN).Definition;
+            }
+            //--end hack--
             switch (RaceId)
             {
                 case 1:

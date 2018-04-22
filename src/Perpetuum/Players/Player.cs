@@ -156,6 +156,7 @@ namespace Perpetuum.Players
         public long CorporationEid { get; set; }
         public IZoneSession Session { get; private set; }
         public Character Character { get; set; } = Character.None;
+        public bool HasGMStealth { get; set; }
 
         public void SetSession(IZoneSession session)
         {
@@ -315,8 +316,15 @@ namespace Perpetuum.Players
         public void ApplyInvulnerableEffect()
         {
             var builder = NewEffectBuilder().SetType(EffectType.effect_invulnerable);
+            builder.WithDurationModifier(0.75); //Reduce span of syndicate protection
             ApplyEffect(builder);
         }
+
+        public void RemoveInvulnerableEffect()
+        {
+            EffectHandler.RemoveEffectsByType(EffectType.effect_invulnerable);
+        }
+
 
         public void ApplyTeleportSicknessEffect()
         {
@@ -428,8 +436,8 @@ namespace Perpetuum.Players
             return Task.Run(() => HandlePlayerDead(zone, killer));
         }
 
-        public const int ARKHE_REQUEST_TIMER_MINUTES_PVP = 10;
-        public const int ARKHE_REQUEST_TIMER_MINUTES_NPC = 5;
+        public const int ARKHE_REQUEST_TIMER_MINUTES_PVP = 3;
+        public const int ARKHE_REQUEST_TIMER_MINUTES_NPC = 1;
 
 
         //ennek mindenkepp vegig kell futnia

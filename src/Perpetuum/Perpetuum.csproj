@@ -276,6 +276,7 @@
     <Compile Include="Rsa.cs" />
     <Compile Include="Selectors\ISelector.cs" />
     <Compile Include="Selectors\ModuloBasedSelector.cs" />
+    <Compile Include="Services\Channels\GameAdminCommands.cs" />
     <Compile Include="Services\MissionEngine\DisplayMissionSpotsProcess.cs" />
     <Compile Include="Services\MissionEngine\MissionResolveTester.cs" />
     <Compile Include="Services\MissionEngine\OneLocationTest.cs" />
@@ -841,6 +842,7 @@
     <Compile Include="Zones\Environments\EntityEnvironmentDescription.cs" />
     <Compile Include="Zones\Environments\IEnvironmentHandler.cs" />
     <Compile Include="Zones\Environments\ZoneEnvironmentHandler.cs" />
+    <Compile Include="Zones\StrongHoldZone.cs" />
     <Compile Include="Zones\Teleporting\TeleportDescriptionBuilder.cs" />
     <Compile Include="Zones\Teleporting\TeleportWorldTargetHelper.cs" />
     <Compile Include="Zones\Terrains\Materials\MaterialHelper.cs" />

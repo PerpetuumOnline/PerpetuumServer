@@ -14,6 +14,7 @@ using Perpetuum.Services.MissionEngine.MissionDataCacheObjects;
 using Perpetuum.Services.Standing;
 using Perpetuum.Units.DockingBases;
 using Perpetuum.Zones;
+using Perpetuum.Zones.Intrusion;
 
 namespace Perpetuum.Services.ProductionEngine.Facilities
 {
@@ -35,11 +36,24 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
         public MissionDataCache MissionDataCache { get; set; }
         public DockingBaseHelper DockingBaseHelper { get; set; }
         public ProductionInProgress.Factory ProductionInProgressFactory { get; set; }
-        public RobotHelper RobotHelper { protected get; set; }
+        public RobotHelper RobotHelper { protected get; set; }        
 
         public override string ToString()
         {
             return $"{ED.Name} {ED.Definition} {Eid}";
+        }
+        
+        private int GetFacilityBonus()
+        {
+            int modifier = 0;
+            var dockingbase = GetDockingBase();
+            if (dockingbase is Outpost)
+            {
+                ProductionFacility facility = (dockingbase as Outpost).GetProductionFacilities().Where(x => x.Eid == this.Eid).First();
+                int extrapts = facility.DynamicProperties.GetOrDefault<int>(k.extrapoints); //Entity-property for unique facility base-proficiencies
+                modifier = (Outpost.GetFacilityLevelFromStack(facility.Eid) + extrapts) * 25; //bonus per facility level
+            }
+            return modifier;
         }
 
         public virtual Dictionary<string, object> GetFacilityInfo(Character character)
@@ -137,7 +151,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
 
         protected virtual int GetFacilityPoint()
         {
-            return ED.Options.Points;
+            return ED.Options.Points + GetFacilityBonus();
         }
 
         protected int GetPercentageFromAdditiveComponent(int additiveComponent)
@@ -207,6 +221,14 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
         private int GetStandingPoints(Character character)
         {
             return (int)( GetStandingOfOwnerToCharacter(character)*20);
+        }
+
+        //Overload method for price/sec
+        public virtual double GetPricePerSecond(int targetDefinition)
+        {
+            var mod = Math.Max(1, ProductionDataAccess.GetProductionPriceModifier(targetDefinition));
+            mod = Math.Min(10, mod);
+            return GetPricePerSecond() * mod;
         }
 
         public virtual double GetPricePerSecond()

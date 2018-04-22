@@ -1444,6 +1444,15 @@ namespace Perpetuum.Services.MissionEngine.Missions
             double zoneFactor;
             GetFinalReward(out rewardSum, out distanceReward, out difficultyReward, out rewardByTargets, out riskCompensation, out zoneFactor);
 
+            //TODO expose parameter in DB
+            //Modify total reward by participants
+            //Clamp participant count to [1,MaxmimalGangParticipants]
+            double participantBonus = 0.025;
+            int participantCount = Math.Min(MaxmimalGangParticipants, Math.Max(1, participants.Count));
+            double participantModifier = 1 + participantCount * participantBonus;
+            rewardSum *= participantModifier;
+            //--End participantbonus multiplier--//
+
             paymentData.Add("totalReward", Math.Round(rewardSum));
             paymentData.Add("distanceReward", distanceReward);
             paymentData.Add("difficultyReward", difficultyReward);
@@ -2274,7 +2283,7 @@ namespace Perpetuum.Services.MissionEngine.Missions
         {
             if (myLocation.ZoneConfig.Type == ZoneType.Training) return 0;
             var missionLevel = MissionLevel;
-            if (missionLevel == 0) return 0; //level 0 missions ---> no ep
+            if (missionLevel == 0) return 1; //Change: level 0 -> 1ep
             if (missionLevel == -1) { missionLevel = 1; } //10 training missions
 
             var result = myMission.Targets.Count * Math.Pow(missionLevel, 0.5);

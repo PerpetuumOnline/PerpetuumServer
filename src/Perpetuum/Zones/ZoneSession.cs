@@ -279,6 +279,7 @@ namespace Perpetuum.Zones
             player.SetSession(this);
             player.SendInitSelf();
             player.ApplyTeleportSicknessEffect();
+            player.ApplyInvulnerableEffect();
 
             _player = player;
         }

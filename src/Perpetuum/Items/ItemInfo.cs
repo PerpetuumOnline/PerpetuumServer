@@ -6,10 +6,14 @@ namespace Perpetuum.Items
 {
     public struct ItemInfo : IEquatable<ItemInfo>
     {
-        public static readonly ItemInfo None = new ItemInfo(0);
+        public static readonly ItemInfo None = new ItemInfo(0,0);
 
         public int Definition { get; private set; }
         public int Quantity { get; set; }
+        // min/max quantity for loot generation
+        public int MinQty { get; set; }
+        public int MaxQty { get; set; }
+        //
         public float Health { get; set; }
         public bool IsRepackaged { get; set; }
 
@@ -19,6 +23,27 @@ namespace Perpetuum.Items
             Quantity = quantity;
             Health = (float) EntityDefault.Health;
             IsRepackaged = EntityDefault.AttributeFlags.Repackable;
+        }
+
+        // overload, accept min/max quantities for loot items.
+        public ItemInfo(int definition, int minq = 1, int maxq = 1) : this()
+        {
+            Definition = definition;
+            MinQty = minq;
+            MaxQty = maxq;
+            Quantity = this.randomQuantity(); //randomize quantity for min-max ranged loots on init
+            Health = (float)EntityDefault.Health;
+            IsRepackaged = EntityDefault.AttributeFlags.Repackable;
+        }
+
+        //Roll random
+        public int randomQuantity()
+        {
+            if(this.MinQty != this.MaxQty)
+            {
+                return FastRandom.NextInt(this.MinQty, this.MaxQty);
+            }
+            return this.MinQty;
         }
 
         public EntityDefault EntityDefault

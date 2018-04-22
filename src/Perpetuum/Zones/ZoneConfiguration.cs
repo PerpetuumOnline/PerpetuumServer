@@ -61,6 +61,7 @@ namespace Perpetuum.Zones
                     MaxPlayers = 10000,
                     MaxDockingBase = record.GetValue<int>("maxdockingbase"),
                     PlantAltitudeScale = record.GetValue<double>("plantaltitudescale"),
+                    Note = record.GetValue<string>("note"),
                 };
 
                 config.PlantRules = _plantRuleLoader.LoadPlantRulesWithOverrides(config.plantRuleSetId);
@@ -98,6 +99,7 @@ namespace Perpetuum.Zones
         public int MaxDockingBase { get; set; }
         public double PlantAltitudeScale { private get; set; }
         public int RaceId { get; set; }
+        public string Note { get; set; }
 
         public string ListenerAddress { get; set; }
         public int ListenerPort { get; set; }
@@ -126,7 +128,8 @@ namespace Perpetuum.Zones
                 {k.waterLevel, WaterLevel},
                 {k.type, (int) Type},
                 {k.sparkCost, SparkCost},
-                {k.maxDockingBase, MaxDockingBase}
+                {k.maxDockingBase, MaxDockingBase},
+                {k.note, Note }
             };
         }
 

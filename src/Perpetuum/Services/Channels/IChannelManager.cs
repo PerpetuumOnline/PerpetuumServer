@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Perpetuum.Accounting.Characters;
+using Perpetuum.Host.Requests;
 
 namespace Perpetuum.Services.Channels
 {
@@ -19,7 +20,7 @@ namespace Perpetuum.Services.Channels
         void SetMemberRole(string channelName, Character issuer, Character character, ChannelMemberRole role);
         void SetPassword(string channelName, Character issuer, string password);
         void SetTopic(string channelName, Character issuer, string topic);
-        void Talk(string channelName, Character sender, string message);
+        void Talk(string channelName, Character sender, string message, IRequest request);
         void KickOrBan(string channelName, Character issuer, Character character, string message, bool ban);
         void UnBan(string channelName, Character issuer, Character character);
 
@@ -27,5 +28,6 @@ namespace Perpetuum.Services.Channels
 
         IEnumerable<Channel> GetChannelsByMember(Character member);
         IEnumerable<Channel> GetPublicChannels();
+        IEnumerable<Channel> GetAllChannels();
     }
 }

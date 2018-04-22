@@ -1055,6 +1055,11 @@ namespace Perpetuum.Accounting.Characters
             return _zoneManager.Value.GetZone(ZoneId ?? -1);
         }
 
+        public IZone GetZone(int zoneiwant)
+        {
+            return _zoneManager.Value.GetZone(zoneiwant);
+        }
+
         public ZoneConfiguration GetCurrentZoneConfiguration()
         {
             return GetCurrentZone()?.Configuration ?? ZoneConfiguration.None;

@@ -68,7 +68,7 @@ namespace Perpetuum.Services.MissionEngine.Missions
 
         private double ZoneFactor
         {
-            get { return _missionInProgress.myLocation.ZoneConfig.IsAlpha ? 1 : 3; }
+            get { return _missionInProgress.myLocation.ZoneConfig.IsAlpha ? 1 : 2; }  //TODO: Beta multiplier!
         }
 
 
@@ -154,16 +154,16 @@ namespace Perpetuum.Services.MissionEngine.Missions
 
             // 0 -> 0.0   10 - > 1.0
             // 6 -> 0.6 --> 0.5*0.6 => positive x 30%
- 
-            var f = _missionInProgress.MissionLevel.Clamp(0, 9) / 9.0 ; 
-            
-            var negativeValue = -1 * (standingValue / 2) * f; //20% extension can reduce it to 10%
 
-            var positiveAllianceEid = _missionLocation.Agent.OwnerAlliance.Eid;
-            var opposingAllianceEid = DefaultCorporationDataCache.SelectOpposingAlliance(positiveAllianceEid);
+            //Implementation: Add reputation for all factions equally -- No factional bias!
+            IEnumerable<long> allianceEids = DefaultCorporationDataCache.GetMegaCorporationEids();
+            List<MissionStandingChange> standingChangeForSyndicatification = new List<MissionStandingChange>();
+            foreach(long id in allianceEids)
+            {
+                standingChangeForSyndicatification.Add(new MissionStandingChange(id, standingValue));
+            }
+            _standingChanges = standingChangeForSyndicatification.ToArray();
 
-            _standingChanges = new[] {new MissionStandingChange(positiveAllianceEid, standingValue), new MissionStandingChange(opposingAllianceEid, negativeValue) };
-           
         }
 
     }

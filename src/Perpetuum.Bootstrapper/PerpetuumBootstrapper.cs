@@ -218,6 +218,11 @@ namespace Perpetuum.Bootstrapper
             m.Shutdown(delay);
         }
 
+        public IContainer GetContainer()
+        {
+            return _container;
+        }
+
         public void WaitForStop()
         {
             var are = new AutoResetEvent(false);
@@ -265,7 +270,6 @@ namespace Perpetuum.Bootstrapper
             Logger.Info($"GC Latency mode: {GCSettings.LatencyMode}");
             Logger.Info($"Vector is hardware accelerated: {Vector.IsHardwareAccelerated}");
 
-            Db.TransactionScopeFactory = _container.Resolve<Func<TransactionScope>>();
             Db.DbQueryFactory = _container.Resolve<Func<DbQuery>>();
 
             using (var connection = _container.Resolve<DbConnectionFactory>()()) { Logger.Info($"Database: {connection.Database}"); }
@@ -283,7 +287,7 @@ namespace Perpetuum.Bootstrapper
             CorporationData.CorporationManager = _container.Resolve<ICorporationManager>();
 
             Character.CharacterFactory = _container.Resolve<CharacterFactory>();
-            Character.CharacterCache = _container.Resolve<Func<string, ObjectCache>>().Invoke("CharacterCache");
+            Character.CharacterCache = _container.Resolve<Func<string, ObjectCache>>().Invoke("CharacterCache");            
 
             MissionHelper.Init(_container.Resolve<MissionDataCache>(), _container.Resolve<IStandingHandler>());
             MissionHelper.MissionProcessor = _container.Resolve<MissionProcessor>();
@@ -349,6 +353,12 @@ namespace Perpetuum.Bootstrapper
 
             DefaultCorporationDataCache.LoadAll();
             _container.Resolve<MissionDataCache>().CacheMissionData();
+            // initialize our markets.
+            // this is dependent on all zones being loaded.
+            _container.Resolve<MarketHelper>().Init();
+            _container.Resolve<MarketHandler>().Init();
+
+
         }
 
         public bool TryInitUpnp(out bool success)
@@ -537,15 +547,7 @@ namespace Perpetuum.Bootstrapper
 
             _builder.RegisterType<DbQuery>();
 
-            _builder.Register(x =>
-            {
-                return new TransactionScope(TransactionScopeOption.Required, new TransactionOptions
-                {
-                    IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted
-                });
-            });
-
-
+            
             _builder.RegisterType<SparkTeleport>();
 
             _builder.RegisterType<ExtensionReader>().As<IExtensionReader>().SingleInstance();
@@ -554,7 +556,7 @@ namespace Perpetuum.Bootstrapper
 
             _builder.RegisterType<LootService>().As<ILootService>().SingleInstance().OnActivated(e => e.Instance.Init());
             _builder.RegisterType<ItemPriceHelper>().SingleInstance();
-            _builder.RegisterType<PriceCalculator>().SingleInstance();
+            _builder.RegisterType<PriceCalculator>(); // this doesn't appear to be something that should be a singleton.
 
 
             _builder.RegisterType<CharacterExtensions>().As<ICharacterExtensions>().SingleInstance();
@@ -616,6 +618,7 @@ namespace Perpetuum.Bootstrapper
 
             RegisterRequestHandler<ChannelCreate>(Commands.ChannelCreate);
             RegisterRequestHandler<ChannelList>(Commands.ChannelList);
+            RegisterRequestHandler<ChannelListAll>(Commands.ChannelListAll);
             RegisterRequestHandler<ChannelMyList>(Commands.ChannelMyList);
             RegisterRequestHandler<ChannelJoin>(Commands.ChannelJoin);
             RegisterRequestHandler<ChannelLeave>(Commands.ChannelLeave);
@@ -1511,12 +1514,9 @@ namespace Perpetuum.Bootstrapper
         }
 
         private void InitRelayManager()
-        {
-            _builder.RegisterType<MarketHelper>().SingleInstance().OnActivated(e => e.Instance.Init());
-            _builder.RegisterType<MarketHandler>().OnActivated(e =>
-            {
-                e.Instance.Init();
-            }).SingleInstance();
+        {            
+            _builder.RegisterType<MarketHelper>().SingleInstance();
+            _builder.RegisterType<MarketHandler>().SingleInstance();
 
             _builder.RegisterType<MarketOrder>();
             _builder.RegisterType<MarketOrderRepository>().As<IMarketOrderRepository>();
@@ -1575,9 +1575,9 @@ namespace Perpetuum.Bootstrapper
             _builder.RegisterType<RelayStateService>().As<IRelayStateService>().SingleInstance();
             _builder.RegisterType<RelayInfoBuilder>();
 
-            _builder.RegisterType<TradeService>().As<ITradeService>();
+            _builder.RegisterType<TradeService>().SingleInstance().As<ITradeService>();
 
-            _builder.RegisterType<HostShutDownManager>();
+            _builder.RegisterType<HostShutDownManager>().SingleInstance();
 
             _builder.RegisterType<HighScoreService>().As<IHighScoreService>();
             _builder.RegisterType<CorporationHandler>();
@@ -1659,6 +1659,7 @@ namespace Perpetuum.Bootstrapper
             RegisterRequestHandlerFactory<IZoneRequest>();
 
             RegisterRequestHandler<GetEnums>(Commands.GetEnums);
+            RegisterRequestHandler<GetCommands>(Commands.GetCommands);
             RegisterRequestHandler<GetEntityDefaults>(Commands.GetEntityDefaults).SingleInstance();
             RegisterRequestHandler<GetAggregateFields>(Commands.GetAggregateFields).SingleInstance();
             RegisterRequestHandler<GetDefinitionConfigUnits>(Commands.GetDefinitionConfigUnits).SingleInstance();
@@ -1668,6 +1669,7 @@ namespace Perpetuum.Bootstrapper
             RegisterRequestHandler<SignInSteam>(Commands.SignInSteam);
             RegisterRequestHandler<SignOut>(Commands.SignOut);
             RegisterRequestHandler<SteamListAccounts>(Commands.SteamListAccounts);
+            RegisterRequestHandler<AccountConfirmEmail>(Commands.AccountConfirmEmail);
             RegisterRequestHandler<CharacterList>(Commands.CharacterList);
             RegisterRequestHandler<CharacterCreate>(Commands.CharacterCreate);
             RegisterRequestHandler<CharacterSelect>(Commands.CharacterSelect);
@@ -1700,6 +1702,8 @@ namespace Perpetuum.Bootstrapper
             RegisterRequestHandler<CharacterSetNote>(Commands.CharacterSetNote);
             RegisterRequestHandler<CharacterCorporationHistory>(Commands.CharacterCorporationHistory);
             RegisterRequestHandler<CharacterWizardData>(Commands.CharacterWizardData).SingleInstance();
+            RegisterRequestHandler<CharactersOnline>(Commands.GetCharactersOnline);
+            RegisterRequestHandler<ReimburseItemRequestHandler>(Commands.ReimburseItem);
             RegisterRequestHandler<Chat>(Commands.Chat);
             RegisterRequestHandler<GoodiePackList>(Commands.GoodiePackList);
             RegisterRequestHandler<GoodiePackRedeem>(Commands.GoodiePackRedeem);
@@ -1880,6 +1884,7 @@ namespace Perpetuum.Bootstrapper
             RegisterRequestHandler<FreshNewsCount>(Commands.FreshNewsCount);
             RegisterRequestHandler<GetNews>(Commands.GetNews);
             RegisterRequestHandler<AddNews>(Commands.AddNews);
+            RegisterRequestHandler<UpdateNews>(Commands.UpdateNews);
             RegisterRequestHandler<NewsCategory>(Commands.NewsCategory).SingleInstance();
 
             RegisterRequestHandler<EpForActivityDailyLog>(Commands.EpForActivityDailyLog);
@@ -1961,6 +1966,7 @@ namespace Perpetuum.Bootstrapper
             RegisterRequestHandler<PollGet>(Commands.PollGet);
             RegisterRequestHandler<PollAnswer>(Commands.PollAnswer);
             RegisterRequestHandler<ForceDock>(Commands.ForceDock);
+            RegisterRequestHandler<ForceDockAdmin>(Commands.ForceDockAdmin);
             RegisterRequestHandler<GetItemSummary>(Commands.GetItemSummary);
 
             RegisterRequestHandler<ProductionHistory>(Commands.ProductionHistory);
@@ -2349,6 +2355,8 @@ namespace Perpetuum.Bootstrapper
             RegisterZone<PveZone>(ZoneType.Pve);
             RegisterZone<PvpZone>(ZoneType.Pvp);
             RegisterZone<TrainingZone>(ZoneType.Training);
+            RegisterZone<StrongHoldZone>(ZoneType.Stronghold);
+
 
             _builder.RegisterType<SettingsLoader>();
             _builder.RegisterType<PlantRuleLoader>();
@@ -2462,6 +2470,7 @@ namespace Perpetuum.Bootstrapper
             RegisterZoneRequestHandler<TeleportUse>(Commands.TeleportUse);
             RegisterZoneRequestHandler<TeleportQueryWorldChannels>(Commands.TeleportQueryWorldChannels);
             RegisterZoneRequestHandler<JumpAnywhere>(Commands.JumpAnywhere);
+            RegisterZoneRequestHandler<MovePlayer>(Commands.MovePlayer);
             RegisterZoneRequestHandler<ZoneDrawStatMap>(Commands.ZoneDrawStatMap);
             RegisterZoneRequestHandler<MissionStartFromZone>(Commands.MissionStartFromZone);
             RegisterZoneRequestHandler<ZoneItemShopBuy>(Commands.ItemShopBuy);
