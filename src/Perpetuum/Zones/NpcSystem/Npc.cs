@@ -229,7 +229,8 @@ namespace Perpetuum.Zones.NpcSystem
         public override void Enter()
         {
             var pathFinder = new AStarFinder(Heuristic.Manhattan, npc.IsWalkable);
-            pathFinder.FindPathAsync(npc.CurrentPosition, npc.HomePosition).ContinueWith(t =>
+            var randomHome = npc.HomePosition.GetRandomPositionInRange2D(1, npc.HomeRange * 0.4);
+            pathFinder.FindPathAsync(npc.CurrentPosition, randomHome).ContinueWith(t =>
             {
                 var path = t.Result;
                 if (path == null)
@@ -237,7 +238,7 @@ namespace Perpetuum.Zones.NpcSystem
                     WriteLog("Path not found! (" + npc.CurrentPosition + " => " + npc.HomePosition + ")");
 
                     var f = new AStarFinder(Heuristic.Manhattan,(x,y) => true);
-                    path = f.FindPath(npc.CurrentPosition, npc.HomePosition);
+                    path = f.FindPath(npc.CurrentPosition, randomHome);
 
                     if (path == null)
                     {
@@ -1012,11 +1013,11 @@ namespace Perpetuum.Zones.NpcSystem
                          .Min();
 
             range *= BEST_COMBAT_RANGE_MODIFIER;
-
+            range = Math.Max(3, range);
             return (int) range;
         }
 
-        private const double BEST_COMBAT_RANGE_MODIFIER = 0.5;
+        private const double BEST_COMBAT_RANGE_MODIFIER = 0.9;
 
         private class BodyPullThreatHelper : IEntityVisitor<Player>,IEntityVisitor<AreaBomb>
         {
