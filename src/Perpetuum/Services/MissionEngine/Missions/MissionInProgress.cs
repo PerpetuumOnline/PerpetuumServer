@@ -403,9 +403,11 @@ namespace Perpetuum.Services.MissionEngine.Missions
         {
             var races = new[] {1, 2, 3};
 
-            var factionChance = FastRandom.NextDouble();
-
-            if (factionChance > 0.25)
+            if (myLocation.ZoneConfig.IsAlpha) //TODO: Fixme -- Alpha as neutral-assumption
+            {
+                _selectedRace = races.RandomElement();
+            }
+            else if (FastRandom.NextDouble() > 0.25)
             {
                 _selectedRace = myLocation.RaceId;
             }
