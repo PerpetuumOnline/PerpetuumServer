@@ -25,7 +25,9 @@ namespace Perpetuum.RequestHandlers.Zone
 
                         request.Zone.Terrain.Blocks.UpdateValue(x, y, bi =>
                         {
-                            bi.Height = 0;
+                            // only reset the height if there is a plant here.
+                            // otherwise we reset blocking heights for decor, etc!
+                            bi.Height = bi.Plant ? 0 : bi.Height;
                             bi.Plant = false;
                             return bi;
                         });
