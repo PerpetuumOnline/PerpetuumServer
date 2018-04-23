@@ -484,10 +484,11 @@ namespace Perpetuum.Units
 
         private IDamageBuilder GetExplosionDamageBuilder()
         {
+            var radius = SignatureRadius * 0.66; //Note: reduced for increased bot srf-areas
             var damageBuilder = DamageInfo.Builder.WithAttacker(this)
-                                          .WithOptimalRange(2)
-                                          .WithFalloff(SignatureRadius)
-                                          .WithExplosionRadius(SignatureRadius);
+                                          .WithOptimalRange(1)
+                                          .WithFalloff(radius)
+                                          .WithExplosionRadius(radius);
 
             var armorMaxValue = ArmorMax;
 
