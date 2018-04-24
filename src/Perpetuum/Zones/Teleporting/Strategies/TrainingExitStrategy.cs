@@ -79,6 +79,8 @@ namespace Perpetuum.Zones.Teleporting.Strategies
             var dockingBase = hardCodeTMACorp.GetDockingBase();
             dockingBase.CreateStarterRobotForCharacter(character, true);
             dockingBase.DockIn(character, TimeSpan.Zero, ZoneExitType.TrainingExitTeleport);
+            //Set Home Base of character to Docked base
+            character.HomeBaseEid = dockingBase.Eid;
 
             var publicContainer = dockingBase.GetPublicContainerWithItems(character);
             CreateRewardItems(character, publicContainer);
