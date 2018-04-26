@@ -484,7 +484,7 @@ namespace Perpetuum.Units
 
         private IDamageBuilder GetExplosionDamageBuilder()
         {
-            var radius = SignatureRadius * 0.66; //Note: reduced for increased bot srf-areas
+            var radius = SignatureRadius * 0.5; //Note: reduced for increased bot srf-areas
             var damageBuilder = DamageInfo.Builder.WithAttacker(this)
                                           .WithOptimalRange(1)
                                           .WithFalloff(radius)
