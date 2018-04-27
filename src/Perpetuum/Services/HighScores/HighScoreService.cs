@@ -19,13 +19,14 @@ namespace Perpetuum.Services.HighScores
                     h.characterid,sum(playerskilled) as pk 
                     from characterhighscore h join characters c on h.characterid=c.characterid
                     where 
-					(select acclevel from accounts where accountid=c.accountid)=0 and
+					(select acclevel from accounts where accountid=c.accountid)=@acctlvl and
 					date between @startDate and @endDate
                     group by h.characterid order by pk desc";
 
             return Db.Query().CommandText(qry)
                 .SetParameter("@startDate", range.Start)
                 .SetParameter("@endDate", range.End)
+                .SetParameter("@acctlvl", (int)AccessLevel.normal)
                 .Execute()
                 .Select(CreateHighScoreFromRecord).ToArray();
         }
