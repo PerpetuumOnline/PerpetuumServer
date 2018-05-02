@@ -238,7 +238,7 @@ namespace Perpetuum.Zones.NpcSystem
                     WriteLog("Path not found! (" + npc.CurrentPosition + " => " + npc.HomePosition + ")");
 
                     var f = new AStarFinder(Heuristic.Manhattan,(x,y) => true);
-                    path = f.FindPath(npc.CurrentPosition, randomHome);
+                    path = f.FindPath(npc.CurrentPosition, npc.HomePosition);
 
                     if (path == null)
                     {
