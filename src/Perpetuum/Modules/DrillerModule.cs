@@ -28,7 +28,8 @@ namespace Perpetuum.Modules
             _rareMaterialHandler = rareMaterialHandler;
             _materialHelper = materialHelper;
             _miningAmountModifier = new MiningAmountModifierProperty(this);
-            AddProperty(_miningAmountModifier); 
+            AddProperty(_miningAmountModifier);
+
         }
 
         public override void AcceptVisitor(IEntityVisitor visitor)
@@ -44,6 +45,7 @@ namespace Perpetuum.Modules
             public MiningAmountModifierProperty(DrillerModule module) : base(module, AggregateField.mining_amount_modifier)
             {
                 _module = module;
+                AddEffectModifier(AggregateField.effect_mining_amount_modifier);
             }
 
             protected override double CalculateValue()

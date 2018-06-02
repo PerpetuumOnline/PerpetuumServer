@@ -101,6 +101,7 @@ namespace Perpetuum.ExportedTypes
 		effect_teleport_cooldown = 40,
 		effect_teleport_self_enabler = 102,
 		effect_teleport_sickness = 42,
-		effect_thermal_resist = 13
-	}
+		effect_thermal_resist = 13,
+        effect_beta_bonus = 103 //TODO beta bonus effect -- ID hardcoded from inserted DB id
+    }
 }

@@ -1022,10 +1022,20 @@ namespace Perpetuum.Players
                     player.AddToZone(zone,validPosition,zoneEnterType);
                     
                     player.ApplyInvulnerableEffect();
+                    player.ApplyZoneEffects(zone);
                 });
 
                 scope.Complete();
                 return player;
+            }
+        }
+
+        public void ApplyZoneEffects(IZone zone)
+        {
+            if (zone.Configuration.IsBeta)
+            {
+                var builder = NewEffectBuilder().SetType(EffectType.effect_beta_bonus).SetOwnerToSource();
+                ApplyEffect(builder);
             }
         }
 

@@ -51,6 +51,7 @@ namespace Perpetuum.ExportedTypes
 		effcat_target_paint = 0x0000000040000000,
 		effcat_teleport_effects = 0x0000000008000000,
 		effcat_terrain_object_effects = 0x0000080000000000,
-		effcat_zero_core_drop = 0x0000000400000000
-	}
+		effcat_zero_core_drop = 0x0000000400000000,
+        effcat_zone_beta = 0x0000100000000000 //TODO beta bonus category -- might hijack other category if client cant display?
+    }
 }

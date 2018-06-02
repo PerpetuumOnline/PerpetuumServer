@@ -65,7 +65,7 @@ namespace Perpetuum.Zones.Effects
 
             foreach (var unit in units)
             {
-                if ( unit == Owner )
+                if (unit == Owner)
                     continue;
 
                 if ( unit.EffectHandler.ContainsToken(Token) )
