@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Perpetuum.Deployers;
 using Perpetuum.EntityFramework;
+using Perpetuum.ExportedTypes;
 using Perpetuum.Groups.Corporations;
 using Perpetuum.Players;
 using Perpetuum.Units;
@@ -26,6 +28,7 @@ namespace Perpetuum.Zones.ProximityProbes
             corporation.GetProximityProbeEids().Count().ThrowIfGreaterOrEqual(maxProbes, ErrorCodes.MaximumAmountOfProbesReached);
 
             var probe = (ProximityProbeBase)_entityServices.Factory.CreateWithRandomEID(DeployableItemEntityDefault);
+            probe.CheckDeploymentAndThrow(zone, spawnPosition); //Enforce min-distance separations
             probe.Owner = corporation.Eid;
             var zoneStorage = zone.Configuration.GetStorage();
             probe.Parent = zoneStorage.Eid;
@@ -37,7 +40,17 @@ namespace Perpetuum.Zones.ProximityProbes
             initialMembers.Add(player.Character);
             
             probe.InitProbe( initialMembers.Distinct() );
+            probe.SetDespawnTime(this.ProximityProbeDespawnTime);
             return probe;
+        }
+
+        private TimeSpan ProximityProbeDespawnTime
+        {
+            get
+            {
+                var m = GetPropertyModifier(AggregateField.despawn_time);
+                return TimeSpan.FromMilliseconds((int)m.Value);
+            }
         }
     }
 }

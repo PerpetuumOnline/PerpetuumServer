@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using Perpetuum.Accounting.Characters;
 using Perpetuum.EntityFramework;
+using Perpetuum.ExportedTypes;
 using Perpetuum.Groups.Corporations;
 using Perpetuum.Log;
 using Perpetuum.Players;
 using Perpetuum.Timers;
 using Perpetuum.Units;
+using Perpetuum.Units.DockingBases;
 using Perpetuum.Zones.PBS;
+using Perpetuum.Zones.Teleporting;
 
 namespace Perpetuum.Zones.ProximityProbes
 {
@@ -24,6 +27,7 @@ namespace Perpetuum.Zones.ProximityProbes
     {
         private readonly CharactersRegisterHelper<ProximityProbeBase> _charactersRegisterHelper;
         private IntervalTimer _probingInterval = new IntervalTimer(TimeSpan.FromSeconds(10));
+        private UnitDespawnHelper _despawnHelper;
 
         protected ProximityProbeBase()
         {
@@ -31,6 +35,17 @@ namespace Perpetuum.Zones.ProximityProbes
         }
 
         public ICorporationManager CorporationManager { get; set; }
+
+        public virtual void CheckDeploymentAndThrow(IZone zone, Position spawnPosition)
+        {
+            zone.Units.OfType<DockingBase>().WithinRange(spawnPosition, DistanceConstants.PROXIMITY_PROBE_DEPLOY_RANGE_FROM_BASE).Any().ThrowIfTrue(ErrorCodes.NotDeployableNearObject);
+            zone.Units.OfType<Teleport>().WithinRange(spawnPosition, DistanceConstants.PROXIMITY_PROBE_DEPLOY_RANGE_FROM_TELEPORT).Any().ThrowIfTrue(ErrorCodes.TeleportIsInRange);
+        }
+
+        public void SetDespawnTime(TimeSpan despawnTime)
+        {
+            _despawnHelper = UnitDespawnHelper.Create(this, despawnTime);
+        }
 
         protected internal override void UpdatePlayerVisibility(Player player)
         {
@@ -62,6 +77,8 @@ namespace Perpetuum.Zones.ProximityProbes
                 //do something
                 OnUnitsFound(robotsNearMe);
             }
+
+            _despawnHelper.Update(time, this);
         }
 
         protected virtual bool IsActive => true;
