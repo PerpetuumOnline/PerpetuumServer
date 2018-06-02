@@ -1449,7 +1449,7 @@ namespace Perpetuum.Services.MissionEngine.Missions
             //TODO expose parameter in DB
             //Modify total reward by participants
             //Clamp participant count to [1,MaxmimalGangParticipants]
-            double participantBonus = 0.025;
+            double participantBonus = 0.05;
             int participantCount = Math.Min(MaxmimalGangParticipants, Math.Max(1, participants.Count));
             double participantModifier = 1 + participantCount * participantBonus;
             rewardSum *= participantModifier;
