@@ -2057,6 +2057,7 @@ namespace Perpetuum.Services.MissionEngine.Missions
         }
 
         public const int MISSION_SUCCESS_TELEPORT_MINUTES = 5;
+        public const double MISSION_SUCCESS_TELEPORT_MINUTES_BETA = 2.5;
 
 
         public void EnableTeleportOnSuccess(IEnumerable<Character> characters, int zoneId)
@@ -2064,8 +2065,8 @@ namespace Perpetuum.Services.MissionEngine.Missions
             var zone = _zoneManager.GetZone(myLocation.ZoneConfig.Id);
             if (zone.Configuration.IsBeta)
             {
-                //on beta, only the owner
-                zone.GetPlayer(character)?.EnableSelfTeleport(TimeSpan.FromMinutes(MISSION_SUCCESS_TELEPORT_MINUTES),zoneId);
+                //on beta, only the owner, shorter timer
+                zone.GetPlayer(character)?.EnableSelfTeleport(TimeSpan.FromMinutes(MISSION_SUCCESS_TELEPORT_MINUTES_BETA),zoneId);
                 return;
             }
 
