@@ -6,6 +6,7 @@ using Perpetuum.Zones.Effects;
 namespace Perpetuum.Units
 {
     public delegate bool UnitDespawnerCanApplyEffect(Unit unit);
+    public delegate void UnitDespawnStrategy(Unit unit);
 
     public class UnitDespawnHelper 
     {
@@ -19,6 +20,8 @@ namespace Perpetuum.Units
 
         public UnitDespawnerCanApplyEffect CanApplyDespawnEffect { private get; set; }
 
+        public UnitDespawnStrategy DespawnStrategy { private get; set; }
+
         public void Update(TimeSpan time,Unit unit)
         {
             _timer.Update(time).IsPassed(() =>
@@ -29,9 +32,15 @@ namespace Perpetuum.Units
                     return;
 
                 CanApplyDespawnEffect = null;
-
-                unit.States.Teleport = true; //kis villam visual amikor kiszedi
-                unit.RemoveFromZone();
+                if (DespawnStrategy != null)
+                {
+                    DespawnStrategy(unit);
+                }
+                else
+                {
+                    unit.States.Teleport = true; //kis villam visual amikor kiszedi
+                    unit.RemoveFromZone();
+                }
             });
         }
 
