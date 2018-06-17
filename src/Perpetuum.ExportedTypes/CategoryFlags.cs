@@ -619,5 +619,5 @@ namespace Perpetuum.ExportedTypes
 		cf_zone_item_shop = 0x0000000000000796,
 		cf_zone_objects = 0x0000000000000092,
 		def_pbs_dogtags = 0x0000000000000691
-	}
+    }
 }

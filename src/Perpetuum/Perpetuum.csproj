@@ -214,6 +214,7 @@
     <Compile Include="IO\FileSystemExtensions.cs" />
     <Compile Include="IO\IFileSystem.cs" />
     <Compile Include="IReadOnlyRepository.cs" />
+    <Compile Include="Items\Paint.cs" />
     <Compile Include="Items\Templates\CachedRobotTemplateReader.cs" />
     <Compile Include="Items\Templates\IRobotTemplateReader.cs" />
     <Compile Include="Items\Templates\IRobotTemplateRelation.cs" />

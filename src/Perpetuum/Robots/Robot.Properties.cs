@@ -159,7 +159,7 @@ namespace Perpetuum.Robots
 
             protected override double CalculateValue()
             {
-                var v = 10 / owner.SignatureRadius * 0.01;
+                var v = 20 / owner.SignatureRadius * 0.01;
                 return v;
             }
         }

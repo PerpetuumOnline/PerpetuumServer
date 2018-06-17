@@ -20,14 +20,15 @@ namespace Perpetuum.RequestHandlers
         {
             using (var scope = Db.CreateTransaction())
             {
-                var giftEid = request.Data.GetOrDefault<long>(k.eid);
+                var itemEid = request.Data.GetOrDefault<long>(k.eid);
+                var item = this._entityServices.Repository.Load(itemEid);
                 var character = request.Session.Character;
 
                 character.IsDocked.ThrowIfFalse(ErrorCodes.CharacterHasToBeDocked);
 
                 var publicContainer = character.GetPublicContainerWithItems();
-                var giftItem = (Gift)publicContainer.GetItemOrThrow(giftEid,true).Unstack(1);
-                var randomItem = giftItem.Open(publicContainer,character);
+                var giftItem = (Gift)publicContainer.GetItemOrThrow(itemEid, true).Unstack(1);
+                var randomItem = giftItem.Open(publicContainer, character);
                 _entityServices.Repository.Delete(giftItem);
                 publicContainer.Save();
 
@@ -48,7 +49,7 @@ namespace Perpetuum.RequestHandlers
                 };
 
                 Transaction.Current.OnCommited(() => Message.Builder.FromRequest(request).WithData(result).Send());
-                
+
                 scope.Complete();
             }
         }

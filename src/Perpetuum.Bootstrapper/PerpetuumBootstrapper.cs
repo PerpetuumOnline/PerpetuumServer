@@ -998,6 +998,7 @@ namespace Perpetuum.Bootstrapper
             RegisterEntity<CreditActivator>();
             RegisterEntity<SparkActivator>();
             RegisterEntity<Gift>();
+            RegisterEntity<Paint>();//TODO register new entitydef
 
             _builder.Register<Func<EntityDefault,Entity>>(x =>
             {
@@ -1022,6 +1023,19 @@ namespace Perpetuum.Bootstrapper
                 {
                     var ed = ctx.Resolve<IEntityDefaultReader>().GetByName(name);
                     ByDefinition<T>(ed.Definition, parameters);
+                }
+
+                //TODO: new for paint
+                void ByNamePatternAndFlag<T>(string substr, CategoryFlags cf, params Parameter[] parameters) where T : Entity
+                {
+                    //TODO: this might be expensive -- string matching all defaults
+                    var matches = ctx.Resolve<IEntityDefaultReader>().GetAll()
+                    .Where(i => i.CategoryFlags == cf)
+                    .Where(i => i.Name.Contains(substr));
+                    foreach (var ed in matches)
+                    {
+                        ByDefinition<T>(ed.Definition, parameters);
+                    }
                 }
 
                 ByName<LootContainer>(DefinitionNames.LOOT_CONTAINER_OBJECT);
@@ -1190,6 +1204,10 @@ namespace Perpetuum.Bootstrapper
                 ByCategoryFlags<VisibilityBasedProximityProbe>(CategoryFlags.cf_visibility_based_probe);
                 ByCategoryFlags<RandomResearchKit>(CategoryFlags.cf_random_research_kits);
                 ByCategoryFlags<LotteryItem>(CategoryFlags.cf_lottery_items);
+
+                //TODO ORDER MATTERS!  Register Paints AFTER lottery will ensure Paint objects are valid subset of lottery category
+                //TODO entitydefaults must contain name "def_paint" and have cf_lottery_items 
+                ByNamePatternAndFlag<Paint>("def_paint", CategoryFlags.cf_lottery_items);
 
                 ByCategoryFlags<VisibilityBasedProbeDeployer>(CategoryFlags.cf_proximity_probe_deployer);
                 ByCategoryFlags<Item>(CategoryFlags.cf_gift_packages);
