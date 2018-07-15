@@ -1872,6 +1872,7 @@ namespace Perpetuum.Bootstrapper
             RegisterRequestHandler<ExtensionBuyEpBoost>(Commands.ExtensionBuyEpBoost);
             RegisterRequestHandler<ExtensionResetCharacter>(Commands.ExtensionResetCharacter);
             RegisterRequestHandler<ExtensionFreeLockedEp>(Commands.ExtensionFreeLockedEp);
+            RegisterRequestHandler<ExtensionFreeAllLockedEpByCommand>(Commands.ExtensionFreeAllLockedEpCommand); // For GameAdmin Channel Command
             RegisterRequestHandler<ExtensionGive>(Commands.ExtensionGive);
             RegisterRequestHandler<ExtensionReset>(Commands.ExtensionReset);
             RegisterRequestHandler<ExtensionRevert>(Commands.ExtensionRevert);

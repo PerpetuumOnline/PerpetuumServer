@@ -3462,6 +3462,17 @@ namespace Perpetuum
             }
         }; //
 
+        //TODO new for gameadmincommand
+        public static readonly Command ExtensionFreeAllLockedEpCommand = new Command
+        {
+            Text = "extensionFreeAllLockedEpByCommand",
+            AccessLevel = AccessLevel.admin,
+            Arguments =
+            {
+                new Argument<int>(k.accountID)
+            }
+        };
+
         public static readonly Command FreshNewsCount = new Command
         {
             Text = "freshNewsCount",

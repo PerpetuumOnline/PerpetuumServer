@@ -744,6 +744,25 @@ namespace Perpetuum.Services.Channels
 
             }
 
+            //FreeAllLockedEP for account - by request of player
+            if (command[0] == "#unlockallep")
+            {
+                bool err = false;
+                err = !int.TryParse(command[1], out int accountID);
+                if (err)
+                {
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                }
+
+                Dictionary<string, object> dictionary = new Dictionary<string, object>()
+                {
+                    { k.accountID, accountID }
+                };
+
+                string cmd = string.Format("{0}:relay:{1}", Commands.ExtensionFreeAllLockedEpCommand.Text, GenxyConverter.Serialize(dictionary));
+                request.Session.HandleLocalRequest(request.Session.CreateLocalRequest(cmd));
+            }
+
         }
     }
 }

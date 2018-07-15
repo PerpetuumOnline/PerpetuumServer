@@ -208,6 +208,7 @@
     <Compile Include="CreateItemRequestHandler.cs" />
     <Compile Include="DecorCategoryList.cs" />
     <Compile Include="DockAll.cs" />
+    <Compile Include="Extensions\ExtensionFreeAllLockedEpByCommand.cs" />
     <Compile Include="GetCommands.cs" />
     <Compile Include="ReimburseItem.cs" />
     <Compile Include="UpdateNews.cs" />
