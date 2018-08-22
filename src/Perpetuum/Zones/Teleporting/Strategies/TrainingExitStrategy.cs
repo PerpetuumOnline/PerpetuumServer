@@ -44,7 +44,7 @@ namespace Perpetuum.Zones.Teleporting.Strategies
         public void DoTeleport(Player player)
         {
             //Throw if email not confirmed
-            player.Character.GetAccount().EmailConfirmed.ThrowIfFalse(ErrorCodes.EmailNotConfirmed);
+            //player.Character.GetAccount().EmailConfirmed.ThrowIfFalse(ErrorCodes.EmailNotConfirmed);
 
             player.States.Dock = true;
 
