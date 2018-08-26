@@ -64,9 +64,9 @@ namespace Perpetuum.Services.MissionEngine.Missions
 
             return info + " RND";
         }
-
+        //ECONOMY:  TODO - put this in DB
         //                                              0   1   2   3   4    5    6    7    8    9
-        private static readonly int[] CoinsPerLevel = { 10, 20, 40, 70, 120, 200, 310, 450, 620, 800};
+        private static readonly int[] CoinsPerLevel = { 10, 20, 40, 70, 120, 200, 300, 400, 500, 600};
         public static int CoinQuantity(int missionLevel, double difficultyMultiplier)
         {
             /*
