@@ -101,7 +101,8 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
 
         public void SpawnAllMembers()
         {
-            for (var i = 0; i < Configuration.FlockMemberCount; i++)
+            var totalToSpawn = Configuration.FlockMemberCount - MembersCount;
+            for (var i = 0; i < totalToSpawn; i++)
             {
                 CreateMemberInZone();
             }
