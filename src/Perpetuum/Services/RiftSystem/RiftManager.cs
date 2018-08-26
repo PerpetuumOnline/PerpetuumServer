@@ -135,7 +135,7 @@ namespace Perpetuum.Services.RiftSystem
             if (_zonemanager.Zones.OfType<StrongHoldZone>().Count() > 0)
             {
                 int rand = r.Next(0, 10);
-                if (rand == 2 && !StrongHoldRiftGenerated)
+                if (rand < 2 && !StrongHoldRiftGenerated)
                 {
                     rift.DestinationStrongholdZone = GetRandomStrongHoldZone();
                     rift.OriginZone = this._zone.Id;
