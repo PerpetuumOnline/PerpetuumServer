@@ -563,6 +563,31 @@ namespace Perpetuum.Services.Channels
                 channel.SendMessageToAll(sessionManager, sender, string.Format("Altered state of control layer on {0} Tiles (PBSTerraformProtected)", lockedtiles.Count));
             }
 
+            //MissionTestResolve - DEBUG ONLY
+            if (command[0] == "#testmissions")
+            {
+                int.TryParse(command[1], out int charID);
+                int.TryParse(command[2], out int zoneID);
+                int.TryParse(command[3], out int level);
+                int.TryParse(command[4], out int numAttempts);
+                int.TryParse(command[5], out int displayFlag);
+                int.TryParse(command[6], out int singleFlag);
+                Dictionary<string, object> dictionary = new Dictionary<string, object>()
+                {
+                    { k.characterID, charID },
+                    { k.zone, zoneID },
+                    { k.level, level },
+                    { "display", displayFlag },
+                    { "attempts", numAttempts },
+                    { "single", singleFlag },
+                };
+
+                string cmd = string.Format("{0}:relay:{1}", Commands.MissionResolveTest.Text, GenxyConverter.Serialize(dictionary));
+                request.Session.HandleLocalRequest(request.Session.CreateLocalRequest(cmd));
+
+                channel.SendMessageToAll(sessionManager, sender, string.Format("Running missionresolve test {0}", dictionary.ToDebugString()));
+            }
+
 #endif
 
             if (command[0] == "#giveitem")
@@ -762,6 +787,9 @@ namespace Perpetuum.Services.Channels
                 string cmd = string.Format("{0}:relay:{1}", Commands.ExtensionFreeAllLockedEpCommand.Text, GenxyConverter.Serialize(dictionary));
                 request.Session.HandleLocalRequest(request.Session.CreateLocalRequest(cmd));
             }
+
+
+            
 
         }
     }
