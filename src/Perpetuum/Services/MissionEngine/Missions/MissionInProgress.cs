@@ -1351,15 +1351,44 @@ namespace Perpetuum.Services.MissionEngine.Missions
                     }
 
                     //or spawn
-                    var rewardItem = publicContainer.CreateAndAddItem(reward.ItemInfo, false, item => { item.Owner = character.Eid; });
 
-                    var b = TransactionLogEvent.Builder().SetTransactionType(TransactionType.MissionRewardTake)
-                        .SetCharacter(character)
-                        .SetItem(rewardItem)
-                        .SetContainer(publicContainer);
-                    character.LogTransaction(b);
+                    //If item is tokens, split amoung participants
+                    if (myLocation.GetRaceSpecificCoinDefinition() == reward.ItemInfo.Definition)
+                    {
+                        if (_participants.Count > 0 && myLocation.GetRaceSpecificCoinDefinition() == reward.ItemInfo.Definition)
+                        {
+                            var tokenSplitQuantity = (int)Math.Ceiling((double)reward.ItemInfo.Quantity / (double)_participants.Count);
+                            var splitTokens = new MissionReward(new ItemInfo(reward.ItemInfo.Definition, tokenSplitQuantity));
+                            Item tokenItem = null;
+                            foreach (var participant in _participants)
+                            {
+                                var rewardItem = publicContainer.CreateAndAddItem(splitTokens.ItemInfo, false, item => { item.Owner = participant.Eid; });
 
-                    spawnedItems.Add(rewardItem);
+                                var b = TransactionLogEvent.Builder().SetTransactionType(TransactionType.MissionRewardTake)
+                                    .SetCharacter(character)
+                                    .SetItem(rewardItem)
+                                    .SetContainer(publicContainer);
+                                character.LogTransaction(b);
+                                tokenItem = rewardItem;
+                            }
+                            if (tokenItem != null)
+                            {
+                                spawnedItems.Add(tokenItem);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var rewardItem = publicContainer.CreateAndAddItem(reward.ItemInfo, false, item => { item.Owner = character.Eid; });
+
+                        var b = TransactionLogEvent.Builder().SetTransactionType(TransactionType.MissionRewardTake)
+                            .SetCharacter(character)
+                            .SetItem(rewardItem)
+                            .SetContainer(publicContainer);
+                        character.LogTransaction(b);
+
+                        spawnedItems.Add(rewardItem);
+                    }
                 }
             }
 
@@ -1430,11 +1459,30 @@ namespace Perpetuum.Services.MissionEngine.Missions
             }
         }
 
+        public double GetParticipantBonusModifier()
+        {
+            return computeParticipantBonusMultiplier(this._participants.Count);
+        }
 
-        /// <summary>
-        /// Both old and new tech handled
-        /// </summary>
-        public void PayOutMission(double rewardFraction, List<Character> participants, List<Character> onlineGangMembers, Dictionary<string, object> successData)
+        private double computeParticipantBonusMultiplier(int paricipantCount)
+        {
+            //Solo or squad of 1 and initial estimate
+            if (paricipantCount < 2)
+            {
+                return 1.0;
+            }
+            //Modify total reward by participants
+            //Clamp participant count to [1,MaxmimalGangParticipants]
+            double participantBonus = 0.05;  //TODO expose parameter in DB
+            int participantCount = Math.Min(MaxmimalGangParticipants, Math.Max(1, paricipantCount));
+            double participantModifier = 1 + participantCount * participantBonus;
+            return  participantModifier;
+        }
+
+    /// <summary>
+    /// Both old and new tech handled
+    /// </summary>
+    public void PayOutMission(double rewardFraction, List<Character> participants, List<Character> onlineGangMembers, Dictionary<string, object> successData)
         {
             var paymentData = new Dictionary<string, object>();
             
@@ -1446,14 +1494,7 @@ namespace Perpetuum.Services.MissionEngine.Missions
             double zoneFactor;
             GetFinalReward(out rewardSum, out distanceReward, out difficultyReward, out rewardByTargets, out riskCompensation, out zoneFactor);
 
-            //TODO expose parameter in DB
-            //Modify total reward by participants
-            //Clamp participant count to [1,MaxmimalGangParticipants]
-            double participantBonus = 0.05;
-            int participantCount = Math.Min(MaxmimalGangParticipants, Math.Max(1, participants.Count));
-            double participantModifier = 1 + participantCount * participantBonus;
-            rewardSum *= participantModifier;
-            //--End participantbonus multiplier--//
+            rewardSum *= GetParticipantBonusModifier();
 
             paymentData.Add("totalReward", Math.Round(rewardSum));
             paymentData.Add("distanceReward", distanceReward);

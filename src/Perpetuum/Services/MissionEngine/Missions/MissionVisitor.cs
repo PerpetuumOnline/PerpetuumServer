@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Perpetuum.Groups.Corporations;
@@ -152,6 +153,8 @@ namespace Perpetuum.Services.MissionEngine.Missions
 
             var standingValue = 1 / (diffmult * rawGrindLevel);
 
+            standingValue *= _missionInProgress.GetParticipantBonusModifier();
+
             // 0 -> 0.0   10 - > 1.0
             // 6 -> 0.6 --> 0.5*0.6 => positive x 30%
 
@@ -192,7 +195,10 @@ namespace Perpetuum.Services.MissionEngine.Missions
 
             //var coinQuantity = (int)Math.Round(Math.Pow(1.3 + level, 2.5 / 3.0) * randomMission.DifficultyMultiplier);
             var coinQuantity = RandomMission.CoinQuantity(level, randomMission.DifficultyMultiplier);
-            
+
+            //Total token quantity increase
+            coinQuantity = (int) Math.Round(_missionInProgress.GetParticipantBonusModifier() * coinQuantity);
+
             var coinItemInfo = new ItemInfo(coinDefinition, coinQuantity);
             var coinReward = new MissionReward(coinItemInfo);
 
