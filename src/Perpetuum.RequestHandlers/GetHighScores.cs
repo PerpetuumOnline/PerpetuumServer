@@ -6,7 +6,7 @@ namespace Perpetuum.RequestHandlers
 {
     public class GetHighScores : IRequestHandler
     {
-        private static readonly DateTimeRange _timeRange = DateTime.Now.ToRange(-TimeSpan.FromDays(30));
+        private readonly DateTimeRange _timeRange = DateTime.Now.ToRange(-TimeSpan.FromDays(30));
         private readonly IHighScoreService _highScoreService;
 
         public GetHighScores(IHighScoreService highScoreService)
