@@ -5,9 +5,9 @@ namespace Perpetuum.Accounting
 {
     public class EpForActivityLogger : DbLogger<EpForActivityLogEvent>
     {
-        protected override void BuildCommand(EpForActivityLogEvent logEvent,DbQuery query)
+        protected override void BuildCommand(EpForActivityLogEvent logEvent, DbQuery query)
         {
-            const string q = @"INSERT dbo.epforactivitylog (accountid, characterid, epforactivitytype, rawpoints, points, boostfactor ) VALUES ( @accountId, @characterId, @epforactivityType, @rawPoints, @points, @boostFactor)";
+            const string q = @"INSERT dbo.epforactivitylog (accountid, characterid, epforactivitytype, rawpoints, points, boostfactor, multiplier ) VALUES ( @accountId, @characterId, @epforactivityType, @rawPoints, @points, @boostFactor, @boostMultiplier)";
 
             query.CommandText(q)
                 .SetParameter("@accountId",logEvent.Account.Id)
@@ -15,7 +15,8 @@ namespace Perpetuum.Accounting
                 .SetParameter("@epforactivityType", (int)logEvent.TransactionType)
                 .SetParameter("@rawPoints", logEvent.RawPoints)
                 .SetParameter("@points", logEvent.Points)
-                .SetParameter("@boostFactor", logEvent.BoostFactor);
+                .SetParameter("@boostFactor", logEvent.BoostFactor)
+                .SetParameter("@boostMultiplier", logEvent.BoostMultiplier);
         }
     }
 }

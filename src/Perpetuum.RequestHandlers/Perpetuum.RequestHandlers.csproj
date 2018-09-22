@@ -125,6 +125,7 @@
     <Compile Include="Characters\CharacterTransferCredit.cs" />
     <Compile Include="Characters\CharacterWizardData.cs" />
     <Compile Include="Chat.cs" />
+    <Compile Include="EPBonusEvent.cs" />
     <Compile Include="ContainerMover.cs" />
     <Compile Include="Corporations\CorporationAcceptApplication.cs" />
     <Compile Include="Corporations\CorporationApply.cs" />

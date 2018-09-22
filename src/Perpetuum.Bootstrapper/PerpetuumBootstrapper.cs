@@ -77,6 +77,7 @@ using Perpetuum.RequestHandlers.Zone.PBS;
 using Perpetuum.RequestHandlers.Zone.StatsMapDrawing;
 using Perpetuum.Robots;
 using Perpetuum.Services.Channels;
+using Perpetuum.Services.EventServices;
 using Perpetuum.Services.ExtensionService;
 using Perpetuum.Services.HighScores;
 using Perpetuum.Services.Insurance;
@@ -1624,6 +1625,12 @@ namespace Perpetuum.Bootstrapper
 
             _builder.RegisterType<GoodiePackHandler>();
 
+            //TODO new EPBonusEventService 
+            _builder.RegisterType<EPBonusEventService>().SingleInstance().OnActivated(e =>
+            {
+                e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromMinutes(1)));
+            });
+
             _builder.RegisterType<AccountManager>().As<IAccountManager>();
 
             _builder.RegisterType<Account>();
@@ -2129,6 +2136,8 @@ namespace Perpetuum.Bootstrapper
             // Open account commands
             RegisterRequestHandler<AccountOpenCreate>(Commands.AccountOpenCreate);
 
+            // Event GM Commands
+            RegisterRequestHandler<EPBonusEvent>(Commands.EPBonusSet);
         }
 
         private void RegisterRobotTemplates()

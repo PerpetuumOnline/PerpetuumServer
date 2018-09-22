@@ -278,6 +278,7 @@
     <Compile Include="Selectors\ISelector.cs" />
     <Compile Include="Selectors\ModuloBasedSelector.cs" />
     <Compile Include="Services\Channels\GameAdminCommands.cs" />
+    <Compile Include="Services\EventServices\EPBonusEventService.cs" />
     <Compile Include="Services\MissionEngine\DisplayMissionSpotsProcess.cs" />
     <Compile Include="Services\MissionEngine\MissionResolveTester.cs" />
     <Compile Include="Services\MissionEngine\OneLocationTest.cs" />
@@ -554,6 +555,7 @@
     <Compile Include="Units\UnitUpdatePacketBuilder.cs" />
     <Compile Include="Units\UnitUpdateTypes.cs" />
     <Compile Include="Units\UpdatePacketControl.cs" />
+    <Compile Include="Threading\ThreadLock.cs" />
     <Compile Include="ValueTypeExtensions.cs" />
     <Compile Include="Vector2Extensions.cs" />
     <Compile Include="Wallets\IWallet.cs" />

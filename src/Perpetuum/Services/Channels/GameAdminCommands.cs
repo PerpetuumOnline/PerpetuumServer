@@ -788,8 +788,27 @@ namespace Perpetuum.Services.Channels
                 request.Session.HandleLocalRequest(request.Session.CreateLocalRequest(cmd));
             }
 
+            //EPBonusCommands
+            if (command[0] == "#epbonusset")
+            {
+                bool err = false;
+                err = !int.TryParse(command[1], out int bonusBoost);
+                err = !int.TryParse(command[2], out int hours);
+                if (err)
+                {
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                }
 
-            
+                Dictionary<string, object> dictionary = new Dictionary<string, object>()
+                {
+                    { k.bonus, bonusBoost },
+                    { k.duration, hours }
+                };
+
+                string cmd = string.Format("{0}:relay:{1}", Commands.EPBonusSet.Text, GenxyConverter.Serialize(dictionary));
+                request.Session.HandleLocalRequest(request.Session.CreateLocalRequest(cmd));
+                channel.SendMessageToAll(sessionManager, sender, "EP Bonus Set with command: " + dictionary.ToDebugString());
+            }
 
         }
     }

@@ -5,6 +5,7 @@ using System.Transactions;
 using Perpetuum.Accounting.Characters;
 using Perpetuum.Data;
 using Perpetuum.Log;
+using Perpetuum.Services.EventServices;
 using Perpetuum.Services.ExtensionService;
 
 namespace Perpetuum.Accounting
@@ -14,16 +15,19 @@ namespace Perpetuum.Accounting
         private readonly AccountTransactionLogger _transactionLogger;
         private readonly AccountWalletFactory _walletFactory;
         private readonly EpForActivityLogger _epForActivityLogger;
+        private readonly EPBonusEventService _epBonusEventService;
 
         public AccountManager(IAccountRepository accountRepository,
             AccountTransactionLogger transactionLogger,
             AccountWalletFactory walletFactory,
-            EpForActivityLogger epForActivityLogger)
+            EpForActivityLogger epForActivityLogger,
+            EPBonusEventService epBonusEventService)
         {
             Repository = accountRepository;
             _transactionLogger = transactionLogger;
             _walletFactory = walletFactory;
             _epForActivityLogger = epForActivityLogger;
+            _epBonusEventService = epBonusEventService;
         }
 
         public IAccountRepository Repository { get; }
@@ -112,7 +116,7 @@ namespace Perpetuum.Accounting
             var lockedEPPerAccount = GetLockedEpByAccount(account);
             var epCollected = GetExtensionPointsCollected(account);
             var boostFactor = GetExperienceBoostingFactor(epCollected,SERVER_DESIRED_EP_LEVEL);
-            var onePointRate = CalculateBoostedExtensionPoint(1,GetBoostMultiplier(boostFactor));
+            var onePointRate = CalculateBoostedExtensionPoint(1,GetBoostMultiplier(boostFactor, GetEPMultiplier()));
             onePointRate = account.IsDailyEpBoosted ? onePointRate * 2 : onePointRate;
 
             var result = new Dictionary<string,object>
@@ -130,9 +134,13 @@ namespace Perpetuum.Accounting
             return result;
         }
 
-        private static double GetBoostMultiplier(double boostFactor)
+        private static double GetBoostMultiplier(double boostFactor, double bonusMultiplier)
         {
-            return (BOOSTMULTIPLIERMAX - 1) * boostFactor;
+            if (bonusMultiplier > BOOSTMULTIPLIERMAX && boostFactor <= 0)
+            {
+                return bonusMultiplier - BOOSTMULTIPLIERMAX;
+            }
+            return (bonusMultiplier - 1) * boostFactor;
         }
 
         private static double GetExperienceBoostingFactor(int collectedEpSum,double epLevelThreshold)
@@ -350,21 +358,27 @@ namespace Perpetuum.Accounting
             (affected == 1).ThrowIfFalse(ErrorCodes.SQLInsertError);
         }
 
-        public int AddExtensionPointsBoostAndLog(Account account,Character character,EpForActivityType activityType,int points)
+        private double GetEPMultiplier()
+        {
+            return BOOSTMULTIPLIERMAX + _epBonusEventService.GetBonus();
+        }
+
+        public int AddExtensionPointsBoostAndLog(Account account, Character character, EpForActivityType activityType, int points)
         {
             if (points <= 0)
                 return 0;
 
+            var bonusMultiplier = GetEPMultiplier();
             var rawPoints = points;
-            var boostFactor = GetExperienceBoostingFactor(GetExtensionPointsCollected(account),SERVER_DESIRED_EP_LEVEL);
-            var boostedPoints = GetBoostedExtensionPoints(account,points);
+            var boostFactor = GetExperienceBoostingFactor(GetExtensionPointsCollected(account), SERVER_DESIRED_EP_LEVEL);
+            var boostedPoints = GetBoostedExtensionPoints(account, points, bonusMultiplier);
 
             Transaction.Current.OnCommited(() =>
             {
-                LogEpForActivity(account,character,activityType,rawPoints,boostedPoints,boostFactor);
+                LogEpForActivity(account, character, activityType, rawPoints, boostedPoints, boostFactor, (int)bonusMultiplier);
             });
 
-            AddExtensionPoints(account,boostedPoints);
+            AddExtensionPoints(account, boostedPoints);
             return boostedPoints;
         }
 
@@ -381,7 +395,7 @@ namespace Perpetuum.Accounting
             });
         }
 
-        public void InjectExtensionPoints(Account account,int points)
+        private void InjectExtensionPoints(Account account,int points)
         {
             Db.Query().CommandText("extensionPointsInject")
                 .SetParameter("@accountID",account.Id)
@@ -394,11 +408,11 @@ namespace Perpetuum.Accounting
         /// Returns the boosted points
         /// </summary>
         /// <returns></returns>
-        private int GetBoostedExtensionPoints(Account account,int points)
+        private int GetBoostedExtensionPoints(Account account, int points, double bonusMultiplier)
         {
             //  >>>>>>>>>>  ami ebbol kijon az injektolhato <<<<<<<<<<<
             var dailyPointsSum = GetExtensionPointsCollected(account);
-            var realEpGain = AddExtensionPointWithBoosting(points,dailyPointsSum,SERVER_DESIRED_EP_LEVEL);
+            var realEpGain = AddExtensionPointWithBoosting(points, dailyPointsSum, SERVER_DESIRED_EP_LEVEL, bonusMultiplier);
             if (account.IsDailyEpBoosted)
                 realEpGain *= 2;
             return realEpGain;
@@ -411,36 +425,24 @@ namespace Perpetuum.Accounting
         /// <param name="accoutEpSum"></param>
         /// <param name="epLevelThreshold"></param>
         /// <returns></returns>
-        private static int AddExtensionPointWithBoosting(int extensionPointsToAdd,int accoutEpSum,double epLevelThreshold)
+        private static int AddExtensionPointWithBoosting(int extensionPointsToAdd, int accoutEpSum, double epLevelThreshold, double bonusMultiplier)
         {
-            //above threshold -> no change
-            if (accoutEpSum >= epLevelThreshold)
-                return extensionPointsToAdd;
-
             var result = 0;
             var currentEp = accoutEpSum;
-            //var builder = new StringBuilder();
 
-            for (var i = 0;i < extensionPointsToAdd;i++)
+            for (var i = 0; i < extensionPointsToAdd; i++)
             {
-                var expBoostingFactor = GetExperienceBoostingFactor(currentEp,epLevelThreshold);
-                var boostingMultiplier = GetBoostMultiplier(expBoostingFactor);
-                var pointsToAdd = CalculateBoostedExtensionPoint(1,boostingMultiplier);
+                var expBoostingFactor = GetExperienceBoostingFactor(currentEp, epLevelThreshold);
+                var boostingMultiplier = GetBoostMultiplier(expBoostingFactor, bonusMultiplier);
+                var pointsToAdd = CalculateBoostedExtensionPoint(1, boostingMultiplier);
                 result += pointsToAdd;
                 currentEp += pointsToAdd;
-
-                //builder.AppendLine();
-                //builder.Append($"BoostFactor:{Math.Round(expBoostingFactor,4)}");
-                //builder.Append($" rate:  1:{pointsToAdd}");
-                //builder.Append($" tcurrentEP:{currentEp}");
             }
 
-            //Logger.Warning(builder.ToString());
-
-            return Math.Max(result,extensionPointsToAdd);
+            return Math.Max(result, extensionPointsToAdd);
         }
 
-        private void LogEpForActivity(Account account,Character character,EpForActivityType activityType,int rawPoints,int points,double boostFactor)
+        private void LogEpForActivity(Account account,Character character,EpForActivityType activityType,int rawPoints,int points,double boostFactor, int bonusMultiplier)
         {
             var epForActivityLogEvent = new EpForActivityLogEvent(activityType)
             {
@@ -449,10 +451,12 @@ namespace Perpetuum.Accounting
                 RawPoints = rawPoints,
                 Points = points,
                 BoostFactor = boostFactor,
+                BoostMultiplier = bonusMultiplier,
+
             };
 
             _epForActivityLogger.Log(epForActivityLogEvent);
-            Logger.Info($"EP4Activity:{activityType} accountId:{account.Id} characterId:{character.Id} raw:{rawPoints} pts:{points} boostFactor:{Math.Round(boostFactor,4)}");
+            Logger.Info($"EP4Activity:{activityType} accountId:{account.Id} characterId:{character.Id} raw:{rawPoints} pts:{points} boostFactor:{Math.Round(boostFactor,4)}  bonusMultiplier:{bonusMultiplier}");
         }
 
         public IEnumerable<EpForActivityLogEvent> GetEpForActivityHistory(Account account,DateTime earlier,DateTime later)
@@ -470,6 +474,7 @@ namespace Perpetuum.Accounting
                         RawPoints = r.GetValue<int>("rawpoints"),
                         Points = r.GetValue<int>("points"),
                         BoostFactor = r.GetValue<double>("boostfactor"),
+                        BoostMultiplier = r.GetValue<int>(k.multiplier),
                         Created = r.GetValue<DateTime>("eventtime")
                     };
                 }).ToArray();

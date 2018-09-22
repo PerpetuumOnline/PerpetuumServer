@@ -3462,7 +3462,7 @@ namespace Perpetuum
             }
         }; //
 
-        //TODO new for gameadmincommand
+        //GameAdmin Command
         public static readonly Command ExtensionFreeAllLockedEpCommand = new Command
         {
             Text = "extensionFreeAllLockedEpByCommand",
@@ -3470,6 +3470,18 @@ namespace Perpetuum
             Arguments =
             {
                 new Argument<int>(k.accountID)
+            }
+        };
+
+        //GameAdmin Command
+        public static readonly Command EPBonusSet = new Command
+        {
+            Text = "EPBonusSet",
+            AccessLevel = AccessLevel.admin,
+            Arguments =
+            {
+                new Argument<int>(k.bonus),
+                new Argument<int>(k.duration),
             }
         };
 
