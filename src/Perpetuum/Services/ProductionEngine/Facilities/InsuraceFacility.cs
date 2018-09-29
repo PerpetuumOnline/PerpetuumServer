@@ -102,6 +102,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
 
             robot.Initialize(character);
             robot.CheckOwnerCharacterAndCorporationAndThrowIfFailed(character);
+            corporation = character.GetCorporation();
 
             long? corporationEid = character.CorporationEid;
             var useCorporationWallet = false;
