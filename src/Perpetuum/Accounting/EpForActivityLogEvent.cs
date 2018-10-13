@@ -20,6 +20,7 @@ namespace Perpetuum.Accounting
         public int Points { get; set; }
         public double BoostFactor { get; set; }
         public int BoostMultiplier { get; set; }
+        public int EventMultiplier { get; set; }
         public DateTime Created { get; set; }
 
         public IDictionary<string, object> ToDictionary()
@@ -32,6 +33,7 @@ namespace Perpetuum.Accounting
                 {k.points, Points},
                 {k.boostFactor, BoostFactor},
                 {k.multiplier, BoostMultiplier},
+                {k.bonusMultiplier, EventMultiplier},
                 {k.created, Created}
             };
 
