@@ -847,6 +847,7 @@ namespace Perpetuum.Bootstrapper
             RegisterEntity<CalibrationProgram>();
             RegisterEntity<DynamicCalibrationProgram>();
             RegisterEntity<RandomCalibrationProgram>();
+            RegisterEntity<CalibrationProgramCapsule>();//TODO new CT Capsule!
 
             RegisterProductionFacility<Mill>();
             RegisterProductionFacility<Prototyper>();
@@ -1209,6 +1210,9 @@ namespace Perpetuum.Bootstrapper
                 //TODO ORDER MATTERS!  Register Paints AFTER lottery will ensure Paint objects are valid subset of lottery category
                 //TODO entitydefaults must contain name "def_paint" and have cf_lottery_items 
                 ByNamePatternAndFlag<Paint>("def_paint", CategoryFlags.cf_lottery_items);
+
+                //TODO new CalibrationTemplateItem -- activates like paint! same category!
+                ByNamePatternAndFlag<CalibrationProgramCapsule>("_CT_capsule", CategoryFlags.cf_lottery_items);
 
                 ByCategoryFlags<VisibilityBasedProbeDeployer>(CategoryFlags.cf_proximity_probe_deployer);
                 ByCategoryFlags<Item>(CategoryFlags.cf_gift_packages);

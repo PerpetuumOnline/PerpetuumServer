@@ -33,6 +33,45 @@ namespace Perpetuum.RequestHandlers
             {
                 this.HandlePaint(request, itemEid);
             }
+            else if (item is CalibrationProgramCapsule)
+            {
+                this.HandleCalibrationTemplateItem(request, itemEid);
+            }
+        }
+
+        private void HandleCalibrationTemplateItem(IRequest request, long itemEid)
+        {
+            using (var scope = Db.CreateTransaction())
+            {
+                var containerEid = request.Data.GetOrDefault<long>(k.containerEID);
+                var character = request.Session.Character;
+                character.IsDocked.ThrowIfFalse(ErrorCodes.CharacterHasToBeDocked);
+
+                var container = Container.GetWithItems(containerEid, character);
+                container.ThrowIfNotType<PublicContainer>(ErrorCodes.ContainerHasToBeOnADockingBase); //Error for unpacking elsewhere
+
+                var ctCapsule = (CalibrationProgramCapsule)container.GetItemOrThrow(itemEid, true).Unstack(1);
+                var ctDef = ctCapsule.Activate();
+
+                var ctItem = (Item)_entityServices.Factory.CreateWithRandomEID(ctDef);
+                ctItem.Owner = character.Eid;
+
+                container.AddItem(ctItem, false); // CTs dont stack
+                _entityServices.Repository.Delete(ctCapsule);
+                container.Save();
+
+                Transaction.Current.OnCommited(() =>
+                {
+                    var result = new Dictionary<string, object>
+                    {
+                        { k.container, container.ToDictionary() },
+                        { k.item, ctItem.ToDictionary() }
+                    };
+                    Message.Builder.FromRequest(request).WithData(result).Send();
+                });
+
+                scope.Complete();
+            }
         }
 
         public void HandleLottery(IRequest request)
