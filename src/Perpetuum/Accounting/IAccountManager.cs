@@ -22,8 +22,8 @@ namespace Perpetuum.Accounting
 
         void InsertExtensionRemoveLog(Account account, Character character, int extensionId, int extensionLevel,int points);
         void AddExtensionPointsSpent(Account account, Character character, int spentPoints, int extensionID,int extensionLevel);
-        void ExtensionSubscriptionStart(Account account, DateTime startTime, DateTime endTime);
-        void ExtensionSubscriptionExtend(Account account, DateTime extendedValidUntil);
+        void ExtensionSubscriptionStart(Account account, DateTime startTime, DateTime endTime, int multiplierBonus);
+        //void ExtensionSubscriptionExtend(Account account, DateTime extendedValidUntil);
 
         void AddExtensionPoints(Account account, int pointsToInject);
         int AddExtensionPointsBoostAndLog(Account account, Character character, EpForActivityType activityType,int points);

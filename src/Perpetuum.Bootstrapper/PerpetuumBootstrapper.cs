@@ -1001,6 +1001,7 @@ namespace Perpetuum.Bootstrapper
             RegisterEntity<SparkActivator>();
             RegisterEntity<Gift>();
             RegisterEntity<Paint>();//TODO register new entitydef
+			RegisterEntity<EPBoost>();
 
             _builder.Register<Func<EntityDefault,Entity>>(x =>
             {
@@ -1213,6 +1214,9 @@ namespace Perpetuum.Bootstrapper
 
                 //TODO new CalibrationTemplateItem -- activates like paint! same category!
                 ByNamePatternAndFlag<CalibrationProgramCapsule>("_CT_capsule", CategoryFlags.cf_lottery_items);
+
+				// TODO new ep boost item -- activates like paint
+				ByNamePatternAndFlag<EPBoost>("def_boost_ep", CategoryFlags.cf_lottery_items);
 
                 ByCategoryFlags<VisibilityBasedProbeDeployer>(CategoryFlags.cf_proximity_probe_deployer);
                 ByCategoryFlags<Item>(CategoryFlags.cf_gift_packages);

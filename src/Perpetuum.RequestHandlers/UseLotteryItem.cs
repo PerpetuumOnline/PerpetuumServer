@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Transactions;
+using Perpetuum.Accounting;
 using Perpetuum.Accounting.Characters;
 using Perpetuum.Common.Loggers.Transaction;
 using Perpetuum.Containers;
@@ -14,30 +15,64 @@ namespace Perpetuum.RequestHandlers
     public class UseLotteryItem : IRequestHandler
     {
         private readonly IEntityServices _entityServices;
+		private readonly IAccountManager accountManager;
 
-        public UseLotteryItem(IEntityServices entityServices)
+        public UseLotteryItem(IEntityServices entityServices, IAccountManager accountManager)
         {
             _entityServices = entityServices;
+			this.accountManager = accountManager;
         }
 
 
         public void HandleRequest(IRequest request)
         {
             var itemEid = request.Data.GetOrDefault<long>(k.itemEID);
-            var item = this._entityServices.Repository.Load(itemEid);
+            var item = _entityServices.Repository.Load(itemEid);
             if (item is LotteryItem)
-            {
-                this.HandleLottery(request);
-            }
+                HandleLottery(request);
+			else if (item is EPBoost)
+				HandleEPBoost(request, itemEid);
             else if (item is Paint) //TODO this is here until we can build a good category flag..
-            {
-                this.HandlePaint(request, itemEid);
-            }
+                HandlePaint(request, itemEid);
             else if (item is CalibrationProgramCapsule)
-            {
-                this.HandleCalibrationTemplateItem(request, itemEid);
-            }
+                HandleCalibrationTemplateItem(request, itemEid);
         }
+
+		private void HandleEPBoost(IRequest request, long itemEid)
+		{
+			using (var scope = Db.CreateTransaction())
+			{
+				var containerEid = request.Data.GetOrDefault<long>(k.containerEID);
+				var character = request.Session.Character;
+				var account = accountManager.Repository.Get(request.Session.AccountId).ThrowIfNull(ErrorCodes.AccountNotFound);
+
+				var container = Container.GetWithItems(containerEid, character);
+
+				var containerItem = (EPBoost)container.GetItemOrThrow(itemEid, true).Unstack(1);
+
+				containerItem.Activate(accountManager, account);
+
+				_entityServices.Repository.Delete(containerItem);
+				container.Save();
+				LogActivation(character, container, containerItem);
+				
+
+				Transaction.Current.OnCommited(() =>
+				{
+					//Send custom message back in "Redeemables" dialog
+					var boostDict = containerItem.ToDictionary();
+					boostDict[k.quantity] = -1;  //Indicate the consumption of item from stack
+					var result = new Dictionary<string, object>
+					{
+						{ k.container, container.ToDictionary() },
+						{ k.item, boostDict }
+					};
+					Message.Builder.FromRequest(request).WithData(result).Send();
+				});
+
+				scope.Complete();
+			}
+		}
 
         private void HandleCalibrationTemplateItem(IRequest request, long itemEid)
         {
@@ -119,6 +154,15 @@ namespace Perpetuum.RequestHandlers
                                                  .SetItem(lotteryItem);
             character.LogTransaction(b);
         }
+
+		private static void LogActivation(Character character, Container container, Item item)
+		{
+			var b = TransactionLogEvent.Builder().SetTransactionType(TransactionType.ItemRedeem)
+												 .SetCharacter(character)
+												 .SetContainer(container)
+												 .SetItem(item);
+			character.LogTransaction(b);
+		}
 
         private static void LogRandomItemCreated(Character character, Container container, Item randomItem)
         {

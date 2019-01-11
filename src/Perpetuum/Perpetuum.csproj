@@ -215,6 +215,7 @@
     <Compile Include="IO\IFileSystem.cs" />
     <Compile Include="IReadOnlyRepository.cs" />
     <Compile Include="Items\CalibrationProgramCapsule.cs" />
+    <Compile Include="Items\EPBoost.cs" />
     <Compile Include="Items\Paint.cs" />
     <Compile Include="Items\Templates\CachedRobotTemplateReader.cs" />
     <Compile Include="Items\Templates\IRobotTemplateReader.cs" />

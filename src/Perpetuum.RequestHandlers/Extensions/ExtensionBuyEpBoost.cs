@@ -23,6 +23,9 @@ namespace Perpetuum.RequestHandlers.Extensions
 
         public void HandleRequest(IRequest request)
         {
+			// Disable this command completely so as to not cause confusion with the in-game item
+			false.ThrowIfFalse(ErrorCodes.NoSuchCommand);
+			/*
             using (var scope = Db.CreateTransaction())
             {
                 var account = _accountManager.Repository.Get(request.Session.AccountId).ThrowIfNull(ErrorCodes.AccountNotFound);
@@ -42,7 +45,7 @@ namespace Perpetuum.RequestHandlers.Extensions
                 
                     var startTime = DateTime.Now;
                     var endTime = DateTime.Now.AddDays(EP_BOOST_PERIOD_LENGTH_IN_DAYS);
-                    _accountManager.ExtensionSubscriptionStart(account,startTime, endTime);
+                    _accountManager.ExtensionSubscriptionStart(account, startTime, endTime, 2);
                     account.ValidUntil = endTime;
                 }
                 else
@@ -72,7 +75,8 @@ namespace Perpetuum.RequestHandlers.Extensions
                 });
                 
                 scope.Complete();
-            }
+				
+            }*/
         }
     }
 }

@@ -17,6 +17,11 @@ namespace Perpetuum.EntityFramework
             _dictionary = dictionary;
         }
 
+		public TReturnType GetOption<TReturnType>(string keyName)
+		{
+			return _dictionary.GetOrDefault<TReturnType>(keyName);
+		}
+
         public int AlarmPeriod
         {
             get { return _dictionary.GetOrDefault<int>(k.alarmPeriod); }

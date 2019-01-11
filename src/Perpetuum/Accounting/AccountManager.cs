@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Transactions;
 using Perpetuum.Accounting.Characters;
@@ -116,7 +117,7 @@ namespace Perpetuum.Accounting
             var lockedEPPerAccount = GetLockedEpByAccount(account);
             var epCollected = GetExtensionPointsCollected(account);
             var boostFactor = GetExperienceBoostingFactor(epCollected,SERVER_DESIRED_EP_LEVEL);
-            var onePointRate = CalculateBoostedExtensionPoint(1,GetBoostMultiplier(boostFactor, GetEpBonusFromEvent()));
+            var onePointRate = CalculateBoostedExtensionPoint(1,GetBoostMultiplier(boostFactor, GetEpBonusFromEvent(), GetEpBonusFromSubscription(account)));
             onePointRate = account.IsDailyEpBoosted ? onePointRate * 2 : onePointRate;
 
             var result = new Dictionary<string,object>
@@ -140,9 +141,9 @@ namespace Perpetuum.Accounting
         /// <param name="boostFactor">Normalized value mapping AccountEP from 0->SERVER_DESIRED_EP_LEVEL as [1.0->0.0]</param>
         /// <param name="bonusIncrease">A boostfactor-agnostic multiplier -- usually from EPBonusEvents</param>
         /// <returns>EP Multiplier</returns>
-        private static double GetBoostMultiplier(double boostFactor, double bonusIncrease)
+        private static double GetBoostMultiplier(double boostFactor, double bonusIncrease, int itemIncrease)
         {
-            return ((BOOSTMULTIPLIERMAX - 1) * boostFactor) + bonusIncrease;
+            return ((BOOSTMULTIPLIERMAX - 1) * boostFactor) + bonusIncrease + itemIncrease;
         }
 
         private static double GetExperienceBoostingFactor(int collectedEpSum,double epLevelThreshold)
@@ -325,22 +326,30 @@ namespace Perpetuum.Accounting
         /// <summary>
         /// Starts the subscription period
         /// </summary>
-        public void ExtensionSubscriptionStart(Account account,DateTime startTime,DateTime endTime)
+        public void ExtensionSubscriptionStart(Account account,DateTime startTime,DateTime endTime, int multiplierBonus)
         {
-            Db.Query().CommandText("extensionSubscriptionStart")
-                .SetParameter("@accountID",account.Id)
-                .SetParameter("@startTime",startTime)
-                .SetParameter("@endTime",endTime)
-                .ExecuteNonQuery();
+            try
+            {
+                Db.Query().CommandText("extensionSubscriptionStart")
+                    .SetParameter("@accountID", account.Id)
+                    .SetParameter("@startTime", startTime)
+                    .SetParameter("@endTime", endTime)
+                    .SetParameter("@multiplierBonus", multiplierBonus)
+                    .ExecuteNonQuery();
+            }
+            catch (SqlException exc)
+            {
+                exc.Number.ThrowIfEqual(100000, ErrorCodes.ItemNotUsable);
+            }
         }
 
-        public void ExtensionSubscriptionExtend(Account account,DateTime extendedValidUntil)
-        {
-            Db.Query().CommandText("extensionSubscriptionExtend")
-                .SetParameter("@accountID",account.Id)
-                .SetParameter("@endTime",extendedValidUntil)
-                .ExecuteNonQuery();
-        }
+        //public void ExtensionSubscriptionExtend(Account account,DateTime extendedValidUntil)
+        //{
+        //    Db.Query().CommandText("extensionSubscriptionExtend")
+        //        .SetParameter("@accountID",account.Id)
+        //        .SetParameter("@endTime",extendedValidUntil)
+        //        .ExecuteNonQuery();
+        //}
 
         /// <summary>
         /// penalty IS ++++ positive
@@ -365,15 +374,31 @@ namespace Perpetuum.Accounting
             return _epBonusEventService.GetBonus();
         }
 
+		private int GetEpBonusFromSubscription(Account account)
+		{
+			var dataRecord = Db.Query().CommandText("getExtensionSubscription")
+				.SetParameter("@accountID", account.Id)
+				.Execute();
+
+			if (!dataRecord.Any())
+				return 0;
+
+			var record = dataRecord.SingleOrDefault();
+			int ord = record.GetOrdinal("multiplierBonus");
+			
+			return record.GetInt32(ord);
+		}
+
         public int AddExtensionPointsBoostAndLog(Account account, Character character, EpForActivityType activityType, int points)
         {
             if (points <= 0)
                 return 0;
 
             var bonusIncrease = GetEpBonusFromEvent();
+			var itemIncrease = GetEpBonusFromSubscription(account);
             var rawPoints = points;
             var boostFactor = GetExperienceBoostingFactor(GetExtensionPointsCollected(account), SERVER_DESIRED_EP_LEVEL);
-            var boostedPoints = GetBoostedExtensionPoints(account, points, bonusIncrease);
+            var boostedPoints = GetBoostedExtensionPoints(account, points, bonusIncrease, itemIncrease);
 
             Transaction.Current.OnCommited(() =>
             {
@@ -410,11 +435,11 @@ namespace Perpetuum.Accounting
         /// Returns the boosted points
         /// </summary>
         /// <returns></returns>
-        private int GetBoostedExtensionPoints(Account account, int points, double bonusIncrease)
+        private int GetBoostedExtensionPoints(Account account, int points, double bonusIncrease, int itemIncrease)
         {
             //  >>>>>>>>>>  ami ebbol kijon az injektolhato <<<<<<<<<<<
             var dailyPointsSum = GetExtensionPointsCollected(account);
-            var realEpGain = AddExtensionPointWithBoosting(points, dailyPointsSum, SERVER_DESIRED_EP_LEVEL, bonusIncrease);
+            var realEpGain = AddExtensionPointWithBoosting(points, dailyPointsSum, SERVER_DESIRED_EP_LEVEL, bonusIncrease, itemIncrease);
             if (account.IsDailyEpBoosted)
                 realEpGain *= 2;
             return realEpGain;
@@ -428,7 +453,7 @@ namespace Perpetuum.Accounting
         /// <param name="epLevelThreshold"></param>
         /// <param name="bonusIncrease">Any multiplier increase over the BOOSTMULTIPLIERMAX</param>
         /// <returns></returns>
-        private static int AddExtensionPointWithBoosting(int extensionPointsToAdd, int accoutEpSum, double epLevelThreshold, double bonusIncrease)
+        private static int AddExtensionPointWithBoosting(int extensionPointsToAdd, int accoutEpSum, double epLevelThreshold, double bonusIncrease, int itemIncrease)
         {
             var result = 0;
             var currentEp = accoutEpSum;
@@ -436,7 +461,7 @@ namespace Perpetuum.Accounting
             for (var i = 0; i < extensionPointsToAdd; i++)
             {
                 var expBoostingFactor = GetExperienceBoostingFactor(currentEp, epLevelThreshold);
-                var boostingMultiplier = GetBoostMultiplier(expBoostingFactor, bonusIncrease);
+                var boostingMultiplier = GetBoostMultiplier(expBoostingFactor, bonusIncrease, itemIncrease);
                 var pointsToAdd = CalculateBoostedExtensionPoint(1, boostingMultiplier);
                 result += pointsToAdd;
                 currentEp += pointsToAdd;
