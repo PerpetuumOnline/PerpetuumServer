@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Perpetuum.Services.Looting;
@@ -8,10 +9,12 @@ namespace Perpetuum.Zones.Artifacts.Generators.Loot
     public class ArtifactLootGenerator : IArtifactLootGenerator
     {
         private readonly IArtifactRepository _artifactRepository;
+        private Random _random;
 
         public ArtifactLootGenerator(IArtifactRepository artifactRepository)
         {
             _artifactRepository = artifactRepository;
+            _random = new Random();
         }
 
         public ArtifactLootItems GenerateLoot(Artifact artifact)
@@ -32,7 +35,8 @@ namespace Perpetuum.Zones.Artifacts.Generators.Loot
             {
                 foreach (var loot in loots)
                 {
-                    var chance = FastRandom.NextDouble();
+                    var chance = _random.NextDouble();
+
                     if (chance > loot.Chance)
                         continue;
 
