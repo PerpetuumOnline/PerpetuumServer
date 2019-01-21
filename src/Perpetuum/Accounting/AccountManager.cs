@@ -330,7 +330,7 @@ namespace Perpetuum.Accounting
         {
             try
             {
-                Db.Query().CommandText("extensionSubscriptionStart")
+                Db.Query().CommandText("opp.extensionSubscriptionStart")
                     .SetParameter("@accountID", account.Id)
                     .SetParameter("@startTime", startTime)
                     .SetParameter("@endTime", endTime)
@@ -376,7 +376,7 @@ namespace Perpetuum.Accounting
 
 		private int GetEpBonusFromSubscription(Account account)
 		{
-			var dataRecord = Db.Query().CommandText("getExtensionSubscription")
+			var dataRecord = Db.Query().CommandText("opp.getExtensionSubscription")
 				.SetParameter("@accountID", account.Id)
 				.Execute();
 
