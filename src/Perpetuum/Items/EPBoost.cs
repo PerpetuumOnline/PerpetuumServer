@@ -35,7 +35,7 @@ namespace Perpetuum.Items
 		
 		public void Activate(IAccountManager accountManager, Account account)
 		{
-				accountManager.ExtensionSubscriptionStart(account, DateTime.UtcNow, DateTime.UtcNow.AddHours(TimePeriodHours), Boost);
+				accountManager.ExtensionSubscriptionStart(account, DateTime.Now, DateTime.Now.AddHours(TimePeriodHours), Boost);
 		}
 	}
 }
