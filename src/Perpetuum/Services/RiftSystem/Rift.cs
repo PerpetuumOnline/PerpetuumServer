@@ -9,6 +9,7 @@ using Perpetuum.Log;
 using Perpetuum.Players;
 using Perpetuum.Services.MissionEngine.MissionTargets;
 using Perpetuum.Units;
+using Perpetuum.Units.DockingBases;
 using Perpetuum.Zones;
 using Perpetuum.Zones.Blobs.BlobEmitters;
 using Perpetuum.Zones.NpcSystem.Presences;
@@ -194,13 +195,13 @@ namespace Perpetuum.Services.RiftSystem
 
 
             // we are on a stronghold. we want to go home.
-            // for the moment we will send them to a teleporter on zone 0.
+            // Sending them at the Hershfield main terminal.
             if (player.Zone is StrongHoldZone)
             {
-                var destZone = player.Character.GetZone(0);
-                var teleportColumns = destZone.GetTeleportColumns().Where(t => t.IsEnabled);
+                var destZone = player.Character.GetZone(8); // Hershfield zone
+                var dockingBase = destZone.Units.OfType<DockingBase>().First();
                 var teleport = _teleportStrategyFactories.TeleportToAnotherZoneFactory(destZone);
-                teleport.TargetPosition = teleportColumns.First().CurrentPosition;
+                teleport.TargetPosition = UndockSpawnPositionSelector.SelectSpawnPosition(dockingBase);
                 teleport.DoTeleportAsync(player);
                 return;
             }
