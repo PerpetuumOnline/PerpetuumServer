@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using Perpetuum.Units;
+using Perpetuum.Units.DockingBases;
 using Perpetuum.Zones.Finders.PositionFinders;
+using Perpetuum.Zones.Teleporting;
 
 namespace Perpetuum.Zones.Terrains.Materials.Minerals.Generators
 {
@@ -72,6 +75,16 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals.Generators
             return true;
         }
 
+        private bool IsInRangeOfBaseOrTeleports(Point location)
+        {
+            if (_zone.Units.OfType<DockingBase>().WithinRange(location.ToPosition(), DistanceConstants.MINERAL_DISTANCE_FROM_BASE_MIN).Any())
+                return true;
+
+            if (_zone.Units.OfType<Teleport>().WithinRange(location.ToPosition(), DistanceConstants.MINERAL_DISTANCE_FROM_BASE_MIN).Any())
+                return true;
+            return false;
+        }
+
         private MineralNode CreateMineralNode(MineralLayer layer,Dictionary<Point,double> tiles)
         {
             int minx = int.MaxValue, miny = int.MaxValue, maxx = 0, maxy = 0;
@@ -114,6 +127,14 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals.Generators
 
                 if ( !IsValid(startPosition) )
                     continue;
+
+                if( layer.Configuration.Type == MaterialType.Epriton)
+                {
+                    if (IsInRangeOfBaseOrTeleports(startPosition))
+                    {
+                        continue;
+                    }
+                }
 
                 var n = layer.GetNearestNode(startPosition);
                 if (n == null)
