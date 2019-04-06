@@ -325,7 +325,9 @@ namespace Perpetuum.Services.Looting
             {
                 _itemRepository.DeleteAll(this);
                 zone.UnitService.RemoveUserUnit(this);
-            }).ContinueWith(t => { base.OnRemovedFromZone(zone); });
+            }).ContinueWith(t => {
+                base.OnRemovedFromZone(zone);
+            });
         }
 
         protected class LootContainerProgressInfoPacketBuilder : IBuilder<Packet>

@@ -288,6 +288,12 @@
     <Compile Include="IMessageSender.cs" />
     <Compile Include="MessageSender.cs" />
     <Compile Include="Services\Relay\ServerStateInfo.cs" />
+    <Compile Include="Services\Relics\Relic.cs" />
+    <Compile Include="Services\Relics\RelicInfo.cs" />
+    <Compile Include="Services\Relics\RelicLoot.cs" />
+    <Compile Include="Services\Relics\RelicManager.cs" />
+    <Compile Include="Services\Relics\RelicSpawnInfo.cs" />
+    <Compile Include="Services\Relics\RelicZoneConfig.cs" />
     <Compile Include="Services\Sessions\SessionID.cs" />
     <Compile Include="Common\SettingsLoader.cs" />
     <Compile Include="EntityFramework\DefinitionConfig.cs" />

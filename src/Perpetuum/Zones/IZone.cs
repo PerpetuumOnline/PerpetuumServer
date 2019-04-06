@@ -5,6 +5,7 @@ using Perpetuum.Common.Loggers;
 using Perpetuum.Groups.Corporations;
 using Perpetuum.Log;
 using Perpetuum.Players;
+using Perpetuum.Services.Relics;
 using Perpetuum.Units;
 using Perpetuum.Zones.Beams;
 using Perpetuum.Zones.Decors;
@@ -47,6 +48,7 @@ namespace Perpetuum.Zones
         PBSHighwayHandler HighwayHandler { get; }
         TerraformHandler TerraformHandler { get; }
         MiningLogHandler MiningLogHandler { get; }
+        RelicManager RelicManager { get; }
 
         IZoneUnitService UnitService { get; }
         IZoneEnterQueueService EnterQueueService { get; }

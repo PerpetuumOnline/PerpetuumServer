@@ -606,7 +606,7 @@ namespace Perpetuum.Players
             base.OnTileChanged();
 
             var zone = Zone;
-            if (zone == null) 
+            if (zone == null)
                 return;
 
             MissionHandler?.MissionUpdateOnTileChange();
@@ -615,7 +615,7 @@ namespace Perpetuum.Players
 
             ApplyHighwayEffect(controlInfo.IsAnyHighway);
 
-            if (zone.Configuration.Protected) 
+            if (zone.Configuration.Protected)
                 return;
 
             //PVP zone

@@ -16,6 +16,7 @@ using Perpetuum.Log;
 using Perpetuum.Network;
 using Perpetuum.Players;
 using Perpetuum.Services.HighScores;
+using Perpetuum.Services.Relics;
 using Perpetuum.Services.RiftSystem;
 using Perpetuum.Services.Sessions;
 using Perpetuum.Timers;
@@ -68,6 +69,9 @@ namespace Perpetuum.Zones
         [CanBeNull]
         public RiftManager RiftManager { private get; set; }
 
+        [CanBeNull]
+        public RelicManager RelicManager { get; set; }
+
         public IZoneEnterQueueService EnterQueueService { get; set; }
 
         public IHighScoreService HighScores { get; set; }
@@ -96,11 +100,15 @@ namespace Perpetuum.Zones
         public override void Start()
         {
             Listener.Start(OnConnectionAccepted);
+            RelicManager?.Start();
         }
 
         public override void Stop()
         {
             Listener.Stop();
+
+            //Emit stop signal to child services
+            RelicManager?.Stop();
 
             // players
             SaveUnitsToDb<Player>();
@@ -302,6 +310,7 @@ namespace Perpetuum.Zones
             UpdateUnits(time);
 
             RiftManager?.Update(time);
+            RelicManager?.Update(time);
             MiningLogHandler.Update(time);
             MeasureUpdate(time);
         }
