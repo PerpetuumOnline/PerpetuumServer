@@ -185,5 +185,39 @@ namespace Perpetuum.Services.Mail
         {
             return Db.Query().CommandText("newMailCount").SetParameter("@characterID", character.Id).ExecuteScalar<int>();
         }
+
+        public static ErrorCodes SendWelcomeMailBeginTutorial(Character newPlayer)
+        {
+            return SendWelcomeMail(newPlayer, "TutorialArriveMail");
+        }
+
+        public static ErrorCodes SendWelcomeMailExitTutorial(Character newPlayer)
+        {
+            return SendWelcomeMail(newPlayer, "TutorialCompleteMail");
+        }
+
+        private static ErrorCodes SendWelcomeMail(Character newPlayer, string mailName)
+        {
+            // TODO: query for this character once upon startup
+            Character sender = Character.GetByNick("[OPP] Sparky - The Syndicate Welcome Agent");
+
+            string subject, body;
+            using (var scope = Db.CreateTransaction())
+            {
+                var records = Db.Query()
+                    .CommandText("SELECT subject, body FROM premademail WHERE name = @mailName")
+                    .SetParameter("@mailName", mailName)
+                    .Execute();
+                subject = records.First().GetValue<string>("subject");
+                body = records.First().GetValue<string>("body");
+
+                subject = subject.Replace("$USER$", newPlayer.Nick);
+                body = body.Replace("$USER$", newPlayer.Nick);
+
+                scope.Complete();
+            }
+
+            return SendMail(sender, newPlayer, subject, body, MailType.character, out _, out _);
+        }
     }
 }

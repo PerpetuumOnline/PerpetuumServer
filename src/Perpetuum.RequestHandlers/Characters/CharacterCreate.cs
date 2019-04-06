@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Transactions;
 using Perpetuum.Accounting;
 using Perpetuum.Accounting.Characters;
@@ -11,6 +12,7 @@ using Perpetuum.GenXY;
 using Perpetuum.Groups.Corporations;
 using Perpetuum.Host.Requests;
 using Perpetuum.Services.Channels;
+using Perpetuum.Services.Mail;
 using Perpetuum.Services.Sparks;
 using Perpetuum.Units.DockingBases;
 using Perpetuum.Zones.Training;
@@ -19,6 +21,8 @@ namespace Perpetuum.RequestHandlers.Characters
 {
     public class CharacterCreate : IRequestHandler
     {
+        private TimeSpan WAIT_TIME_BEFORE_SENDING_MAIL = TimeSpan.FromSeconds(10);
+
         private readonly IAccountManager _accountManager;
         private readonly IChannelManager _channelManager;
         private readonly DockingBaseHelper _dockingBaseHelper;
@@ -103,6 +107,9 @@ namespace Perpetuum.RequestHandlers.Characters
                     character.SetAllExtensionLevel(6);
                     dockingBase.CreateStarterRobotForCharacter(character);
                     character.AddToWallet(TransactionType.CharacterCreate,10000000);
+
+                    Task.Delay(WAIT_TIME_BEFORE_SENDING_MAIL)
+                        .ContinueWith(task => MailHandler.SendWelcomeMailBeginTutorial(character));
                 }
 
                 character.CurrentDockingBaseEid = dockingBase.Eid;

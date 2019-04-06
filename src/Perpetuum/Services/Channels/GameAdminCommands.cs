@@ -3,6 +3,7 @@ using Perpetuum.ExportedTypes;
 using Perpetuum.GenXY;
 using Perpetuum.Host.Requests;
 using Perpetuum.Players;
+using Perpetuum.Services.Mail;
 using Perpetuum.Services.RiftSystem;
 using Perpetuum.Services.Sessions;
 using Perpetuum.Zones;
