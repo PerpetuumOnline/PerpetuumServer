@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Perpetuum.Services.Looting
 {
@@ -9,6 +10,12 @@ namespace Perpetuum.Services.Looting
         public CompositeLootGenerator(params ILootGenerator[] generators)
         {
             _generators = generators;
+        }
+
+        public IReadOnlyCollection<LootGeneratorItemInfo> GetInfos()
+        {
+            var infos = _generators.Select(x => x.GetInfos());
+            return infos.SelectMany(infoset => infoset).ToList().AsReadOnly();
         }
 
         public IEnumerable<LootItem> Generate()

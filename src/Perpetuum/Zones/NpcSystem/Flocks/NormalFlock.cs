@@ -66,7 +66,16 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
             base.OnMemberDead(killer,npc);
 
             _allowMultiplierChange = true;
-            _spawnTimes.Enqueue(new TimeTracker(RespawnTime));
+            _spawnTimes.Enqueue(new TimeTracker(GetRespawnTime()));
+        }
+
+        private TimeSpan GetRespawnTime()
+        {
+            if (Configuration.SpecialType == NpcSpecialType.Boss)
+            {
+                return RespawnTime.Multiply(FastRandom.NextDouble(0.9, 1.15));
+            }
+            return RespawnTime;
         }
 
         public override void Update(TimeSpan time)

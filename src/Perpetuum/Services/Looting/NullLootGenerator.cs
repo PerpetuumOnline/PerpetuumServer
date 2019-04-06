@@ -8,5 +8,10 @@ namespace Perpetuum.Services.Looting
         {
             yield break;
         }
+
+        public IReadOnlyCollection<LootGeneratorItemInfo> GetInfos()
+        {
+            return null;
+        }
     }
 }

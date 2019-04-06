@@ -39,6 +39,7 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
                     c.IsCallForHelp = r.GetValue<bool>("iscallforhelp");
                     c.Enabled = r.GetValue<bool>("enabled");
                     c.BehaviorType = (NpcBehaviorType) r.GetValue<int>("behaviorType");
+                    c.SpecialType = (NpcSpecialType) r.GetValue<int>("npcSpecialType");
                 });
                 var config = builder.Build();
                 _flockConfigurations[config.ID] = config;

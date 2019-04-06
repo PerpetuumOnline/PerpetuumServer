@@ -17,6 +17,7 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
         public bool IsCallForHelp { get; set; }
         public bool Enabled { get; set; }
         public NpcBehaviorType BehaviorType { get; set; }
+        public NpcSpecialType SpecialType { get; set; }
         public int HomeRange { get; set; }
         public EntityDefault EntityDefault { get; set; }
         public TimeSpan RespawnTime { get; set; }

@@ -114,6 +114,7 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
         {
             var npc = (Npc)EntityService.Factory.Create(Configuration.EntityDefault, EntityIDGenerator.Random);
             npc.Behavior = GetBehavior();
+            npc.SpecialType = Configuration.SpecialType;
 
             var gen = new CompositeLootGenerator(
                 new LootGenerator(LootService.GetNpcLootInfos(npc.Definition)),

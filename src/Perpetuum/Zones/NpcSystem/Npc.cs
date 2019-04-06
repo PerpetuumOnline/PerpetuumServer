@@ -38,6 +38,12 @@ namespace Perpetuum.Zones.NpcSystem
         Aggressive
     }
 
+    public enum NpcSpecialType
+    {
+        Normal,
+        Boss
+    }
+
     public abstract class NpcAI : IState
     {
         protected readonly Npc npc;
@@ -568,6 +574,7 @@ namespace Perpetuum.Zones.NpcSystem
         }
 
         public NpcBehavior Behavior { get; set; }
+        public NpcSpecialType SpecialType { get; set; }
 
         [CanBeNull]
         private INpcGroup _group;
@@ -723,7 +730,25 @@ namespace Perpetuum.Zones.NpcSystem
 
             using (var scope = Db.CreateTransaction())
             {
-                LootContainer.Create().SetOwner(tagger).AddLoot(LootGenerator).BuildAndAddToZone(zone, CurrentPosition);
+
+                if (SpecialType == NpcSpecialType.Boss)
+                {
+                    //Boss - Split loot equally to all participants
+                    List<Player> participants = new List<Player>();
+                    participants = ThreatManager.Hostiles.Select(x => zone.ToPlayerOrGetOwnerPlayer(x.unit)).ToList();
+                    ISplittableLootGenerator splitLooter = new SplittableLootGenerator(LootGenerator);
+                    List<ILootGenerator> lootGenerators = splitLooter.GetGenerators(participants.Count);
+                    for (var i = 0; i < participants.Count; i++)
+                    {
+                        LootContainer.Create().SetOwner(participants[i]).AddLoot(lootGenerators[i]).BuildAndAddToZone(zone, participants[i].CurrentPosition);
+                    }
+                }
+                else
+                {
+                    //Normal case: loot can awarded in full to tagger
+                    LootContainer.Create().SetOwner(tagger).AddLoot(LootGenerator).BuildAndAddToZone(zone, CurrentPosition);
+                }
+
 
                 var killerPlayer = zone.ToPlayerOrGetOwnerPlayer(killer);
 

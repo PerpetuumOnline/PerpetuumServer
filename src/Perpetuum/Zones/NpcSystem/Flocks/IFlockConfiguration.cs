@@ -20,5 +20,6 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
         string Note { get; }
         bool IsCallForHelp { get; }
         NpcBehaviorType BehaviorType { get; }
+        NpcSpecialType SpecialType { get; }
     }
 }
