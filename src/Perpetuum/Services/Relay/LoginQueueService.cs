@@ -24,12 +24,14 @@ namespace Perpetuum.Services.Relay
             public readonly ISession session;
             public readonly int accountId;
             public readonly string hwHash;
+            public readonly int language;
 
-            public SignInInfo(ISession session, int accountId, string hwHash)
+            public SignInInfo(ISession session, int accountId, string hwHash, int language)
             {
                 this.accountId = accountId;
                 this.session = session;
                 this.hwHash = hwHash.IsNullOrEmpty() ? "hash_" + FastRandom.NextString(7) : hwHash.Substring(0, Math.Min(50, hwHash.Length));
+                this.language = language;
             }
         }
 
@@ -46,9 +48,9 @@ namespace Perpetuum.Services.Relay
             _timer.Update(time).IsPassed(RefreshQueue);
         }
 
-        public void EnqueueAccount(ISession session, int accountID, string hwHash)
+        public void EnqueueAccount(ISession session, int accountID, string hwHash, int language)
         {
-            var info = new SignInInfo(session,accountID,hwHash);
+            var info = new SignInInfo(session,accountID,hwHash,language);
 
             lock (_queueSync)
             {
@@ -90,7 +92,7 @@ namespace Perpetuum.Services.Relay
 
                     try
                     {
-                        info.session.SignIn(info.accountId,info.hwHash);
+                        info.session.SignIn(info.accountId,info.hwHash,info.language);
                     }
                     catch (Exception ex)
                     {

@@ -59,7 +59,8 @@ namespace Perpetuum.RequestHandlers
             }
 
             var hwHash = request.Data.GetOrDefault<string>(k.hash);
-            _loginQueueService.EnqueueAccount(request.Session, account.Id, hwHash);
+            var language = request.Data.GetOrDefault<int>(k.language, 0);
+            _loginQueueService.EnqueueAccount(request.Session, account.Id, hwHash, language);
         }
 
         protected abstract Account LoadAccount(IRequest request);

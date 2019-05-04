@@ -70,6 +70,9 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Collections.Immutable, Version=1.2.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\System.Collections.Immutable.1.4.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
@@ -165,6 +168,7 @@
     <Compile Include="Converters\IConverter.cs" />
     <Compile Include="Converters\IConvertible.cs" />
     <Compile Include="CorporationConfiguration.cs" />
+    <Compile Include="CustomDictionary.cs" />
     <Compile Include="Data\AnonymousEnlistmentNotification.cs" />
     <Compile Include="Data\Database.cs" />
     <Compile Include="Data\DataReaderExtensions.cs" />

@@ -499,6 +499,7 @@ namespace Perpetuum.Bootstrapper
             _builder.RegisterType<TechTreeInfoService>().As<ITechTreeInfoService>();
             _builder.RegisterType<TechTreeService>().As<ITechTreeService>();
             _builder.RegisterType<TeleportDescriptionRepository>().As<ITeleportDescriptionRepository>();
+            _builder.RegisterType<CustomDictionary>().As<ICustomDictionary>();
 
             _builder.RegisterType<Session>().AsSelf().As<ISession>();
 

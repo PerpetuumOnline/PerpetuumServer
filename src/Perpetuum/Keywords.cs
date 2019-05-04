@@ -237,6 +237,7 @@ namespace Perpetuum
         public const string currentLoad = "currentLoad";
         public const string currentRound = "currentRound";
         public const string currentScore = "currentScore";
+        public const string customDictionary = "customDictionary";
 
         public const string cycle = "cycle";
         public const string cycle_time = "cycle_time";

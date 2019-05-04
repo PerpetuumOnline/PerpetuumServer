@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -33,7 +34,7 @@ namespace Perpetuum.Services.Sessions
 
         void Start();
 
-        void SignIn(int accountID, string hwHash);
+        void SignIn(int accountID, string hwHash, int language);
         void SignOut();
 
         void SelectCharacter(Character character);
@@ -52,10 +53,10 @@ namespace Perpetuum.Services.Sessions
         private readonly GlobalConfiguration _globalConfiguration;
         private readonly IAccountManager _accountManager;
         private readonly IZoneManager _zoneManager;
+        private readonly ICustomDictionary _customDictionary;
         private readonly Func<string, Command> _commandFactory;
         private readonly RequestHandlerFactory<IRequest> _requestHandlerFactory;
         private readonly RequestHandlerFactory<IZoneRequest> _zoneRequestHandlerFactory;
-
         private readonly ITcpConnection _connection;
 
         private AccessLevel _accessLevel;
@@ -67,6 +68,7 @@ namespace Perpetuum.Services.Sessions
         public Session(GlobalConfiguration globalConfiguration,
             IAccountManager accountManager,
             IZoneManager zoneManager,
+            ICustomDictionary customDictionary,
             Socket socket,
             Func<string, Command> commandFactory,
             RequestHandlerFactory<IRequest> requestHandlerFactory,
@@ -80,6 +82,7 @@ namespace Perpetuum.Services.Sessions
             _globalConfiguration = globalConfiguration;
             _accountManager = accountManager;
             _zoneManager = zoneManager;
+            _customDictionary = customDictionary;
             _commandFactory = commandFactory;
             _requestHandlerFactory = requestHandlerFactory;
             _zoneRequestHandlerFactory = zoneRequestHandlerFactory;
@@ -172,7 +175,7 @@ namespace Perpetuum.Services.Sessions
             _connection.Disconnect();
         }
 
-        public void SignIn(int accountID, string hwHash)
+        public void SignIn(int accountID, string hwHash, int language)
         {
             if (IsAuthenticated)
                 return;
@@ -208,7 +211,14 @@ namespace Perpetuum.Services.Sessions
 
                     AccountId = account.Id;
 
-                    var builder = Message.Builder.SetCommand(Commands.SignIn).WithData(account.ToDictionary());
+                    var response = account.ToDictionary();
+                    var customDictionary = _customDictionary.GetDictionary(language);
+                    if (customDictionary != null && customDictionary.Count > 0)
+                    {
+                        response.Add(k.customDictionary, customDictionary);
+                    }
+
+                    var builder = Message.Builder.SetCommand(Commands.SignIn).WithData(response);
                     SendMessage(builder);
                 });
 

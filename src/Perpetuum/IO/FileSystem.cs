@@ -73,6 +73,11 @@ namespace Perpetuum.IO
             return Path.Combine(_root, path);
         }
 
+        public IEnumerable<string> GetFiles(string path, string mask)
+        {
+            return Directory.GetFiles(Path.Combine(_root, path), mask);
+        }
+
         public override string ToString()
         {
             return $"Root: {_root}";
