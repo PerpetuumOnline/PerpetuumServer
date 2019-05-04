@@ -14,6 +14,27 @@ namespace Perpetuum
 
     public class CustomDictionary : ICustomDictionary
     {
+        /*
+        Language IDs:
+            0 = English
+            1 = Hungarian
+            2 = German
+            3 = Portuguese
+            4 = Russian
+            5 = French
+            6 = Spanish
+            7 = Polish
+            8 = Slovenian
+            9 = Romanian
+            10 = Norwegian
+            11 = Greek
+            12 = Finnish
+            13 = Italian
+            14 = Turkish
+            15 = Estonian
+            16 = Swedish
+            17 = Dutch
+        */
         private readonly int _defaultLanguage = 0;
 
         public Dictionary<int, Dictionary<string, object>> _dictionaries;
