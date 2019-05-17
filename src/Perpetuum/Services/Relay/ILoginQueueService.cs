@@ -5,6 +5,6 @@ namespace Perpetuum.Services.Relay
 {
     public interface ILoginQueueService : IProcess
     {
-        void EnqueueAccount(ISession session, int accountID, string hwHash);
+        void EnqueueAccount(ISession session, int accountID, string hwHash, int language);
     }
 }

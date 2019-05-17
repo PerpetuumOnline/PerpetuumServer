@@ -20,5 +20,7 @@ namespace Perpetuum.IO
         void CreateDirectory(string path);
 
         string CreatePath(string path);
+
+        IEnumerable<string> GetFiles(string path, string mask);
     }
 }
