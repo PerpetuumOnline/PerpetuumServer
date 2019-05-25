@@ -21,6 +21,7 @@ namespace Perpetuum.Services.Channels
         void SetPassword(string channelName, Character issuer, string password);
         void SetTopic(string channelName, Character issuer, string topic);
         void Talk(string channelName, Character sender, string message, IRequest request);
+        void Announcement(string channelName, Character sender, string message);
         void KickOrBan(string channelName, Character issuer, Character character, string message, bool ban);
         void UnBan(string channelName, Character issuer, Character character);
 

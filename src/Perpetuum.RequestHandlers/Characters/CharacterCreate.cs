@@ -22,6 +22,7 @@ namespace Perpetuum.RequestHandlers.Characters
     public class CharacterCreate : IRequestHandler
     {
         private TimeSpan WAIT_TIME_BEFORE_SENDING_MAIL = TimeSpan.FromSeconds(10);
+        private TimeSpan WAIT_TIME_BEFORE_SENDING_WELCOME_MESSAGE = TimeSpan.FromSeconds(10);
 
         private readonly IAccountManager _accountManager;
         private readonly IChannelManager _channelManager;
@@ -110,6 +111,11 @@ namespace Perpetuum.RequestHandlers.Characters
 
                     Task.Delay(WAIT_TIME_BEFORE_SENDING_MAIL)
                         .ContinueWith(task => MailHandler.SendWelcomeMailBeginTutorial(character));
+                    Task.Delay(WAIT_TIME_BEFORE_SENDING_WELCOME_MESSAGE)
+                    .ContinueWith(task =>
+                    {
+                        ChannelMessageHandler.SendNewPlayerTutorialMessage(_channelManager, character.Nick);
+                    });
                 }
 
                 character.CurrentDockingBaseEid = dockingBase.Eid;

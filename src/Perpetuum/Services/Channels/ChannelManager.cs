@@ -272,6 +272,17 @@ namespace Perpetuum.Services.Channels
 
         }
 
+        public void Announcement(string channelName, Character sender, string message)
+        {
+            Channel channel;
+            if (!_channels.TryGetValue(channelName, out channel))
+                return;
+
+            channel.Logger.LogMessage(sender, message);
+
+            channel.SendMessageToAll(_sessionManager, sender, message);
+        }
+
         public void KickOrBan(string channelName, Character issuer, Character character, string message, bool ban)
         {
             if (issuer == character)

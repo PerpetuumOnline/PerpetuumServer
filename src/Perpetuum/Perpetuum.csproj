@@ -283,8 +283,11 @@
     <Compile Include="Rsa.cs" />
     <Compile Include="Selectors\ISelector.cs" />
     <Compile Include="Selectors\ModuloBasedSelector.cs" />
+    <Compile Include="Services\Channels\ChannelMessageHandler.cs" />
     <Compile Include="Services\Channels\GameAdminCommands.cs" />
+    <Compile Include="Services\Channels\PreMadeChatMessageNames.cs" />
     <Compile Include="Services\EventServices\EPBonusEventService.cs" />
+    <Compile Include="Services\Mail\PreMadeMailNames.cs" />
     <Compile Include="Services\MissionEngine\DisplayMissionSpotsProcess.cs" />
     <Compile Include="Services\MissionEngine\MissionResolveTester.cs" />
     <Compile Include="Services\MissionEngine\OneLocationTest.cs" />

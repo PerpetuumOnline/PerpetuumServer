@@ -188,12 +188,12 @@ namespace Perpetuum.Services.Mail
 
         public static ErrorCodes SendWelcomeMailBeginTutorial(Character newPlayer)
         {
-            return SendWelcomeMail(newPlayer, "TutorialArriveMail");
+            return SendWelcomeMail(newPlayer, PreMadeMailNames.TUTORIAL_ARRIVE);
         }
 
         public static ErrorCodes SendWelcomeMailExitTutorial(Character newPlayer)
         {
-            return SendWelcomeMail(newPlayer, "TutorialCompleteMail");
+            return SendWelcomeMail(newPlayer, PreMadeMailNames.TUTORIAL_FINISH);
         }
 
         private static ErrorCodes SendWelcomeMail(Character newPlayer, string mailName)
