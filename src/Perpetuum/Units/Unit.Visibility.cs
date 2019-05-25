@@ -105,7 +105,7 @@ namespace Perpetuum.Units
                     return true;
             }
 
-            var range = 100 / target.StealthStrength * DetectionStrength;
+            var range = 100 / Math.Max(1, target.StealthStrength) * Math.Max(1, DetectionStrength);
             return IsInRangeOf3D(target, range);
         }
 

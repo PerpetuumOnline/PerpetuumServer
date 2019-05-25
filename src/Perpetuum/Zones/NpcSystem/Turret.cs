@@ -27,7 +27,8 @@ namespace Perpetuum.Zones.NpcSystem
                                    IEntityVisitor<EnergyVampireModule>,
                                    IEntityVisitor<SensorBoosterModule>,
                                    IEntityVisitor<ArmorHardenerModule>,
-                                   IEntityVisitor<BlobEmissionModulatorModule>
+                                   IEntityVisitor<BlobEmissionModulatorModule>,
+                                   IEntityVisitor<TargetBlinderModule>
     {
         private readonly IntervalTimer _timer;
         private readonly ActiveModule _module;
@@ -168,6 +169,22 @@ namespace Perpetuum.Zones.NpcSystem
         public void Visit(BlobEmissionModulatorModule module)
         {
             if (module.ParentRobot.CorePercentage < BLOBBER_CORE_THRESHOLD)
+                return;
+
+            var lockTarget = ((Creature)module.ParentRobot).SelectOptimalLockTargetFor(module);
+            if (lockTarget == null)
+                return;
+
+            module.Lock = lockTarget;
+            module.State.SwitchTo(ModuleStateType.Oneshot);
+        }
+
+
+        private const double BLINDER_CORE_THRESHOLD = 0.5;
+
+        public void Visit(TargetBlinderModule module)
+        {
+            if (module.ParentRobot.CorePercentage < BLINDER_CORE_THRESHOLD)
                 return;
 
             var lockTarget = ((Creature)module.ParentRobot).SelectOptimalLockTargetFor(module);

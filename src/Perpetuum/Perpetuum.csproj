@@ -253,6 +253,7 @@
     <Compile Include="Log\LogType.cs" />
     <Compile Include="LookupExtensions.cs" />
     <Compile Include="MathHelper.cs" />
+    <Compile Include="Modules\EffectModules\TargetBlinderModule.cs" />
     <Compile Include="Modules\ModulePropertyModifiersReader.cs" />
     <Compile Include="Network\ClientConnection.cs" />
     <Compile Include="Network\EncryptedTcpConnection.cs" />

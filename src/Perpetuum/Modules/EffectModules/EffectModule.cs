@@ -1,4 +1,5 @@
-﻿using Perpetuum.StateMachines;
+﻿using Perpetuum.EntityFramework;
+using Perpetuum.StateMachines;
 using Perpetuum.Units;
 using Perpetuum.Zones.Effects;
 using Perpetuum.Zones.Locking.Locks;
@@ -64,6 +65,12 @@ namespace Perpetuum.Modules.EffectModules
         protected virtual bool CanApplyEffect(Unit target)
         {
             return true;
+        }
+
+        public override void AcceptVisitor(IEntityVisitor visitor)
+        {
+            if (!TryAcceptVisitor(this, visitor))
+                base.AcceptVisitor(visitor);
         }
 
         protected virtual void OnApplyingEffect(Unit target) {}
