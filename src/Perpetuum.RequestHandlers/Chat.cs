@@ -59,7 +59,7 @@ namespace Perpetuum.RequestHandlers
                 ObjectHelper.Swap(ref x, ref y);
             }
 
-            var hash = (ulong) x << 32 | (ulong) y;
+            var hash = (ulong) x << 32 | (uint) y;
 
             var senderNick = sender.Nick;
                 
