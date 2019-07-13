@@ -358,16 +358,22 @@ namespace Perpetuum.Zones.Intrusion
                         var ownerEid = siteInfo.Owner ?? default(long);
                         var ownerAndWinnerGoodRelation = false;
 
+                        //Ally relationship threshold
                         var friendlyOnly = 10;
-                        //Compare both relations between corps: 
-                        //True IFF both corps have strictly friendly relations with eachother
+                        //Ally stability affect
+                        var allyAffectFactor = 0.0;
+                        //Compare mutual relation match between corps to determine ally
                         ownerAndWinnerGoodRelation = _corporationManager.IsStandingMatch(winnerCorporation.Eid, ownerEid, friendlyOnly);
                         ownerAndWinnerGoodRelation = _corporationManager.IsStandingMatch(ownerEid, winnerCorporation.Eid, friendlyOnly) && ownerAndWinnerGoodRelation;
 
-                        //Stability increase if winner is owner OR winner is in good standing with owner
-                        if (winnerCorporation.Eid == siteInfo.Owner || ownerAndWinnerGoodRelation)
+                        //Stability increase if winner is owner, 0 increase if ally, else negative
+                        if (winnerCorporation.Eid == siteInfo.Owner)
                         {
                             newStability = (newStability + sap.StabilityChange).Clamp(0, 100);
+                        }
+                        else if (ownerAndWinnerGoodRelation)
+                        {
+                            newStability = (newStability + (int)(sap.StabilityChange * allyAffectFactor)).Clamp(0, 100);
                         }
                         else
                         {
