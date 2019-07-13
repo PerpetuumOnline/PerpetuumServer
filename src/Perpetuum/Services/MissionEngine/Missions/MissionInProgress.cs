@@ -1568,11 +1568,12 @@ namespace Perpetuum.Services.MissionEngine.Missions
                     }
                 }
 
+                double amountToCharacter;
                 //if the complete reward is paid to the corporation
                 if (Math.Abs(taxRatio - 1.0) < double.Epsilon)
-                    continue;
-
-                var amountToCharacter = Math.Round((1 - taxRatio)*realRewardFeePerCharacter);
+                    amountToCharacter = 0d;
+                else
+                    amountToCharacter = Math.Round((1 - taxRatio)*realRewardFeePerCharacter);
 
                 oneCharacterPayOut.Add(k.fee, amountToCharacter);
                 paymentsPerCharacter.Add("p" + count++, oneCharacterPayOut);
