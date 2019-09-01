@@ -26,6 +26,8 @@ namespace Perpetuum.Zones.Intrusion
     {
         private const int EP_WINNER = 120;
         private const int EP_LOSER = 20;
+        private const int MAX_STABILITY = 120;
+        private const int PRODUCTION_BONUS_THRESHOLD = 100;
 
         private TimeRange _intrusionWaitTime => IntrusionWaitTime;
         private readonly IEntityServices _entityServices;
@@ -369,7 +371,7 @@ namespace Perpetuum.Zones.Intrusion
                         //Stability increase if winner is owner, 0 increase if ally, else negative
                         if (winnerCorporation.Eid == siteInfo.Owner)
                         {
-                            newStability = (newStability + sap.StabilityChange).Clamp(0, 100);
+                            newStability = (newStability + sap.StabilityChange).Clamp(0, MAX_STABILITY);
                         }
                         else if (ownerAndWinnerGoodRelation)
                         {
@@ -377,7 +379,7 @@ namespace Perpetuum.Zones.Intrusion
                         }
                         else
                         {
-                            newStability = (newStability - sap.StabilityChange).Clamp(0, 100);
+                            newStability = (newStability - sap.StabilityChange).Clamp(0, MAX_STABILITY);
 
                             // csak akkor ha 0 lett a stability
                             if (newStability == 0)
@@ -535,6 +537,9 @@ namespace Perpetuum.Zones.Intrusion
         /// </summary>
         private void ProductionStabilityGain(int newStability, int oldStability, long? newOwner)
         {
+            if (oldStability > PRODUCTION_BONUS_THRESHOLD)
+                return; //Do nothing if old stability > 100
+
             var siteInfo = GetIntrusionSiteInfo();
             var oldProductionPoints = (int) (oldStability/10.0);
             var newProductionPoints = (int) (newStability/10.0);
@@ -564,6 +569,9 @@ namespace Perpetuum.Zones.Intrusion
         /// </summary>
         private void ProductionStabilityLoss(int newStability, int oldStability, long? newOwner, long? oldOwner)
         {
+            if (newStability > PRODUCTION_BONUS_THRESHOLD)
+                return; //Do nothing if new stability > 100
+
             var siteInfo = GetIntrusionSiteInfo();
             var oldProductionPoints = (int)(oldStability / 10.0);
             var newProductionPoints = (int)(newStability / 10.0);
