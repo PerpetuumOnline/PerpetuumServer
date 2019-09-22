@@ -40,6 +40,7 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
                     c.Enabled = r.GetValue<bool>("enabled");
                     c.BehaviorType = (NpcBehaviorType) r.GetValue<int>("behaviorType");
                     c.SpecialType = (NpcSpecialType) r.GetValue<int>("npcSpecialType");
+                    c.BossInfo = NpcBossInfo.GetBossInfoByFlockID(c.ID);
                 });
                 var config = builder.Build();
                 _flockConfigurations[config.ID] = config;

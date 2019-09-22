@@ -78,6 +78,7 @@ using Perpetuum.RequestHandlers.Zone.StatsMapDrawing;
 using Perpetuum.Robots;
 using Perpetuum.Services.Channels;
 using Perpetuum.Services.EventServices;
+using Perpetuum.Services.EventServices.EventProcessors;
 using Perpetuum.Services.ExtensionService;
 using Perpetuum.Services.HighScores;
 using Perpetuum.Services.Insurance;
@@ -836,6 +837,10 @@ namespace Perpetuum.Bootstrapper
             RegisterUnit<PBSDockingBase>();
             RegisterUnit<Outpost>().OnActivated(e =>
             {
+                var listener = new AffectOutpostStability(e.Instance);
+                e.Context.Resolve<EventListenerService>().AttachListener(listener);
+
+
 #if (DEBUG)
                 var intrusionWaitTime = TimeRange.FromLength(TimeSpan.FromSeconds(10),TimeSpan.FromSeconds(15));
 #else
@@ -1650,6 +1655,18 @@ namespace Perpetuum.Bootstrapper
             {
                 e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromMinutes(1)));
             });
+
+            //TODO new EventListenerService 
+            _builder.RegisterType<ChatEcho>();
+            _builder.RegisterType<NpcChatEcho>();
+            _builder.RegisterType<AffectOutpostStability>();
+            _builder.RegisterType<EventListenerService>().SingleInstance().OnActivated(e =>
+            {
+                e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromSeconds(2.5)));
+                e.Instance.AttachListener(e.Context.Resolve<ChatEcho>());
+                e.Instance.AttachListener(e.Context.Resolve<NpcChatEcho>());
+            });
+            
 
             _builder.RegisterType<AccountManager>().As<IAccountManager>();
 

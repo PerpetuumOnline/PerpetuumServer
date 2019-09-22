@@ -71,9 +71,9 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
 
         private TimeSpan GetRespawnTime()
         {
-            if (Configuration.SpecialType == NpcSpecialType.Boss)
+            if (IsBoss)
             {
-                return RespawnTime.Multiply(FastRandom.NextDouble(0.9, 1.15));
+                return BossInfo.OnRespawn(RespawnTime);
             }
             return RespawnTime;
         }

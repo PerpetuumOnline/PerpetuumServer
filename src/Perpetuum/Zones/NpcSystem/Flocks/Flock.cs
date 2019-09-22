@@ -26,8 +26,11 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
 
         private ImmutableList<Npc> _members = ImmutableList<Npc>.Empty;
 
-        public IFlockConfiguration Configuration { get;}
+        public IFlockConfiguration Configuration { get; }
         public Presence Presence { get; }
+
+        public NpcBossInfo BossInfo { get { return Configuration.BossInfo; } }
+        public bool IsBoss { get { return BossInfo != null; } }
 
         public int Id => Configuration.ID;
 
@@ -115,6 +118,7 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
             var npc = (Npc)EntityService.Factory.Create(Configuration.EntityDefault, EntityIDGenerator.Random);
             npc.Behavior = GetBehavior();
             npc.SpecialType = Configuration.SpecialType;
+            npc.BossInfo = BossInfo;
 
             var gen = new CompositeLootGenerator(
                 new LootGenerator(LootService.GetNpcLootInfos(npc.Definition)),

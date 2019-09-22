@@ -9,6 +9,7 @@ using Perpetuum.ExportedTypes;
 using Perpetuum.Groups.Corporations;
 using Perpetuum.Log;
 using Perpetuum.Players;
+using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Timers;
 using Perpetuum.Units;
 using Perpetuum.Zones.Beams;
@@ -320,6 +321,21 @@ namespace Perpetuum.Zones.Intrusion
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Adapter method for SAP->StabilityAffectingEvent
+        /// </summary>
+        /// <returns>StabilityAffectingEvent</returns>
+        public StabilityAffectingEvent toStabilityAffectingEvent()
+        {
+            List<Player> players = new List<Player>();
+            foreach(var player in this.PlayerInfos)
+            {
+                players.Add(player.character.GetPlayerRobotFromZone());
+            }
+            var winner = GetPlayerTopScores(1)[0].character.GetPlayerRobotFromZone();
+            return new StabilityAffectingEvent(Site, winner, Definition, Eid, StabilityChange, players);
         }
     }
 }
