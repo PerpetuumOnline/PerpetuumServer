@@ -132,29 +132,20 @@ namespace Perpetuum.Zones.NpcSystem
 
     public class ThreatManager : IThreatManager
     {
-        private ImmutableSortedSet<Hostile> _sortedHotiles = ImmutableSortedSet<Hostile>.Empty;
         private ImmutableDictionary<long,Hostile> _hostiles = ImmutableDictionary<long, Hostile>.Empty;
-        private bool _isDirty;
 
-        public Hostile GetHostile(Unit unit)
+        public Hostile GetOrAddHostile(Unit unit)
         {
             return ImmutableInterlocked.GetOrAdd(ref _hostiles, unit.Eid, eid =>
             {
                 var h = new Hostile(unit);
-                h.Updated += OnHostileThreatUpdated;
-                _isDirty = true;
                 return h;
             });
         }
 
-        private void OnHostileThreatUpdated(Hostile hostile)
-        {
-            _isDirty = true;
-        }
-
         public ImmutableSortedSet<Hostile> Hostiles
         {
-            get { return _sortedHotiles; }
+            get { return _hostiles.Values.ToImmutableSortedSet(); }
         }
 
         public bool Contains(Unit unit)
@@ -165,26 +156,14 @@ namespace Perpetuum.Zones.NpcSystem
         public void Clear()
         {
             _hostiles.Clear();
-            _isDirty = true;
         }
 
         public void Remove(Hostile hostile)
         {
-            if (ImmutableInterlocked.TryRemove(ref _hostiles, hostile.unit.Eid, out hostile))
-                _isDirty = true;
+            ImmutableInterlocked.TryRemove(ref _hostiles, hostile.unit.Eid, out hostile);
         }
 
-        public void Update()
-        {
-            if (!_isDirty)
-                return;
-
-            _isDirty = false;
-
-            _sortedHotiles = _hostiles.Values.ToImmutableSortedSet();
-        }
-
-        public string ToDebugString()
+         public string ToDebugString()
         {
             if ( _hostiles.Count == 0 )
                 return string.Empty;
