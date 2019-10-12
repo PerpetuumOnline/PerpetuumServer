@@ -16,6 +16,8 @@ namespace Perpetuum
         public int SteamAppID { get; set; }
         public byte[] SteamKey { get; set; }
 
+        public string ResourceServerURL { get; set; }
+
         public CorporationConfiguration Corporation { get; set; }
     }
 }
