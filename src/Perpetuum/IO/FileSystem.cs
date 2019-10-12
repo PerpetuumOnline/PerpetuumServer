@@ -75,7 +75,12 @@ namespace Perpetuum.IO
 
         public IEnumerable<string> GetFiles(string path, string mask)
         {
-            return Directory.GetFiles(Path.Combine(_root, path), mask);
+            var fullPath = Path.Combine(_root, path);
+            if (!Directory.Exists(fullPath))
+            {
+                return System.Linq.Enumerable.Empty<string>();
+            }
+            return Directory.GetFiles(fullPath, mask);
         }
 
         public override string ToString()
