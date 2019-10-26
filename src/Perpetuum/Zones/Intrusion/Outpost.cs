@@ -15,6 +15,7 @@ using Perpetuum.Groups.Corporations;
 using Perpetuum.Items.Templates;
 using Perpetuum.Log;
 using Perpetuum.Services.Channels;
+using Perpetuum.Services.EventServices;
 using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Services.Looting;
 using Perpetuum.Timers;
@@ -32,10 +33,13 @@ namespace Perpetuum.Zones.Intrusion
         private const int PRODUCTION_BONUS_THRESHOLD = 100;
 
         private TimeRange _intrusionWaitTime => IntrusionWaitTime;
+        private TimeSpan _timeSinceLastSAP = TimeSpan.Zero;
         private readonly IEntityServices _entityServices;
         private readonly ICorporationManager _corporationManager;
         private readonly ILootService _lootService;
         private static readonly ILookup<long, SAPInfo> _sapInfos;
+        private readonly EventListenerService _eventChannel;
+        private OutpostDecay _decay;
 
         public static StabilityBonusThreshold[] StabilityBonusThresholds { get; private set; }
         public static int DefenseNodesStabilityLimit { get; private set; }
@@ -64,11 +68,14 @@ namespace Perpetuum.Zones.Intrusion
                        ILootService lootService,
                        ICentralBank centralBank,
                        IRobotTemplateRelations robotTemplateRelations,
+                       EventListenerService eventChannel,
                        DockingBaseHelper dockingBaseHelper) : base(channelManager,centralBank,robotTemplateRelations,dockingBaseHelper)
         {
             _entityServices = entityServices;
             _corporationManager = corporationManager;
             _lootService = lootService;
+            _eventChannel = eventChannel;
+            _decay = new OutpostDecay(_eventChannel, this);
         }
 
         public TimeRange IntrusionWaitTime { get; set; }
@@ -141,6 +148,7 @@ namespace Perpetuum.Zones.Intrusion
         protected override void OnUpdate(TimeSpan time)
         {
             base.OnUpdate(time);
+            _decay.OnUpdate(time);
 
             if (!Enabled || IntrusionInProgress)
                 return;
@@ -317,6 +325,7 @@ namespace Perpetuum.Zones.Intrusion
 
         private void OnSAPTakeOver(SAP sap)
         {
+            _decay.OnSAP();
             Task.Run(() => HandleTakeOver(sap)).ContinueWith(t => IntrusionInProgress = false);
         }
 
@@ -373,11 +382,16 @@ namespace Perpetuum.Zones.Intrusion
         /// </summary>
         private void processStabilityChange(StabilityAffectingEvent sap)
         {
+            // Check for invalid player-SAPS
             var winnerCorporation = sap.GetWinnerCorporation();
-            if (winnerCorporation == null)
+            if (winnerCorporation == null && !sap.IsSystemGenerated())
                 return;
 
+            // Check for unowned outposts to not be affected by system-generated events
             var siteInfo = GetIntrusionSiteInfo();
+            if (siteInfo.Owner == null && sap.IsSystemGenerated())
+                return;
+
             var oldStability = siteInfo.Stability;
             var newStability = siteInfo.Stability;
             var newOwner = siteInfo.Owner;
@@ -393,7 +407,11 @@ namespace Perpetuum.Zones.Intrusion
                 OldStability = oldStability
             };
 
-            if (winnerCorporation is PrivateCorporation)
+            if (sap.IsSystemGenerated())
+            {
+                newStability = (newStability + sap.StabilityChange);
+            }
+            else if (winnerCorporation is PrivateCorporation)
             {
                 //Compare the Owner and Winner corp's relations
                 var ownerEid = siteInfo.Owner ?? default(long);
@@ -420,28 +438,27 @@ namespace Perpetuum.Zones.Intrusion
                 {
                     newStability = (newStability - sap.StabilityChange);
                 }
-                
-                if (siteInfo.Owner == null)
-                {
-                    // No owner - winner gets outpost, for any SAP event
-                    logEvent.EventType = IntrusionEvents.siteOwnershipGain;
-                    newOwner = winnerCorporation.Eid;
-                    newStability = STARTING_STABILITY;
-                }
-                else if (newStability <= 0)
-                {
-                    // Outpost has owner, but new stability hit 0 = owner loses station
-                    logEvent.EventType = IntrusionEvents.siteOwnershipLost;
-                    newOwner = null;
-                }
-
-                newStability = newStability.Clamp(MIN_STABILITY, MAX_STABILITY);
-
-                //set the resulting values
-                SetIntrusionOwnerAndPoints(newOwner, newStability);
-                ReactStabilityChanges(siteInfo, oldStability, newStability, newOwner, oldOwner);
             }
 
+            if (siteInfo.Owner == null)
+            {
+                // No owner - winner gets outpost, for any SAP event
+                logEvent.EventType = IntrusionEvents.siteOwnershipGain;
+                newOwner = winnerCorporation.Eid;
+                newStability = STARTING_STABILITY;
+            }
+            else if (newStability <= 0)
+            {
+                // Outpost has owner, but new stability hit 0 = owner loses station
+                logEvent.EventType = IntrusionEvents.siteOwnershipLost;
+                newOwner = null;
+            }
+
+            newStability = newStability.Clamp(MIN_STABILITY, MAX_STABILITY);
+
+            //set the resulting values
+            SetIntrusionOwnerAndPoints(newOwner, newStability);
+            ReactStabilityChanges(siteInfo, oldStability, newStability, newOwner, oldOwner);
             logEvent.NewOwner = newOwner;
             logEvent.NewStability = newStability;
             InsertIntrusionLog(logEvent);
@@ -460,14 +477,16 @@ namespace Perpetuum.Zones.Intrusion
                     OnIntrusionSiteInfoUpdated();
                     InformAllPlayers();
                 }
-
-                InformPlayersOnZone(Commands.ZoneSapActivityEnd, new Dictionary<string, object>
+                if (!sap.IsSystemGenerated())
+                {
+                    InformPlayersOnZone(Commands.ZoneSapActivityEnd, new Dictionary<string, object>
                         {
                             {k.siteEID, Eid},
                             {k.eventType, (int) logEvent.EventType},
                             {k.eid, sap.Eid},
                             {k.winner, winnerCorporation.Eid},
                         });
+                }
             });
         }
 

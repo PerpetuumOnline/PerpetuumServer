@@ -11,22 +11,31 @@ namespace Perpetuum.Services.EventServices.EventMessages
     public class StabilityAffectingEvent : EventMessage
     {
         private Player _player;
-        private IList<Player> _particpants;
+        private IList<Player> _particpants = new List<Player>();
         public Outpost Outpost { get; }
-
         public bool OverrideRelations { get; }
         public int StabilityChange { get; }
         public int Definition { get; }
-        public long Eid { get; }
-        public StabilityAffectingEvent(Outpost outpost, Player winner, int def, long eid, int sapPoints, IList<Player> participants, bool overrideRelations = false)
+        public long? Eid { get; }
+
+        public StabilityAffectingEvent(Outpost outpost, Player winner, int def, long? eid, int sapPoints, IList<Player> participants = null, bool overrideRelations = false)
         {
             Outpost = outpost;
             _player = winner;
             StabilityChange = sapPoints;
             Definition = def;
             Eid = eid;
-            _particpants = participants;
+            if (participants != null)
+            {
+                _particpants = participants;
+            }
+            
             OverrideRelations = overrideRelations;
+        }
+
+        public bool IsSystemGenerated()
+        {
+            return _player == null;
         }
 
         public IList<Player> GetPlayers()
@@ -37,6 +46,8 @@ namespace Perpetuum.Services.EventServices.EventMessages
         [CanBeNull]
         public Corporation GetWinnerCorporation()
         {
+            if (IsSystemGenerated())
+                return Corporation.GetByName("syndicate_police_central");
             return Corporation.Get(_player.CorporationEid);
         }
     }
