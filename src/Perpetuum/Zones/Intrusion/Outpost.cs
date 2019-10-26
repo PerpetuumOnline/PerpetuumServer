@@ -28,7 +28,7 @@ namespace Perpetuum.Zones.Intrusion
     public class Outpost : DockingBase
     {
         private const int EP_WINNER = 120;
-        private const int MAX_STABILITY = 120;
+        private const int MAX_STABILITY = 150;
         private const int MIN_STABILITY = 0;
         private const int STARTING_STABILITY = 1;
         private const int PRODUCTION_BONUS_THRESHOLD = 100;

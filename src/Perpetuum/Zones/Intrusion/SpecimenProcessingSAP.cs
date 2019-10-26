@@ -34,9 +34,9 @@ namespace Perpetuum.Zones.Intrusion
 
 
         private const int SUBMIT_ITEM_RANGE = 7;
-        private static readonly TimeSpan _submitItemCooldown = TimeSpan.FromMinutes(1);
+        private static readonly TimeSpan _submitItemCooldown = TimeSpan.FromMinutes(1.5);
 
-        private static readonly IntRange _requiredItems = new IntRange(3, 4);
+        private static readonly IntRange _requiredItems = new IntRange(5, 6);
 
         private readonly IList<ItemInfo> _itemInfos;
         private readonly ConcurrentDictionary<int, PlayerItemProgress> _playerItemProgresses = new ConcurrentDictionary<int, PlayerItemProgress>();
@@ -64,21 +64,16 @@ namespace Perpetuum.Zones.Intrusion
         /// </summary>
         private static IList<ItemInfo> GenerateSpecimenProcessingItemList(int count = 5)
         {
-            var result = new Dictionary<int, ItemInfo>();
-
-            while (count > 0)
+            var result = new List<ItemInfo>();
+            while(result.Count < count)
             {
-                var randomItemInfo = _specimenProcessingItems.Where(d => !result.ContainsKey(d.Key)).RandomElement();
-
+                var randomItemInfo = _specimenProcessingItems.RandomElement();
                 var siegeItem = randomItemInfo.Value;
                 var randomQty = FastRandom.NextInt(siegeItem.quantity);
-
                 var itemInfo = new ItemInfo(siegeItem.definition, randomQty);
-                result.Add(randomItemInfo.Key, itemInfo);
-                count--;
+                result.Add(itemInfo);
             }
-
-            return result.Values.ToArray();
+            return result;
         }
 
 
