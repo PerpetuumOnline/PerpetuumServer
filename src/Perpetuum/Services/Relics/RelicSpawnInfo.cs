@@ -13,12 +13,10 @@ namespace Perpetuum.Services.Relics
     public class RelicSpawnInfoRepository
     {
         private RelicSpawnInfoReader _relicSpawnInfoReader;
-        private IZone _zone;
 
         public RelicSpawnInfoRepository(IZone zone)
         {
             _relicSpawnInfoReader = new RelicSpawnInfoReader(zone);
-            _zone = zone;
         }
 
         public IEnumerable<RelicSpawnInfo> GetAll()

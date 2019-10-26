@@ -70,7 +70,7 @@ namespace Perpetuum.Zones
         public RiftManager RiftManager { private get; set; }
 
         [CanBeNull]
-        public RelicManager RelicManager { get; set; }
+        public IRelicManager RelicManager { get; set; }
 
         public IZoneEnterQueueService EnterQueueService { get; set; }
 

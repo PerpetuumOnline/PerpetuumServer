@@ -18,6 +18,7 @@ using Perpetuum.Services.Channels;
 using Perpetuum.Services.EventServices;
 using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Services.Looting;
+using Perpetuum.Services.Relics;
 using Perpetuum.Timers;
 using Perpetuum.Units.DockingBases;
 using Perpetuum.Zones.Effects;
@@ -39,7 +40,7 @@ namespace Perpetuum.Zones.Intrusion
         private readonly ILootService _lootService;
         private static readonly ILookup<long, SAPInfo> _sapInfos;
         private readonly EventListenerService _eventChannel;
-        private OutpostDecay _decay;
+        private readonly OutpostDecay _decay;
 
         public static StabilityBonusThreshold[] StabilityBonusThresholds { get; private set; }
         public static int DefenseNodesStabilityLimit { get; private set; }
@@ -76,6 +77,11 @@ namespace Perpetuum.Zones.Intrusion
             _lootService = lootService;
             _eventChannel = eventChannel;
             _decay = new OutpostDecay(_eventChannel, this);
+        }
+
+        public void PublishSAPEvent(StabilityAffectingEvent eventMsg)
+        {
+            _eventChannel.PublishMessage(eventMsg);
         }
 
         public TimeRange IntrusionWaitTime { get; set; }

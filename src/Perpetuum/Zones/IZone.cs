@@ -48,7 +48,7 @@ namespace Perpetuum.Zones
         PBSHighwayHandler HighwayHandler { get; }
         TerraformHandler TerraformHandler { get; }
         MiningLogHandler MiningLogHandler { get; }
-        RelicManager RelicManager { get; }
+        IRelicManager RelicManager { get; }
 
         IZoneUnitService UnitService { get; }
         IZoneEnterQueueService EnterQueueService { get; }

@@ -1010,9 +1010,10 @@ namespace Perpetuum.Bootstrapper
             RegisterEntity<SparkActivator>();
             RegisterEntity<Gift>();
             RegisterEntity<Paint>();//TODO register new entitydef
-			RegisterEntity<EPBoost>();
+            RegisterEntity<EPBoost>();
             RegisterEntity<Relic>();
-           
+            RegisterEntity<SAPRelic>();
+
 
             _builder.Register<Func<EntityDefault,Entity>>(x =>
             {
@@ -1234,6 +1235,7 @@ namespace Perpetuum.Bootstrapper
 
                 //New Relic Definition for Units
                 ByNamePatternAndFlag<Relic>(DefinitionNames.RELIC, CategoryFlags.undefined);
+                ByNamePatternAndFlag<SAPRelic>(DefinitionNames.RELIC_SAP, CategoryFlags.undefined);
 
                 ByCategoryFlags<VisibilityBasedProbeDeployer>(CategoryFlags.cf_proximity_probe_deployer);
                 ByCategoryFlags<Item>(CategoryFlags.cf_gift_packages);
@@ -2376,9 +2378,9 @@ namespace Perpetuum.Bootstrapper
 
         private void RegisterRelics()
         {
-            _builder.RegisterType<RelicManager>();
+            _builder.RegisterType<ZoneRelicManager>().As<IRelicManager>();
 
-            _builder.Register<Func<IZone, RelicManager>>(x =>
+            _builder.Register<Func<IZone, IRelicManager>>(x =>
             {
                 var ctx = x.Resolve<IComponentContext>();
                 return zone =>
@@ -2405,7 +2407,7 @@ namespace Perpetuum.Bootstrapper
                         return null;
                     }
                     //Do not register RelicManagers on zones without the necessary valid entries in reliczoneconfig and relicspawninfo
-                    return ctx.Resolve<RelicManager>(new TypedParameter(typeof(IZone), zone));
+                    return ctx.Resolve<IRelicManager>(new TypedParameter(typeof(IZone), zone));
                 };
             });
         }
@@ -2488,7 +2490,7 @@ namespace Perpetuum.Bootstrapper
                     zone.Environment = ctx.Resolve<ZoneEnvironmentHandler>(new TypedParameter(typeof(IZone), zone));
                     zone.SafeSpawnPoints = ctx.Resolve<ISafeSpawnPointsRepository>(new TypedParameter(typeof(IZone), zone));
                     zone.ZoneSessionFactory = ctx.Resolve<ZoneSession.Factory>();
-                    zone.RelicManager = ctx.Resolve<Func<IZone, RelicManager>>().Invoke(zone);
+                    zone.RelicManager = ctx.Resolve<Func<IZone, IRelicManager>>().Invoke(zone);
 
                     if (configuration.Terraformable)
                     {

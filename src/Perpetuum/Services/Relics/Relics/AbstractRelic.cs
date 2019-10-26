@@ -13,16 +13,15 @@ using System.Threading.Tasks;
 namespace Perpetuum.Services.Relics
 {
 
-    public class Relic : Unit
+    public class AbstractRelic : Unit, IRelic
     {
-        private RelicInfo _info;
-        private IZone _zone;
-        private bool _alive;
+        protected RelicInfo _info;
+        protected IZone _zone;
+        protected bool _alive;
 
-        private const double ACTIVATION_RANGE = 3; //30m
-        private const double RESPAWN_PROXIMITY = 10.0 * ACTIVATION_RANGE;
-        private readonly TimeSpan MAXLIFESPAN = TimeSpan.FromDays(3);
-        private TimeSpan lifespan = TimeSpan.Zero;
+        protected const double ACTIVATION_RANGE = 3; //30m
+        protected readonly TimeSpan MAXLIFESPAN = TimeSpan.FromDays(3);
+        protected TimeSpan lifespan = TimeSpan.Zero;
 
         // Locks - Be sure to use locks independently and do not nest calls into other locks!
         // Lock for Live/Dead state of Relic
@@ -31,12 +30,12 @@ namespace Perpetuum.Services.Relics
         private ReaderWriterLockSlim _lifespanLock;
         private readonly TimeSpan THREAD_TIMEOUT = TimeSpan.FromSeconds(4);
 
-        private RelicLootItems _loots;
+        protected RelicLootItems _loots;
 
         [CanBeNull]
-        public static Relic BuildAndAddToZone(RelicInfo info, IZone zone, Position position, RelicLootItems lootItems)
+        public static IRelic BuildAndAddToZone(RelicInfo info, IZone zone, Position position, RelicLootItems lootItems)
         {
-            var relic = (Relic)CreateUnitWithRandomEID(DefinitionNames.RELIC);
+            var relic = (AbstractRelic)CreateUnitWithRandomEID(DefinitionNames.RELIC);
             if (relic == null)
                 return null;
             relic.Init(info, zone, position, lootItems);
@@ -114,6 +113,11 @@ namespace Perpetuum.Services.Relics
             base.OnRemovedFromZone(zone);
         }
 
+        public void RemoveFromZone()
+        {
+            base.RemoveFromZone();
+        }
+
 
         protected internal override void UpdatePlayerVisibility(Player player)
         {
@@ -123,7 +127,7 @@ namespace Perpetuum.Services.Relics
             }
         }
 
-        private void PopRelic(Player player)
+        public virtual void PopRelic(Player player)
         {
             //Set flag on relic for removal
             SetAlive(false);

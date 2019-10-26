@@ -4352,7 +4352,8 @@ namespace Perpetuum.ExportedTypes
  		 public const string REDEEMABLE_SPARK_DLC0 = "def_redeemable_spark_dlc0";
  		 public const string REDEEMABLE_SPARK_DLC1 = "def_redeemable_spark_dlc1";
  		 public const string RELIC = "def_relic";
- 		 public const string RESEARCH_KIT_0 = "def_research_kit_0";
+		 public const string RELIC_SAP = "def_relic_sap";
+		 public const string RESEARCH_KIT_0 = "def_research_kit_0";
  		 public const string RESEARCH_KIT_1 = "def_research_kit_1";
  		 public const string RESEARCH_KIT_10 = "def_research_kit_10";
  		 public const string RESEARCH_KIT_2 = "def_research_kit_2";

@@ -12,7 +12,7 @@ namespace Perpetuum.Zones.Intrusion
     {
         private readonly Outpost _outpost;
         private readonly EventListenerService _eventChannel;
-        private readonly static TimeSpan noDecayBefore = TimeSpan.FromDays(7);
+        private readonly static TimeSpan noDecayBefore = TimeSpan.FromDays(3);
         private readonly static TimeSpan decayRate = TimeSpan.FromDays(1);
         private TimeSpan timeSinceLastDecay = TimeSpan.Zero;
         private TimeSpan lastSuccessfulIntrusion = TimeSpan.Zero;
