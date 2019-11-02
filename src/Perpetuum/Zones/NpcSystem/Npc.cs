@@ -784,6 +784,11 @@ namespace Perpetuum.Zones.NpcSystem
                 return;
 
             AddThreat(player,new Threat(ThreatType.Damage, e.TotalDamage * 0.9),true);
+
+            if (IsBoss())
+            {
+                BossInfo.OnAggro(player, _eventChannel);
+            }
         }
 
         protected override void OnDead(Unit killer)

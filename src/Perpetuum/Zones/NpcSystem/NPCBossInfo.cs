@@ -1,4 +1,5 @@
 ﻿using Perpetuum.Data;
+using Perpetuum.Players;
 using Perpetuum.Services.EventServices;
 using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Units;
@@ -53,6 +54,7 @@ namespace Perpetuum.Zones.NpcSystem
         private readonly bool _overrideRelations;
         private readonly string _deathMsg;
         private readonly string _aggroMsg;
+        private bool _sayOnce;
 
         public NpcBossInfo(int id, int flockid, double? respawnNoiseFactor, bool lootSplit, long? outpostEID, int? stabilityPts, bool overrideRelations, string customDeathMsg, string customAggroMsg)
         {
@@ -65,6 +67,7 @@ namespace Perpetuum.Zones.NpcSystem
             _overrideRelations = overrideRelations;
             _deathMsg = customDeathMsg;
             _aggroMsg = customAggroMsg;
+            _sayOnce = true;
         }
 
         // TODO - find good place to call this that will be stable and not noisey (excessive repeat messages)
@@ -73,9 +76,17 @@ namespace Perpetuum.Zones.NpcSystem
         /// </summary>
         /// <param name="aggressor">Player aggressor</param>
         /// <param name="channel">the npc event channel</param>
-        public void OnAggro(Unit aggressor, EventListenerService channel)
+        public void OnAggro(Player aggressor, EventListenerService channel)
         {
-            CommunicateAggression(aggressor, channel);
+            if (_sayOnce)
+            {
+                _sayOnce = false;
+                CommunicateAggression(aggressor, channel);
+            }
+            if (_outpostEID != null)
+            {
+                aggressor.ApplyPvPEffect();
+            }
         }
 
         /// <summary>

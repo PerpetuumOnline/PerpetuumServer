@@ -3,7 +3,6 @@ using Perpetuum.Players;
 using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Zones;
 using Perpetuum.Zones.Intrusion;
-using System.Collections.Generic;
 
 namespace Perpetuum.Services.Relics
 {
@@ -30,6 +29,7 @@ namespace Perpetuum.Services.Relics
 
         public override void PopRelic(Player player)
         {
+            player.ApplyPvPEffect();
             _outpost.PublishSAPEvent(new StabilityAffectingEvent(_outpost, player, this.Definition, this.Eid, 1));
             base.PopRelic(player);
         }
