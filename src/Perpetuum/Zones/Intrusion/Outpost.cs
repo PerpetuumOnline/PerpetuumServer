@@ -446,7 +446,7 @@ namespace Perpetuum.Zones.Intrusion
                 }
             }
 
-            if (siteInfo.Owner == null)
+            if (siteInfo.Owner == null && winnerCorporation is PrivateCorporation)
             {
                 // No owner - winner gets outpost, for any SAP event
                 logEvent.EventType = IntrusionEvents.siteOwnershipGain;
