@@ -413,7 +413,7 @@ namespace Perpetuum.Zones.Intrusion
                 OldStability = oldStability
             };
 
-            if (sap.IsSystemGenerated())
+            if (sap.IsSystemGenerated() || sap.OverrideRelations)
             {
                 newStability = (newStability + sap.StabilityChange);
             }
@@ -432,7 +432,7 @@ namespace Perpetuum.Zones.Intrusion
                 ownerAndWinnerGoodRelation = _corporationManager.IsStandingMatch(ownerEid, winnerCorporation.Eid, friendlyOnly) && ownerAndWinnerGoodRelation;
 
                 //Stability increase if winner is owner, 0 increase if ally, else negative
-                if (winnerCorporation.Eid == siteInfo.Owner || sap.OverrideRelations)
+                if (winnerCorporation.Eid == siteInfo.Owner)
                 {
                     newStability = (newStability + sap.StabilityChange);
                 }
