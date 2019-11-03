@@ -446,12 +446,20 @@ namespace Perpetuum.Zones.Intrusion
                 }
             }
 
-            if (siteInfo.Owner == null && winnerCorporation is PrivateCorporation)
+            if (siteInfo.Owner == null)
             {
-                // No owner - winner gets outpost, for any SAP event
-                logEvent.EventType = IntrusionEvents.siteOwnershipGain;
-                newOwner = winnerCorporation.Eid;
-                newStability = STARTING_STABILITY;
+                if (winnerCorporation is PrivateCorporation)
+                {
+                    // No owner - winner gets outpost, for any SAP event
+                    logEvent.EventType = IntrusionEvents.siteOwnershipGain;
+                    newOwner = winnerCorporation.Eid;
+                    newStability = STARTING_STABILITY;
+                }
+                else
+                {
+                    // No owner - winner is non-player corp => stability stays at 0
+                    newStability = MIN_STABILITY;
+                }
             }
             else if (newStability <= 0)
             {
