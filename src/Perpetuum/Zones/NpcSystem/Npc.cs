@@ -169,11 +169,6 @@ namespace Perpetuum.Zones.NpcSystem
             if (hostile.unit.IsInvulnerable)
                 return false;
 
-            if (hostile.unit is Player player)
-            {
-                return player.GetLocks().OfType<UnitLock>().Where(x => x.Target.Eid == npc.Eid).Any();
-            }
-
             if (npc.Behavior.Type == NpcBehaviorType.Neutral)
             {
                 if (hostile.IsExpired)
