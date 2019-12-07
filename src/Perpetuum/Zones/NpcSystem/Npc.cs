@@ -668,6 +668,10 @@ namespace Perpetuum.Zones.NpcSystem
 
         public void AddThreat(Unit hostile, Threat threat,bool spreadToGroup)
         {
+            if (IsBoss() && hostile.IsPlayer())
+            {
+                BossInfo.OnAggro(hostile as Player, _eventChannel);
+            }
             _threatManager.GetOrAddHostile(hostile).AddThreat(threat);
 
             var PseudoThreat = PseudoThreats.Where(x => x.Unit == hostile).FirstOrDefault();
@@ -778,12 +782,7 @@ namespace Perpetuum.Zones.NpcSystem
             if (player == null)
                 return;
 
-            AddThreat(player,new Threat(ThreatType.Damage, e.TotalDamage * 0.9),true);
-
-            if (IsBoss())
-            {
-                BossInfo.OnAggro(player, _eventChannel);
-            }
+            AddThreat(player, new Threat(ThreatType.Damage, e.TotalDamage * 0.9), true);
         }
 
         protected override void OnDead(Unit killer)
@@ -1011,7 +1010,7 @@ namespace Perpetuum.Zones.NpcSystem
                 return;
 
             var threatValue = unitLock.Primary ? Threat.LOCK_PRIMARY : Threat.LOCK_SECONDARY;
-            AddThreat(unitLock.Owner,new Threat(ThreatType.Lock, threatValue),true);
+            AddThreat(unitLock.Owner, new Threat(ThreatType.Lock, threatValue), true);
         }
 
         protected override void OnUnitTileChanged(Unit target)
