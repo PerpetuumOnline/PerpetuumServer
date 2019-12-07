@@ -34,7 +34,6 @@ namespace Perpetuum.Zones.Intrusion
         private const int PRODUCTION_BONUS_THRESHOLD = 100;
 
         private TimeRange _intrusionWaitTime => IntrusionWaitTime;
-        private TimeSpan _timeSinceLastSAP = TimeSpan.Zero;
         private readonly IEntityServices _entityServices;
         private readonly ICorporationManager _corporationManager;
         private readonly ILootService _lootService;
@@ -331,7 +330,7 @@ namespace Perpetuum.Zones.Intrusion
 
         private void OnSAPTakeOver(SAP sap)
         {
-            _decay.OnSAP();
+            
             Task.Run(() => HandleTakeOver(sap)).ContinueWith(t => IntrusionInProgress = false);
         }
 
@@ -403,6 +402,12 @@ namespace Perpetuum.Zones.Intrusion
             var newOwner = siteInfo.Owner;
             var oldOwner = siteInfo.Owner;
 
+            // Reset Decay timer on any StabilityAffectingEvent completed by the owner
+            if (winnerCorporation.Eid == siteInfo.Owner)
+            {
+                _decay.ResetDecayTimer();
+            }
+
             var logEvent = new IntrusionLogEvent
             {
                 OldOwner = siteInfo.Owner,
@@ -454,6 +459,7 @@ namespace Perpetuum.Zones.Intrusion
                     logEvent.EventType = IntrusionEvents.siteOwnershipGain;
                     newOwner = winnerCorporation.Eid;
                     newStability = STARTING_STABILITY;
+                    _decay.ResetDecayTimer();
                 }
                 else
                 {

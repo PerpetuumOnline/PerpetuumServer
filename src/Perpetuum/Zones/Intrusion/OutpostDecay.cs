@@ -42,7 +42,7 @@ namespace Perpetuum.Zones.Intrusion
         /// <summary>
         /// Called when a SAP is completed
         /// </summary>
-        public void OnSAP()
+        public void ResetDecayTimer()
         {
             lastSuccessfulIntrusion = TimeSpan.Zero;
         }
