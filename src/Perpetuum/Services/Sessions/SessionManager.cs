@@ -22,6 +22,7 @@ namespace Perpetuum.Services.Sessions
         private readonly Session.Factory _sessionFactory;
         private readonly IRelayStateService _relayStateService;
         private readonly ISteamManager _steamManager;
+        private readonly GlobalConfiguration _globalConfiguration;
         private readonly ConcurrentDictionary<SessionID,ISession>  _sessions = new ConcurrentDictionary<SessionID, ISession>();
         private readonly ConcurrentDictionary<Character,ISession>  _charactersIndex = new ConcurrentDictionary<Character, ISession>();
 
@@ -30,6 +31,7 @@ namespace Perpetuum.Services.Sessions
             var relayEndPoint = new IPEndPoint(IPAddress.Any,globalConfiguration.ListenerPort);
 
             _listener = new TcpListener(relayEndPoint);
+            _globalConfiguration = globalConfiguration;
             _sessionFactory = sessionFactory;
             _relayStateService = relayStateService;
             _steamManager = steamManager;
@@ -81,6 +83,11 @@ namespace Perpetuum.Services.Sessions
                 {k.OSTime,DateTime.Now},
                 {"steamLoginEnabled",_steamManager.SteamAppID > 0}
             };
+
+            if (!string.IsNullOrEmpty(_globalConfiguration.ResourceServerURL))
+            {
+                welcomeData.Add("resourceServerURL", _globalConfiguration.ResourceServerURL);
+            }
 
             var builder = Message.Builder.SetCommand(Commands.Welcome).WithData(welcomeData);
             session.SendMessage(builder);
