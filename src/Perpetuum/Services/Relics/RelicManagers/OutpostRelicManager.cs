@@ -87,7 +87,8 @@ namespace Perpetuum.Services.Relics
             List<Point> result = null;
             for(int i = 0; i < 10; i++)
             {
-                var randomPos = _outpost.CurrentPosition.GetRandomPositionInRange2D(SPAWN_MINIMUM_OUTPOST_DISTANCE, SPAWN_MAXIMUM_OUTPOST_DISTANCE);
+                var randomPos = _outpost.CurrentPosition.GetRandomPositionInRange2D(
+                    SPAWN_MINIMUM_OUTPOST_DISTANCE, SPAWN_MAXIMUM_OUTPOST_DISTANCE);
                 var posFinder = new ClosestWalkablePositionFinder(_zone, randomPos);
 
                 posFinder.Find(out p);
