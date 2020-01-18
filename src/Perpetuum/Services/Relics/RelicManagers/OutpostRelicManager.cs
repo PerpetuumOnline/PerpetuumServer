@@ -7,6 +7,10 @@ using Perpetuum.Zones.Beams;
 using Perpetuum.Zones.Intrusion;
 using Perpetuum.Zones.Finders.PositionFinders;
 using System.Threading;
+using Perpetuum.PathFinders;
+using Perpetuum.Accounting.Characters;
+using Perpetuum.Units;
+using Perpetuum.Log;
 
 namespace Perpetuum.Services.Relics
 {
@@ -72,9 +76,44 @@ namespace Perpetuum.Services.Relics
 
         protected override Point FindRelicPosition(RelicInfo info)
         {
-            var randomPos = _outpost.CurrentPosition.GetRandomPositionInRange2D(90, 350);
-            var posFinder = new ClosestWalkablePositionFinder(_zone, randomPos);
-            posFinder.Find(out Position p);
+            Position p = new Position();
+            bool passableHandler(int x, int y)
+            {
+                return Zone.IsWalkable(new Point(x, y));
+            }
+            PathFinder pathFinder = new AStarFinder(Heuristic.None, passableHandler);
+            Position outpostPosition = _outpost.CurrentPosition;
+            Position invalidPoint = new Position(0, 0);
+
+            Point[] result = null;
+            var attemptCount = 0;
+            for(attemptCount = 0; attemptCount < 10; attemptCount++)
+            {
+                var randomPos = _outpost.CurrentPosition.GetRandomPositionInRange2D(90, 350);
+                var posFinder = new ClosestWalkablePositionFinder(_zone, randomPos);
+
+                var foundValidLocation = posFinder.Find(out p);
+
+                if (!foundValidLocation)
+                {
+                    Logger.Info("Invalid location!");
+                    return p;
+                }
+
+                Logger.Info("Looking for a relic");
+                result = pathFinder.FindPath(outpostPosition, p);
+                if(result != null)
+                {
+                    break;
+                }
+            }
+
+            if (result == null)
+            {
+                Logger.Info("Invalid location!");
+                p = invalidPoint;
+            }
+
             return p;
         }
 
