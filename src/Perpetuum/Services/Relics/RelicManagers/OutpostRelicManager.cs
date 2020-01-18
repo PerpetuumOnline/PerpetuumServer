@@ -77,31 +77,17 @@ namespace Perpetuum.Services.Relics
         protected override Point FindRelicPosition(RelicInfo info)
         {
             Position p = new Position();
-            bool passableHandler(int x, int y)
-            {
-                return Zone.IsWalkable(new Point(x, y));
-            }
-            PathFinder pathFinder = new AStarFinder(Heuristic.None, passableHandler);
-            Position outpostPosition = _outpost.CurrentPosition;
             Position invalidPoint = new Position(0, 0);
 
-            Point[] result = null;
+            List<Point> result = null;
             var attemptCount = 0;
             for(attemptCount = 0; attemptCount < 10; attemptCount++)
             {
                 var randomPos = _outpost.CurrentPosition.GetRandomPositionInRange2D(90, 350);
                 var posFinder = new ClosestWalkablePositionFinder(_zone, randomPos);
 
-                var foundValidLocation = posFinder.Find(out p);
-
-                if (!foundValidLocation)
-                {
-                    Logger.Info("Invalid location!");
-                    return p;
-                }
-
-                Logger.Info("Looking for a relic");
-                result = pathFinder.FindPath(outpostPosition, p);
+                posFinder.Find(out p);
+                result = _zone.FindWalkableArea(p, _zone.Size.ToArea(), 200);
                 if(result != null)
                 {
                     break;
