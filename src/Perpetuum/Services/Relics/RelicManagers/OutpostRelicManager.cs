@@ -101,7 +101,6 @@ namespace Perpetuum.Services.Relics
 
             if (result == null)
             {
-                Logger.Info("Invalid location!");
                 p = invalidPosition;
             }
 
