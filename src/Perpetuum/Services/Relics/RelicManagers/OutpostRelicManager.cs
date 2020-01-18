@@ -27,6 +27,11 @@ namespace Perpetuum.Services.Relics
         //Beam Draw refresh
         private readonly TimeSpan _relicRefreshRate = TimeSpan.FromSeconds(19.95);
 
+        // Spawn range and area
+        private readonly int SPAWN_MINIMUM_OUTPOST_DISTANCE = 90;
+        private readonly int SPAWN_MAXIMUM_OUTPOST_DISTANCE = 350;
+        private readonly int SPAWN_AREA_REQUIRED_SIZE = 200;
+
         private IZone _zone;
         protected override IZone Zone
         {
@@ -77,17 +82,16 @@ namespace Perpetuum.Services.Relics
         protected override Point FindRelicPosition(RelicInfo info)
         {
             Position p = new Position();
-            Position invalidPoint = new Position(0, 0);
+            Position invalidPosition = new Position(0, 0);
 
             List<Point> result = null;
-            var attemptCount = 0;
-            for(attemptCount = 0; attemptCount < 10; attemptCount++)
+            for(int i = 0; i < 10; i++)
             {
-                var randomPos = _outpost.CurrentPosition.GetRandomPositionInRange2D(90, 350);
+                var randomPos = _outpost.CurrentPosition.GetRandomPositionInRange2D(SPAWN_MINIMUM_OUTPOST_DISTANCE, SPAWN_MAXIMUM_OUTPOST_DISTANCE);
                 var posFinder = new ClosestWalkablePositionFinder(_zone, randomPos);
 
                 posFinder.Find(out p);
-                result = _zone.FindWalkableArea(p, _zone.Size.ToArea(), 200);
+                result = _zone.FindWalkableArea(p, _zone.Size.ToArea(), SPAWN_AREA_REQUIRED_SIZE);
                 if(result != null)
                 {
                     break;
@@ -97,7 +101,7 @@ namespace Perpetuum.Services.Relics
             if (result == null)
             {
                 Logger.Info("Invalid location!");
-                p = invalidPoint;
+                p = invalidPosition;
             }
 
             return p;
