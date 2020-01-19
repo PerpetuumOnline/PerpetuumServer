@@ -234,19 +234,53 @@ namespace Perpetuum.Zones.PBS
 
         }
 
-        private static void PushPlayersFromPosition(IZone zone, Position position, int range, int safeMargin = 1)
+        /// <summary>
+        /// Attempt to push a players from their current locations away from a newly constructed pbs
+        /// </summary>
+        /// <param name="zone">Zone of pbs and players</param>
+        /// <param name="position">Position of pbs deployment</param>
+        /// <param name="range">The construction radius of the pbs</param>
+        /// <param name="safeMargin">A safe margin to pull inside of the radius</param>
+        private static void PushPlayersFromPosition(IZone zone, Position position, int range, double safeMargin = 0.25)
         {
-
+            var epslion = 0.1;
+            var safeRadius = range - safeMargin;
             var playersInRange = zone.Players.WithinRange(position, range);
 
             foreach (var player in playersInRange)
             {
-                var pushPos = position.GetPositionTowards2D(player.CurrentPosition, Math.Max(range - safeMargin, 0.05));
+                // Strategy 1: Push the player to the closest tangent to the building radius
+                var pushPos = position.GetPositionTowards2D(player.CurrentPosition, Math.Max(safeRadius, epslion));
+                // Strategy 2: Check if the position satisfies the constraints, if fail try a new method
+                pushPos = TryMovePlayerOutOfRadius(pushPos, position, zone, player, safeRadius);
                 Logger.DebugInfo($"player bumped from:{player.CurrentPosition.ToDoubleString2D()} to:{pushPos.ToDoubleString2D()} distance:{pushPos.TotalDistance2D(player.CurrentPosition)}");
 
                 player.CurrentPosition = pushPos;
                 player.SendForceUpdate();
             }
+        }
+
+        /// <summary>
+        /// Fallback method for PushPlayersFromPosition.
+        /// Attempt to find an acceptable location on a radius around a center point to put a player.
+        /// </summary>
+        /// <param name="edge">Attempted location</param>
+        /// <param name="center">Center of circle to move player outside of</param>
+        /// <param name="zone">Zone of transform</param>
+        /// <param name="player">Player to move</param>
+        /// <param name="radius">Radius of circle</param>
+        /// <param name="iterations">Number of attempts to try</param>
+        /// <param name="epsilon">Epsilon factor to account for rounding in geometric in/equalities</param>
+        /// <returns>Modified position</returns>
+        private static Position TryMovePlayerOutOfRadius(Position edge, Position center, IZone zone, Player player, double radius, int iterations=100, double epsilon=0.1)
+        {
+            var r = new Random();
+            while ((edge.TotalDistance2D(center) < radius - epsilon || !zone.IsWalkable(edge, player.Slope)) && iterations > 0)
+            {
+                edge = center.OffsetInDirection(r.NextDouble(), radius);
+                iterations--;
+            }
+            return edge;
         }
 
         public static void OnPBSEggRemoved(IZone zone, PBSEgg pbsEgg)
