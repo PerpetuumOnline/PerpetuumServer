@@ -7,10 +7,6 @@ using Perpetuum.Zones.Beams;
 using Perpetuum.Zones.Intrusion;
 using Perpetuum.Zones.Finders.PositionFinders;
 using System.Threading;
-using Perpetuum.PathFinders;
-using Perpetuum.Accounting.Characters;
-using Perpetuum.Units;
-using Perpetuum.Log;
 
 namespace Perpetuum.Services.Relics
 {
