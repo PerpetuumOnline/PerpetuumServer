@@ -10,19 +10,22 @@ namespace Perpetuum.Zones.Intrusion
     /// </summary>
     public class OutpostDecay
     {
-        private readonly Outpost _outpost;
         private readonly EventListenerService _eventChannel;
         private readonly static TimeSpan noDecayBefore = TimeSpan.FromDays(3);
         private readonly static TimeSpan decayRate = TimeSpan.FromDays(1);
         private TimeSpan timeSinceLastDecay = TimeSpan.Zero;
         private TimeSpan lastSuccessfulIntrusion = TimeSpan.Zero;
         private readonly static int decayPts = -5;
-        private readonly EntityDefault def = EntityDefault.GetByName("def_outpost_decay");
+        private StabilityAffectingEvent.StabilityAffectBuilder _builder;
 
         public OutpostDecay(EventListenerService eventChannel, Outpost outpost)
         {
-            _outpost = outpost;
             _eventChannel = eventChannel;
+            var def = EntityDefault.GetByName("def_outpost_decay");
+             _builder = StabilityAffectingEvent.Builder()
+                .WithOutpost(outpost)
+                .WithSapDefinition(def.Definition)
+                .WithPoints(decayPts);
         }
 
         public void OnUpdate(TimeSpan time)
@@ -49,7 +52,7 @@ namespace Perpetuum.Zones.Intrusion
 
         private void DoDecay()
         {
-            _eventChannel.PublishMessage(new StabilityAffectingEvent(_outpost, null, def.Definition, null, decayPts));
+            _eventChannel.PublishMessage(_builder.Build());
         }
     }
 }

@@ -327,15 +327,21 @@ namespace Perpetuum.Zones.Intrusion
         /// Adapter method for SAP->StabilityAffectingEvent
         /// </summary>
         /// <returns>StabilityAffectingEvent</returns>
-        public StabilityAffectingEvent toStabilityAffectingEvent()
+        public StabilityAffectingEvent ToStabilityAffectingEvent()
         {
             List<Player> players = new List<Player>();
             foreach(var player in this.PlayerInfos)
             {
                 players.Add(player.character.GetPlayerRobotFromZone());
             }
-            var winner = GetPlayerTopScores(1)[0].character.GetPlayerRobotFromZone();
-            return new StabilityAffectingEvent(Site, winner, Definition, Eid, StabilityChange, players);
+            var builder = StabilityAffectingEvent.Builder()
+                .WithOutpost(Site)
+                .WithSapDefinition(Definition)
+                .WithSapEntityID(Eid)
+                .WithPoints(StabilityChange)
+                .AddParticipants(players)
+                .WithWinnerCorp(GetWinnerCorporationEid());
+            return builder.Build();
         }
     }
 }

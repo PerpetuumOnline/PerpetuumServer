@@ -107,14 +107,15 @@ namespace Perpetuum.Zones.NpcSystem
                 if (outpost is Outpost)
                 {
                     var participants = npc.ThreatManager.Hostiles.Select(x => zone.ToPlayerOrGetOwnerPlayer(x.unit)).ToList();
-                    EventMessage sapMessage = new StabilityAffectingEvent(outpost as Outpost,
-                        zone.ToPlayerOrGetOwnerPlayer(killer),
-                        npc.Definition,
-                        npc.Eid,
-                        StabilityPoints(),
-                        participants,
-                        OverrideRelations());
-                    channel.PublishMessage(sapMessage);
+                    var builder = StabilityAffectingEvent.Builder()
+                        .WithOutpost(outpost as Outpost)
+                        .WithOverrideRelations(OverrideRelations())
+                        .WithSapDefinition(npc.Definition)
+                        .WithSapEntityID(npc.Eid)
+                        .WithPoints(StabilityPoints())
+                        .AddParticipants(participants)
+                        .WithWinnerCorp(zone.ToPlayerOrGetOwnerPlayer(killer).CorporationEid);
+                    channel.PublishMessage(builder.Build());
                 }
             }
         }
