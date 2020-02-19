@@ -347,7 +347,7 @@ namespace Perpetuum.Zones.Intrusion
                 {
                     var gen = new LootGenerator(_lootService.GetIntrusionLootInfos(this, sap));
                     LootContainer.Create().AddLoot(gen).BuildAndAddToZone(Zone, sap.CurrentPosition);
-                    processStabilityChange(sap.toStabilityAffectingEvent());
+                    ProcessStabilityChange(sap.ToStabilityAffectingEvent());
                     scope.Complete();
                 }
                 catch (Exception ex)
@@ -370,7 +370,7 @@ namespace Perpetuum.Zones.Intrusion
             {
                 try
                 {
-                    processStabilityChange(sap);
+                    ProcessStabilityChange(sap);
                     scope.Complete();
                 }
                 catch (Exception ex)
@@ -385,7 +385,7 @@ namespace Perpetuum.Zones.Intrusion
         /// <summary>
         /// Core SAP logic
         /// </summary>
-        private void processStabilityChange(StabilityAffectingEvent sap)
+        private void ProcessStabilityChange(StabilityAffectingEvent sap)
         {
             // Check for invalid player-SAPS
             var winnerCorporation = sap.GetWinnerCorporation();
@@ -484,7 +484,7 @@ namespace Perpetuum.Zones.Intrusion
             InsertIntrusionLog(logEvent);
 
             //Award EP
-            foreach (var player in sap.GetPlayers())
+            foreach (var player in sap.Participants)
             {
                 player.Character.AddExtensionPointsBoostAndLog(EpForActivityType.Intrusion, EP_WINNER);
             }

@@ -29,8 +29,15 @@ namespace Perpetuum.Services.Relics
 
         public override void PopRelic(Player player)
         {
+            var builder = StabilityAffectingEvent.Builder()
+                .WithOutpost(_outpost)
+                .WithSapDefinition(Definition)
+                .WithSapEntityID(Eid)
+                .WithPoints(1)
+                .AddParticipant(player)
+                .WithWinnerCorp(player.CorporationEid);
             player.ApplyPvPEffect();
-            _outpost.PublishSAPEvent(new StabilityAffectingEvent(_outpost, player, this.Definition, this.Eid, 1));
+            _outpost.PublishSAPEvent(builder.Build());
             base.PopRelic(player);
         }
     }
