@@ -691,7 +691,6 @@
     <Compile Include="Zones\NpcSystem\Presences\RandomFlockInfo.cs" />
     <Compile Include="Zones\NpcSystem\Presences\RandomFlockReader.cs" />
     <Compile Include="Zones\NpcSystem\Presences\RandomFlockSelector.cs" />
-    <Compile Include="Zones\NpcSystem\Presences\TestService.cs" />
     <Compile Include="Zones\ProximityProbes\PBSRegisterHelper.cs" />
     <Compile Include="Zones\ProximityProbes\VisibilityBasedProximityProbe.cs" />
     <Compile Include="Accounting\Characters\CharacterCleaner.cs" />

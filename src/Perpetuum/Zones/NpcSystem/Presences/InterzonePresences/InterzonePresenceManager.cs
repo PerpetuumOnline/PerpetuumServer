@@ -17,24 +17,20 @@ namespace Perpetuum.Zones.NpcSystem.Presences.InterzonePresences
         private IEnumerable<InterzoneGroup> _groups = new List<InterzoneGroup>();
         private ImmutableList<Presence> _presences = ImmutableList<Presence>.Empty;
 
-        public IZoneManager _zoneManager;
+        public Lazy<IZoneManager> _zoneManager;
 
-        public InterzonePresenceManager()
-        {
-
-        }
-
-        public void Init(IZoneManager zoneManager, PresenceFactory presenceFactory, IInterzonePresenceConfigurationReader configurationReader)
+        public InterzonePresenceManager(Lazy<IZoneManager> zoneManager, PresenceFactory presenceFactory, IInterzonePresenceConfigurationReader configurationReader)
         {
             _presenceFactory = presenceFactory;
             _configurationReader = configurationReader;
             _zoneManager = zoneManager;
         }
+
         public override void Start()
         {
             base.Start();
             _groups = _configurationReader.GetAll();
-            foreach(var group in _groups)
+            foreach (var group in _groups)
             {
                 SpawnRandomPresenseOfGroup(group);
             }
@@ -43,9 +39,9 @@ namespace Perpetuum.Zones.NpcSystem.Presences.InterzonePresences
         public void SpawnRandomPresenseOfGroup(InterzoneGroup group)
         {
             var config = group.GetRandom();
-            var zone = _zoneManager.GetZone(config.ZoneID);
+            var zone = _zoneManager.Value.GetZone(config.ZoneID);
             var presence = _presenceFactory(zone, config);
-            
+            presence.LoadFlocks();
             AddPresence(presence);
         }
 

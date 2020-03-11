@@ -7,6 +7,7 @@ using Perpetuum.Services.Looting;
 using Perpetuum.Units;
 using Perpetuum.Zones.Finders.PositionFinders;
 using Perpetuum.Zones.NpcSystem.Presences;
+using Perpetuum.Zones.NpcSystem.Presences.InterzonePresences;
 
 namespace Perpetuum.Zones.NpcSystem.Flocks
 {
@@ -164,7 +165,12 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
 
         private NpcBehavior GetBehavior()
         {
-            if (Configuration.BehaviorType == NpcBehaviorType.Aggressive && Presence is DynamicPresence)
+
+            if( Presence is InterzonePresence)
+            {
+                return NpcBehavior.Create(Configuration.BehaviorType);
+            }
+            else if (Configuration.BehaviorType == NpcBehaviorType.Aggressive && Presence is DynamicPresence)
             {
                 // hogy ne tamadjanak be mindenkit rogton
                 return NpcBehavior.Create(NpcBehaviorType.Neutral);
@@ -199,6 +205,10 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
         {
             switch (presence)
             {
+                case InterzonePresence ip:
+                {
+                    return Configuration.SpawnOrigin;
+                }
                 case DynamicPresence dp:
                 {
                     return dp.DynamicPosition;

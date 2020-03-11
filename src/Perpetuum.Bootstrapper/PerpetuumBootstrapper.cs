@@ -1478,6 +1478,7 @@ namespace Perpetuum.Bootstrapper
             RegisterFlock<Flock>(PresenceType.Random);
             RegisterFlock<Flock>(PresenceType.Roaming);
             RegisterFlock<NormalFlock>(PresenceType.FreeRoaming);
+            RegisterFlock<Flock>(PresenceType.Interzone);
 
             RegisterPresence<Presence>(PresenceType.Normal);
             RegisterPresence<DirectPresence>(PresenceType.Direct).OnActivated(e =>
@@ -1655,11 +1656,6 @@ namespace Perpetuum.Bootstrapper
 
             _builder.RegisterType<GoodiePackHandler>();
 
-            _builder.RegisterType<TestService>().SingleInstance().OnActivated(e =>
-            {
-                e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromSeconds(5)));
-            });
-
             //TODO new EPBonusEventService 
             _builder.RegisterType<EPBonusEventService>().SingleInstance().OnActivated(e =>
             {
@@ -1678,21 +1674,7 @@ namespace Perpetuum.Bootstrapper
             });
 
             //TODO new InterzoneNPCManager
-            //_builder.RegisterType<InterzonePresenceManager>().SingleInstance().OnActivated(e =>
-            //{
-            //    Console.WriteLine("is this working?!");
-            //    try
-            //    {
-            //        e.Instance.Init(e.Context.Resolve<IZoneManager>(), e.Context.Resolve<PresenceFactory>(), e.Context.Resolve<IInterzonePresenceConfigurationReader>());
-            //        var pm = e.Context.Resolve<IProcessManager>();
-            //        var timed = e.Instance.AsTimed(TimeSpan.FromSeconds(1));
-            //        pm.AddProcess(timed);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        Console.WriteLine(ex.ToString());
-            //    }
-            //});
+            RegisterAutoActivate<InterzonePresenceManager>(TimeSpan.FromSeconds(10));
 
             _builder.RegisterType<AccountManager>().As<IAccountManager>();
 
