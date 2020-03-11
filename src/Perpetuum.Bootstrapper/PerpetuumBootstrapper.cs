@@ -261,7 +261,7 @@ namespace Perpetuum.Bootstrapper
         public void Init(string gameRoot)
         {
             _builder = new ContainerBuilder();
-             InitContainer(gameRoot);
+            InitContainer(gameRoot);
             _container = _builder.Build();
             Logger.Current = _container.Resolve<ILogger<LogEvent>>();
 

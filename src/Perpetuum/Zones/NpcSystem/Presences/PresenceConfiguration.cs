@@ -4,7 +4,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
 {
     public class PresenceConfiguration : IPresenceConfiguration
     {
-        public int ID { get; set; }
+        public int ID { get; private set; }
 
         public string Name { get; set; }
         public Area Area { get; set; }
@@ -26,7 +26,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
 
         public int ZoneID { get; set; }
 
-        public Position RandomCenter => new Position((double) RandomCenterX,(double) RandomCenterY);
+        public Position RandomCenter => new Position((double)RandomCenterX, (double)RandomCenterY);
 
         public PresenceConfiguration(int id, PresenceType presenceType)
         {
@@ -44,7 +44,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
     {
         private static readonly IIDGenerator<int> _idGenerator = IDGenerator.CreateIntIDGenerator(25000);
 
-        public DirectPresenceConfiguration(IZone zone) : base(_idGenerator.GetNextID(),PresenceType.Direct)
+        public DirectPresenceConfiguration(IZone zone) : base(_idGenerator.GetNextID(), PresenceType.Direct)
         {
             Area = zone.Configuration.Size.ToArea();
             Name = "direct presence " + ID;

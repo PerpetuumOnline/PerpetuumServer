@@ -56,7 +56,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences.InterzonePresences
         public override void LoadFlocks()
         {
             base.LoadFlocks();
-            foreach(var flock in Flocks)
+            foreach (var flock in Flocks)
             {
                 flock.SpawnAllMembers();
             }

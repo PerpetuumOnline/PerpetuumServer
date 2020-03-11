@@ -27,7 +27,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
         private static IPresenceConfiguration CreatePresenceConfigurationFromRecord(IDataRecord record)
         {
             var id = record.GetValue<int>("id");
-            var presenceType = (PresenceType) record.GetValue<int>("presencetype");
+            var presenceType = (PresenceType)record.GetValue<int>("presencetype");
             var topX = record.GetValue<int>("topx");
             var topY = record.GetValue<int>("topy");
             var bottomX = record.GetValue<int>("bottomx");

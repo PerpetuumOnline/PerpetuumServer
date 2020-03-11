@@ -4,7 +4,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences.InterzonePresences
 {
     public class InterzoneGroup
     {
-        public  int id;
+        public int id;
         public string name;
         private List<IPresenceConfiguration> presences = new List<IPresenceConfiguration>();
 
