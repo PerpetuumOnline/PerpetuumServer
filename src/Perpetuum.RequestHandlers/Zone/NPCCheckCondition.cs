@@ -22,7 +22,7 @@ namespace Perpetuum.RequestHandlers.Zone
 
             foreach (var presence in request.Zone.PresenceManager.GetPresences())
             {
-                var presenceType = presence.Configuration.presenceType;
+                var presenceType = presence.Configuration.PresenceType;
                 if (presenceType != PresenceType.Normal && presenceType != PresenceType.Random) 
                     continue;
 
@@ -31,7 +31,7 @@ namespace Perpetuum.RequestHandlers.Zone
                     var checkConditionsInRange = request.Zone.IsTerrainConditionsMatchInRange(npcFlock.SpawnOrigin, npcFlock.Configuration.SpawnRange.Max, 4.0);
                     if (!checkConditionsInRange)
                     {
-                        Logger.Error("consistency error! invalid roaming position: " + npcFlock.Configuration.SpawnOrigin.ToPoint() + " zoneid: " + request.Zone.Id + " presence:" + presence.Configuration.name + " pres ID:" + presence.Configuration.ID + " " + npcFlock.Configuration.Name + " npcflockID:" + npcFlock.Configuration.ID);
+                        Logger.Error("consistency error! invalid roaming position: " + npcFlock.Configuration.SpawnOrigin.ToPoint() + " zoneid: " + request.Zone.Id + " presence:" + presence.Configuration.Name + " pres ID:" + presence.Configuration.ID + " " + npcFlock.Configuration.Name + " npcflockID:" + npcFlock.Configuration.ID);
                     }
                 }
             }

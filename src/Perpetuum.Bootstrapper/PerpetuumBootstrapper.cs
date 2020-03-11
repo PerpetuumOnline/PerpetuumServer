@@ -126,6 +126,7 @@ using Perpetuum.Zones.Intrusion;
 using Perpetuum.Zones.NpcSystem;
 using Perpetuum.Zones.NpcSystem.Flocks;
 using Perpetuum.Zones.NpcSystem.Presences;
+using Perpetuum.Zones.NpcSystem.Presences.InterzonePresences;
 using Perpetuum.Zones.NpcSystem.Presences.PathFinders;
 using Perpetuum.Zones.NpcSystem.SafeSpawnPoints;
 using Perpetuum.Zones.PBS;
@@ -260,7 +261,7 @@ namespace Perpetuum.Bootstrapper
         public void Init(string gameRoot)
         {
             _builder = new ContainerBuilder();
-            InitContainer(gameRoot);
+             InitContainer(gameRoot);
             _container = _builder.Build();
             Logger.Current = _container.Resolve<ILogger<LogEvent>>();
 
@@ -309,7 +310,6 @@ namespace Perpetuum.Bootstrapper
             MissionTarget.ProductionDataAccess = _container.Resolve<IProductionDataAccess>();
             MissionTarget.RobotTemplateRelations = _container.Resolve<IRobotTemplateRelations>();
             MissionTarget.MissionTargetInProgressFactory = _container.Resolve<MissionTargetInProgress.Factory>();
-
 
             MissionTargetRewardCalculator.Init(_container.Resolve<MissionDataCache>());
             MissionTargetSuccessInfoGenerator.Init(_container.Resolve<MissionDataCache>());
@@ -1439,6 +1439,8 @@ namespace Perpetuum.Bootstrapper
 
             _builder.RegisterType<NpcSafeSpawnPointsRepository>().As<ISafeSpawnPointsRepository>();
             _builder.RegisterType<PresenceConfigurationReader>().As<IPresenceConfigurationReader>();
+            _builder.RegisterType<InterzonePresenceConfigReader>().As<IInterzonePresenceConfigurationReader>();
+            _builder.RegisterType<InterzoneGroup>();
             _builder.RegisterType<PresenceManager>().OnActivated(e =>
             {
                 var pm = e.Context.Resolve<IProcessManager>();
@@ -1465,7 +1467,7 @@ namespace Perpetuum.Bootstrapper
 
                 return ((configuration, presence) =>
                 {
-                    return ctx.ResolveKeyed<Flock>(presence.Configuration.presenceType, TypedParameter.From(configuration), TypedParameter.From(presence));
+                    return ctx.ResolveKeyed<Flock>(presence.Configuration.PresenceType, TypedParameter.From(configuration), TypedParameter.From(presence));
                 });
             });
 
@@ -1487,20 +1489,21 @@ namespace Perpetuum.Bootstrapper
             RegisterPresence<RandomPresence>(PresenceType.Random);
             RegisterPresence<RoamingPresence>(PresenceType.Roaming);
             RegisterPresence<RoamingPresence>(PresenceType.FreeRoaming);
+            RegisterPresence<InterzonePresence>(PresenceType.Interzone);
 
             _builder.Register<PresenceFactory>(x =>
             {
                 var ctx = x.Resolve<IComponentContext>();
                 return ((zone, configuration) =>
                 {
-                    if (!ctx.IsRegisteredWithKey<Presence>(configuration.presenceType))
+                    if (!ctx.IsRegisteredWithKey<Presence>(configuration.PresenceType))
                         return null;
 
-                    var p = ctx.ResolveKeyed<Presence>(configuration.presenceType,TypedParameter.From(zone),TypedParameter.From(configuration));
+                    var p = ctx.ResolveKeyed<Presence>(configuration.PresenceType,TypedParameter.From(zone),TypedParameter.From(configuration));
 
                     if (p is RoamingPresence roamingPresence)
                     {
-                        switch (p.Configuration.presenceType)
+                        switch (p.Configuration.PresenceType)
                         {
                             case PresenceType.Roaming:
                             {
@@ -1652,6 +1655,11 @@ namespace Perpetuum.Bootstrapper
 
             _builder.RegisterType<GoodiePackHandler>();
 
+            _builder.RegisterType<TestService>().SingleInstance().OnActivated(e =>
+            {
+                e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromSeconds(5)));
+            });
+
             //TODO new EPBonusEventService 
             _builder.RegisterType<EPBonusEventService>().SingleInstance().OnActivated(e =>
             {
@@ -1668,7 +1676,23 @@ namespace Perpetuum.Bootstrapper
                 e.Instance.AttachListener(e.Context.Resolve<ChatEcho>());
                 e.Instance.AttachListener(e.Context.Resolve<NpcChatEcho>());
             });
-            
+
+            //TODO new InterzoneNPCManager
+            //_builder.RegisterType<InterzonePresenceManager>().SingleInstance().OnActivated(e =>
+            //{
+            //    Console.WriteLine("is this working?!");
+            //    try
+            //    {
+            //        e.Instance.Init(e.Context.Resolve<IZoneManager>(), e.Context.Resolve<PresenceFactory>(), e.Context.Resolve<IInterzonePresenceConfigurationReader>());
+            //        var pm = e.Context.Resolve<IProcessManager>();
+            //        var timed = e.Instance.AsTimed(TimeSpan.FromSeconds(1));
+            //        pm.AddProcess(timed);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine(ex.ToString());
+            //    }
+            //});
 
             _builder.RegisterType<AccountManager>().As<IAccountManager>();
 
@@ -2519,7 +2543,6 @@ namespace Perpetuum.Bootstrapper
 
                     e.Instance.Zones.Add(zone);
                 };
-
             }).SingleInstance();
 
             _builder.RegisterType<TagHelper>();

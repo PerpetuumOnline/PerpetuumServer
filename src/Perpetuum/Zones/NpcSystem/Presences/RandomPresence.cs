@@ -10,14 +10,14 @@ namespace Perpetuum.Zones.NpcSystem.Presences
         private readonly IRandomFlockSelector _randomFlockSelector;
         private ImmutableHashSet<RandomFlockSpawner> _nextRandomFlocks = ImmutableHashSet<RandomFlockSpawner>.Empty;
 
-        public RandomPresence(IZone zone,PresenceConfiguration configuration,IRandomFlockSelector randomFlockSelector) : base(zone,configuration)
+        public RandomPresence(IZone zone, IPresenceConfiguration configuration,IRandomFlockSelector randomFlockSelector) : base(zone,configuration)
         {
             _randomFlockSelector = randomFlockSelector;
         }
 
         public override void LoadFlocks()
         {
-            for (var i = 0; i < Configuration.maxRandomFlock; i++)
+            for (var i = 0; i < Configuration.MaxRandomFlock; i++)
             {
                 var randomFlock = _randomFlockSelector.SelectRandomFlockByPresence(this);
                 SpawnRandomFlock(randomFlock);
@@ -42,7 +42,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
 
             ImmutableInterlocked.Update(ref _nextRandomFlocks, f =>
             {
-                if (f.Count >= Configuration.maxRandomFlock)
+                if (f.Count >= Configuration.MaxRandomFlock)
                     return f;
 
                 var randomFlockSpawner = new RandomFlockSpawner(this, _randomFlockSelector);

@@ -1,33 +1,42 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Perpetuum.Data;
 
-namespace Perpetuum.Zones.NpcSystem.Presences
+namespace Perpetuum.Zones.NpcSystem.Presences.InterzonePresences
 {
-    public class PresenceConfigurationReader : IPresenceConfigurationReader
+    public class InterzonePresenceConfigReader : IInterzonePresenceConfigurationReader
     {
-        public IPresenceConfiguration Get(int presenceID)
+        public IEnumerable<InterzoneGroup> GetAll()
         {
-            var record = Db.Query().CommandText("select * from npcpresence where id = @presenceID and enabled = 1 and izgroupid IS NULL").SetParameter("@presenceID", presenceID).ExecuteSingleRow();
-            if (record == null)
-                return null;
+            var groups = Db.Query().CommandText("SELECT id, name FROM npcinterzonegroups").Execute().Select(CreateIZGroupFromRecord).ToArray();
 
-            return CreatePresenceConfigurationFromRecord(record);
-        }
-
-        public IEnumerable<IPresenceConfiguration> GetAll(int zoneID)
-        {
-            return Db.Query().CommandText("select p.* from npcpresence p inner join zones z on p.spawnid = z.spawnid where z.id = @zoneID and p.enabled = 1 and p.izgroupid IS NULL")
-                .SetParameter("@zoneID", zoneID)
+            var presenceConfigs = Db.Query().CommandText("SELECT p.*, z.id as zoneID FROM npcpresence p INNER JOIN npcinterzonegroup iz ON p.izgroupid=iz.id INNER JOIN zones z ON z.spawnid=p.spawnid WHERE p.enabled=1")
                 .Execute()
                 .Select(CreatePresenceConfigurationFromRecord).ToArray();
+
+            foreach (var group in groups)
+            {
+                var configs = presenceConfigs.Where(p => group.id == p.InterzoneGroupId);
+                group.AddConfigs(configs);
+            }
+            return groups;
+        }
+
+        private static InterzoneGroup CreateIZGroupFromRecord(IDataRecord record)
+        {
+            var g = new InterzoneGroup()
+            {
+                id = record.GetValue<int>("id"),
+                name = record.GetValue<string>("name")
+            };
+            return g;
         }
 
         private static IPresenceConfiguration CreatePresenceConfigurationFromRecord(IDataRecord record)
         {
             var id = record.GetValue<int>("id");
-            var presenceType = (PresenceType) record.GetValue<int>("presencetype");
+            var presenceType = (PresenceType)record.GetValue<int>("presencetype");
             var topX = record.GetValue<int>("topx");
             var topY = record.GetValue<int>("topy");
             var bottomX = record.GetValue<int>("bottomx");
@@ -46,6 +55,8 @@ namespace Perpetuum.Zones.NpcSystem.Presences
                 RandomRadius = record.GetValue<int?>("randomradius"),
                 DynamicLifeTime = record.GetValue<int?>("dynamiclifetime"),
                 IsRespawnAllowed = record.GetValue<bool>("isrespawnallowed"),
+                InterzoneGroupId = record.GetValue<int?>("izgroupid"),
+                ZoneID = record.GetValue<int>("zoneID"),
                 Area = new Area(topX, topY, bottomX, bottomY)
             };
             return p;

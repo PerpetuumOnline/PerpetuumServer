@@ -19,10 +19,10 @@ namespace Perpetuum.Zones.NpcSystem.Presences
 
         public event Action<Presence> PresenceExpired;
 
-        public DynamicPresence(IZone zone,PresenceConfiguration configuration) : base(zone,configuration)
+        public DynamicPresence(IZone zone, IPresenceConfiguration configuration) : base(zone,configuration)
         {
-            if (Configuration.dynamicLifeTime != null) 
-                LifeTime = TimeSpan.FromMilliseconds((int) Configuration.dynamicLifeTime);
+            if (Configuration.DynamicLifeTime != null) 
+                LifeTime = TimeSpan.FromMilliseconds((int) Configuration.DynamicLifeTime);
         }
 
         public override Area Area

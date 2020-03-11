@@ -16,7 +16,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
         public Position SpawnOrigin { get; private set; }
         public Point CurrentRoamingPosition { get; private set; }
 
-        public RoamingPresence(IZone zone,PresenceConfiguration configuration) : base(zone,configuration)
+        public RoamingPresence(IZone zone, IPresenceConfiguration configuration) : base(zone,configuration)
         {
             _fsm = new StackFSM();
             _fsm.Push(new SpawnState(this));
@@ -52,7 +52,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
 
                 _elapsed = TimeSpan.Zero;
 
-                _delay = TimeSpan.FromSeconds(_presence.Configuration.roamingRespawnSeconds * _repawnDelayModifier);
+                _delay = TimeSpan.FromSeconds(_presence.Configuration.RoamingRespawnSeconds * _repawnDelayModifier);
                 _repawnDelayModifier = FastRandom.NextDouble(1.0, 2.0);
             }
 

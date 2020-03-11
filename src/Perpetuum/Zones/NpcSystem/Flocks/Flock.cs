@@ -135,7 +135,7 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
             var finder = new ClosestWalkablePositionFinder(zone, spawnPosition, npc);
             if (!finder.Find(out spawnPosition))
             {
-                Log($"invalid spawnposition in CreateMemberInZone: {spawnPosition} {Configuration.Name} {Presence.Configuration.name} zone:{zone.Id}");
+                Log($"invalid spawnposition in CreateMemberInZone: {spawnPosition} {Configuration.Name} {Presence.Configuration.Name} zone:{zone.Id}");
             }
 
             OnNpcCreated(npc);
