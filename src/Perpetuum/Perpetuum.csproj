@@ -676,7 +676,6 @@
     <Compile Include="Zones\NpcSystem\Flocks\IFlockConfigurationRepository.cs" />
     <Compile Include="Zones\NpcSystem\NpcBossInfo.cs" />
     <Compile Include="Zones\NpcSystem\Presences\InterzonePresences\IInterzonePresenceConfigurationReader.cs" />
-    <Compile Include="Zones\NpcSystem\Presences\InterzonePresences\IInterzonePresenceManager.cs" />
     <Compile Include="Zones\NpcSystem\Presences\InterzonePresences\InterzoneGroup.cs" />
     <Compile Include="Zones\NpcSystem\Presences\InterzonePresences\InterzonePresence.cs" />
     <Compile Include="Zones\NpcSystem\Presences\InterzonePresences\InterzonePresenceConfigReader.cs" />

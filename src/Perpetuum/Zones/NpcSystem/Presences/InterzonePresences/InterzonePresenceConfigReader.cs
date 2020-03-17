@@ -7,9 +7,9 @@ namespace Perpetuum.Zones.NpcSystem.Presences.InterzonePresences
 {
     public class InterzonePresenceConfigReader : IInterzonePresenceConfigurationReader
     {
-        public IEnumerable<InterzoneGroup> GetAll()
+        public IEnumerable<IInterzoneGroup> GetAll()
         {
-            var groups = Db.Query().CommandText("SELECT id, name FROM npcinterzonegroup").Execute().Select(CreateIZGroupFromRecord).ToArray();
+            var groups = Db.Query().CommandText("SELECT id, name, respawnTime, respawnNoiseFactor FROM npcinterzonegroup").Execute().Select(CreateIZGroupFromRecord).ToArray();
 
             var presenceConfigs = Db.Query().CommandText("SELECT p.*, z.id as zoneID FROM npcpresence p INNER JOIN npcinterzonegroup iz ON p.izgroupid=iz.id INNER JOIN zones z ON z.spawnid=p.spawnid WHERE p.enabled=1")
                 .Execute()
@@ -17,19 +17,19 @@ namespace Perpetuum.Zones.NpcSystem.Presences.InterzonePresences
 
             foreach (var group in groups)
             {
-                var configs = presenceConfigs.Where(p => group.id == p.InterzoneGroupId);
+                var configs = presenceConfigs.Where(p => group.GetId() == p.InterzoneGroupId);
                 group.AddConfigs(configs);
             }
             return groups;
         }
 
-        private static InterzoneGroup CreateIZGroupFromRecord(IDataRecord record)
+        private static IInterzoneGroup CreateIZGroupFromRecord(IDataRecord record)
         {
-            var g = new InterzoneGroup()
-            {
-                id = record.GetValue<int>("id"),
-                name = record.GetValue<string>("name")
-            };
+            var id = record.GetValue<int>("id");
+            var name = record.GetValue<string>("name");
+            var respawnTimeSeconds = record.GetValue<int>("respawnTime");
+            var respawnNoise = record.GetValue<double>("respawnNoiseFactor");
+            var g = new InterzoneGroup(id, name, respawnTimeSeconds, respawnNoise);
             return g;
         }
 

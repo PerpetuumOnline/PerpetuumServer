@@ -1440,7 +1440,7 @@ namespace Perpetuum.Bootstrapper
             _builder.RegisterType<NpcSafeSpawnPointsRepository>().As<ISafeSpawnPointsRepository>();
             _builder.RegisterType<PresenceConfigurationReader>().As<IPresenceConfigurationReader>();
             _builder.RegisterType<InterzonePresenceConfigReader>().As<IInterzonePresenceConfigurationReader>();
-            _builder.RegisterType<InterzoneGroup>();
+            _builder.RegisterType<InterzoneGroup>().As<IInterzoneGroup>();
             _builder.RegisterType<PresenceManager>().OnActivated(e =>
             {
                 var pm = e.Context.Resolve<IProcessManager>();

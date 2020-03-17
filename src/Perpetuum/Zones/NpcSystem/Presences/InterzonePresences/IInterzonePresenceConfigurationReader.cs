@@ -4,6 +4,6 @@ namespace Perpetuum.Zones.NpcSystem.Presences.InterzonePresences
 {
     public interface IInterzonePresenceConfigurationReader
     {
-        IEnumerable<InterzoneGroup> GetAll();
+        IEnumerable<IInterzoneGroup> GetAll();
     }
 }
