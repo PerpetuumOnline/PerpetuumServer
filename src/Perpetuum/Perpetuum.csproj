@@ -284,6 +284,7 @@
     <Compile Include="Rsa.cs" />
     <Compile Include="Selectors\ISelector.cs" />
     <Compile Include="Selectors\ModuloBasedSelector.cs" />
+    <Compile Include="Services\Artifacts\ArtifactRefresher.cs" />
     <Compile Include="Services\Channels\ChannelMessageHandler.cs" />
     <Compile Include="Services\Channels\GameAdminCommands.cs" />
     <Compile Include="Services\Channels\PreMadeChatMessageNames.cs" />

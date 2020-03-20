@@ -76,6 +76,7 @@ using Perpetuum.RequestHandlers.Zone.NpcSafeSpawnPoints;
 using Perpetuum.RequestHandlers.Zone.PBS;
 using Perpetuum.RequestHandlers.Zone.StatsMapDrawing;
 using Perpetuum.Robots;
+using Perpetuum.Services;
 using Perpetuum.Services.Channels;
 using Perpetuum.Services.EventServices;
 using Perpetuum.Services.EventServices.EventProcessors;
@@ -445,6 +446,7 @@ namespace Perpetuum.Bootstrapper
             RegisterAutoActivate<SessionCountWriter>(TimeSpan.FromMinutes(5));
             RegisterAutoActivate<VolunteerCEOProcessor>(TimeSpan.FromMinutes(10));
             RegisterAutoActivate<GiveExtensionPointsService>(TimeSpan.FromMinutes(10));
+            RegisterAutoActivate<ArtifactRefresher>(TimeSpan.FromHours(7));
         }
 
         private void RegisterCommands()
@@ -1668,7 +1670,6 @@ namespace Perpetuum.Bootstrapper
                 e.Instance.AttachListener(e.Context.Resolve<ChatEcho>());
                 e.Instance.AttachListener(e.Context.Resolve<NpcChatEcho>());
             });
-            
 
             _builder.RegisterType<AccountManager>().As<IAccountManager>();
 
