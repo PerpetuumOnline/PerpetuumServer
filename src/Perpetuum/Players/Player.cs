@@ -743,7 +743,7 @@ namespace Perpetuum.Players
             var zone = Zone;
             if (zone == null)
                 return;
-
+            return;
             if (zone.Configuration.Protected)
             {
                 // PROTECTED ISLANDS 
