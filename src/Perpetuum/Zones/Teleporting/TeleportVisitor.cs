@@ -5,5 +5,6 @@ namespace Perpetuum.Zones.Teleporting
         public virtual void VisitTeleport(Teleport teleport) { }
         public virtual void VisitMobileTeleport(MobileTeleport teleport) { }
         public virtual void VisitMobileWorldTeleport(MobileWorldTeleport teleport) { }
+        public virtual void VisitMobileStrongholdTeleport(MobileStrongholdTeleport teleport) { }
     }
 }
