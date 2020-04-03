@@ -1214,7 +1214,7 @@ namespace Perpetuum.Bootstrapper
                 ByCategoryFlags<SimpleSwitch>(CategoryFlags.cf_simple_switch);
                 ByCategoryFlags<ItemSupply>(CategoryFlags.cf_item_supply);
                 ByCategoryFlags<MobileWorldTeleport>(CategoryFlags.cf_mobile_world_teleport);
-                ByNamePatternAndFlag<MobileStrongholdTeleport>("def_mobile_teleport_strnghld", CategoryFlags.cf_mobile_world_teleport); // TODO new field dev
+                ByNamePatternAndFlag<MobileStrongholdTeleport>("def_mobile_teleport_stronghold", CategoryFlags.cf_mobile_world_teleport); // TODO new field dev
                 ByCategoryFlags<Item>(CategoryFlags.cf_mission_coin);
                 ByCategoryFlags<AreaBomb>(CategoryFlags.cf_area_bomb);
                 ByCategoryFlags<AreaBombDeployer>(CategoryFlags.cf_plasma_bomb);
