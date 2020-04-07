@@ -205,22 +205,9 @@ namespace Perpetuum.Services.RiftSystem
                 teleport.DoTeleportAsync(player);
                 return;
             }
-
-            // teleport player to stronghold
-            // stronghold zone must be active.
-            if (this.DestinationStrongholdZone > 0)
-            {
-                var destZone = player.Character.GetZone(DestinationStrongholdZone);
-                var teleport = _teleportStrategyFactories.TeleportToAnotherZoneFactory(destZone);
-                // there should only be one, for now.
-                // FIXME: some zones may have more than one stronghold.
-                // we will need to link anomalies like teleporters.
-                var pos = destZone.Units.OfType<Rift>().First();
-                teleport.TargetPosition = pos.CurrentPosition;
-                teleport.DoTeleportAsync(player);
-            }
             else
             {
+                // Regular jump behaviour
                 player.CurrentPosition.IsInRangeOf3D(CurrentPosition, 8).ThrowIfFalse(ErrorCodes.TeleportOutOfRange);
 
                 var nearestRift = Zone.Units.OfType<Rift>().Where(rift => rift != this).GetNearestUnit(CurrentPosition);
