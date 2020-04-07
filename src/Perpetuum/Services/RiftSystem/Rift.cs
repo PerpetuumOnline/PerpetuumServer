@@ -114,6 +114,10 @@ namespace Perpetuum.Services.RiftSystem
             if (ED.Tier.level > maxRiftLevel)
                 throw new PerpetuumException(ErrorCodes.RiftLevelMismatch);
 
+            if (zone is StrongHoldZone)
+                throw new PerpetuumException(ErrorCodes.ItemNotUsable);
+
+
             var info = new RiftNpcGroupInfo();
             Debug.Assert(DeployableItemEntityDefault.Config.npcPresenceId != null, "DeployableItemEntityDefault.Config.npcPresenceId != null");
             info.presenceID = (int)DeployableItemEntityDefault.Config.npcPresenceId;
@@ -145,9 +149,6 @@ namespace Perpetuum.Services.RiftSystem
             _blobEmitter = new BlobEmitter(this);
         }
 
-        public int DestinationStrongholdZone { get; set; }
-        public int OriginZone { get; set; }
-
         public void SetDespawnTime(TimeSpan despawnTime)
         {
             _despawnHelper = UnitDespawnHelper.Create(this,despawnTime);
@@ -166,7 +167,10 @@ namespace Perpetuum.Services.RiftSystem
             var zone = Zone;
             if (zone == null)
                 return false;
-            
+
+            if (zone is StrongHoldZone)
+                return false;
+
             if (Interlocked.CompareExchange(ref _activated, 1, 0) == 1)
                 return false;
 

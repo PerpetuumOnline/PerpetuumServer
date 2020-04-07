@@ -117,7 +117,7 @@ namespace Perpetuum.Services.RiftSystem
             }
 
             rift.AddToZone(_zone, spawnPosition, ZoneEnterType.NpcSpawn);
-            Logger.Info(string.Format("Rift spawned on zone {0} {1} ({2}) Stronghold Zone ID: {3}", _zone.Id, rift.ED.Name, rift.CurrentPosition, rift.DestinationStrongholdZone));
+            Logger.Info(string.Format("Rift spawned on zone {0} {1} ({2})", _zone.Id, rift.ED.Name, rift.CurrentPosition));
         }
 
         private void OnRiftRemovedFromZone(Unit unit)

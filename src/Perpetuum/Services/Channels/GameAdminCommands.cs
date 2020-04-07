@@ -752,7 +752,7 @@ namespace Perpetuum.Services.Channels
                     var rift = z.Units.OfType<Rift>();
                     foreach (Rift r in rift)
                     {
-                        channel.SendMessageToAll(sessionManager, sender, string.Format("Rift - Zone: {0}, Position: ({1}), Destination Zone:{2}", r.Zone, r.CurrentPosition, r.DestinationStrongholdZone));
+                        channel.SendMessageToAll(sessionManager, sender, string.Format("Rift - Zone: {0}, Position: ({1})", r.Zone, r.CurrentPosition));
                     }
                 }
             }
