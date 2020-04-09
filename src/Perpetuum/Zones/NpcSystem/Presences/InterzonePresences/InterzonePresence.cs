@@ -7,13 +7,13 @@ using Perpetuum.Zones.NpcSystem.Presences.PathFinders;
 
 namespace Perpetuum.Zones.NpcSystem.Presences.InterzonePresences
 {
-    public class InterzonePresence : DynamicPresence, IRoamingPresence
+    public class InterzoneRoamingPresence : InterzonePresence, IRoamingPresence
     {
         public StackFSM StackFSM { get; }
         public Position SpawnOrigin { get; set; }
         public Point CurrentRoamingPosition { get; set; }
         public IRoamingPathFinder PathFinder { get; set; }
-        public InterzonePresence(IZone zone, IPresenceConfiguration configuration) : base(zone, configuration)
+        public InterzoneRoamingPresence(IZone zone, IPresenceConfiguration configuration) : base(zone, configuration)
         {
             if (Configuration.DynamicLifeTime != null)
                 LifeTime = TimeSpan.FromSeconds((int)Configuration.DynamicLifeTime);
@@ -26,6 +26,15 @@ namespace Perpetuum.Zones.NpcSystem.Presences.InterzonePresences
         {
             StackFSM.Update(time);
             base.OnUpdate(time);
+        }
+    }
+
+    public class InterzonePresence : DynamicPresence
+    {
+        public InterzonePresence(IZone zone, IPresenceConfiguration configuration) : base(zone, configuration)
+        {
+            if (Configuration.DynamicLifeTime != null)
+                LifeTime = TimeSpan.FromSeconds((int)Configuration.DynamicLifeTime);
         }
 
         protected override void OnFlockAdded(Flock flock)

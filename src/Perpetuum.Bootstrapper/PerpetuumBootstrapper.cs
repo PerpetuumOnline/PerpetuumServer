@@ -1479,6 +1479,7 @@ namespace Perpetuum.Bootstrapper
             RegisterFlock<Flock>(PresenceType.Roaming);
             RegisterFlock<NormalFlock>(PresenceType.FreeRoaming);
             RegisterFlock<NormalFlock>(PresenceType.Interzone);
+            RegisterFlock<NormalFlock>(PresenceType.InterzoneRoaming);
 
             RegisterPresence<Presence>(PresenceType.Normal);
             RegisterPresence<DirectPresence>(PresenceType.Direct).OnActivated(e =>
@@ -1491,6 +1492,7 @@ namespace Perpetuum.Bootstrapper
             RegisterPresence<RoamingPresence>(PresenceType.Roaming);
             RegisterPresence<RoamingPresence>(PresenceType.FreeRoaming);
             RegisterPresence<InterzonePresence>(PresenceType.Interzone);
+            RegisterPresence<InterzoneRoamingPresence>(PresenceType.InterzoneRoaming);
 
             _builder.Register<PresenceFactory>(x =>
             {
@@ -1516,7 +1518,7 @@ namespace Perpetuum.Bootstrapper
                                 roamingPresence.PathFinder = new FreeRoamingPathFinder(zone);
                                 break;
                             }
-                            case PresenceType.Interzone:
+                            case PresenceType.InterzoneRoaming:
                             {
                                 roamingPresence.PathFinder = new FreeRoamingPathFinder(zone);
                                 break;
