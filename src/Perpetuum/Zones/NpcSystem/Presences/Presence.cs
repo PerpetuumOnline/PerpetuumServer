@@ -81,7 +81,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
         {
             _updateTimer.Update(time);
 
-            if ( !_updateTimer.Passed )
+            if (!_updateTimer.Passed)
                 return;
 
             OnUpdate(_updateTimer.Elapsed);
@@ -176,10 +176,10 @@ namespace Perpetuum.Zones.NpcSystem.Presences
 
         public void AddDebugInfoToDictionary(IDictionary<string, object> dictionary)
         {
-            
+
         }
 
-        protected void Log(string message)
+        public virtual void Log(string message)
         {
             Logger.Info($"[Presence] ({ToString()}) - {message}");
         }

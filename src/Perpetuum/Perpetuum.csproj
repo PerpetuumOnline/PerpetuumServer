@@ -685,6 +685,7 @@
     <Compile Include="Zones\NpcSystem\Presences\IPresenceManager.cs" />
     <Compile Include="Zones\NpcSystem\Presences\IRandomFlockReader.cs" />
     <Compile Include="Zones\NpcSystem\Presences\IRandomFlockSelector.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\PathFinders\RoamingStates.cs" />
     <Compile Include="Zones\NpcSystem\Presences\PresenceConfigurationReader.cs" />
     <Compile Include="Zones\NpcSystem\Presences\PresenceManager.cs" />
     <Compile Include="Zones\NpcSystem\Presences\RandomFlockInfo.cs" />

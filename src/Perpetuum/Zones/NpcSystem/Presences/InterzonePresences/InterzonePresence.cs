@@ -1,17 +1,32 @@
-﻿using Perpetuum.Zones.NpcSystem.Flocks;
-using System;
+﻿using System;
 using System.Text;
+using System.Drawing;
+using Perpetuum.StateMachines;
+using Perpetuum.Zones.NpcSystem.Flocks;
+using Perpetuum.Zones.NpcSystem.Presences.PathFinders;
 
 namespace Perpetuum.Zones.NpcSystem.Presences.InterzonePresences
 {
-    public class InterzonePresence : DynamicPresence
+    public class InterzonePresence : DynamicPresence, IRoamingPresence
     {
+        public StackFSM StackFSM { get; }
+        public Position SpawnOrigin { get; set; }
+        public Point CurrentRoamingPosition { get; set; }
+        public IRoamingPathFinder PathFinder { get; set; }
         public InterzonePresence(IZone zone, IPresenceConfiguration configuration) : base(zone, configuration)
         {
             if (Configuration.DynamicLifeTime != null)
                 LifeTime = TimeSpan.FromSeconds((int)Configuration.DynamicLifeTime);
+
+            StackFSM = new StackFSM();
+            StackFSM.Push(new SpawnState(this));
         }
 
+        protected override void OnUpdate(TimeSpan time)
+        {
+            StackFSM.Update(time);
+            base.OnUpdate(time);
+        }
 
         protected override void OnFlockAdded(Flock flock)
         {

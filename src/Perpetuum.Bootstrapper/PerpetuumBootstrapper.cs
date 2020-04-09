@@ -1478,7 +1478,7 @@ namespace Perpetuum.Bootstrapper
             RegisterFlock<Flock>(PresenceType.Random);
             RegisterFlock<Flock>(PresenceType.Roaming);
             RegisterFlock<NormalFlock>(PresenceType.FreeRoaming);
-            RegisterFlock<Flock>(PresenceType.Interzone);
+            RegisterFlock<NormalFlock>(PresenceType.Interzone);
 
             RegisterPresence<Presence>(PresenceType.Normal);
             RegisterPresence<DirectPresence>(PresenceType.Direct).OnActivated(e =>
@@ -1502,7 +1502,7 @@ namespace Perpetuum.Bootstrapper
 
                     var p = ctx.ResolveKeyed<Presence>(configuration.PresenceType,TypedParameter.From(zone),TypedParameter.From(configuration));
 
-                    if (p is RoamingPresence roamingPresence)
+                    if (p is IRoamingPresence roamingPresence)
                     {
                         switch (p.Configuration.PresenceType)
                         {
@@ -1512,6 +1512,11 @@ namespace Perpetuum.Bootstrapper
                                 break;
                             }
                             case PresenceType.FreeRoaming:
+                            {
+                                roamingPresence.PathFinder = new FreeRoamingPathFinder(zone);
+                                break;
+                            }
+                            case PresenceType.Interzone:
                             {
                                 roamingPresence.PathFinder = new FreeRoamingPathFinder(zone);
                                 break;
