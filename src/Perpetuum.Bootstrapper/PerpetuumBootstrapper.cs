@@ -127,6 +127,7 @@ using Perpetuum.Zones.Intrusion;
 using Perpetuum.Zones.NpcSystem;
 using Perpetuum.Zones.NpcSystem.Flocks;
 using Perpetuum.Zones.NpcSystem.Presences;
+using Perpetuum.Zones.NpcSystem.Presences.InterzonePresences;
 using Perpetuum.Zones.NpcSystem.Presences.PathFinders;
 using Perpetuum.Zones.NpcSystem.SafeSpawnPoints;
 using Perpetuum.Zones.PBS;
@@ -310,7 +311,6 @@ namespace Perpetuum.Bootstrapper
             MissionTarget.ProductionDataAccess = _container.Resolve<IProductionDataAccess>();
             MissionTarget.RobotTemplateRelations = _container.Resolve<IRobotTemplateRelations>();
             MissionTarget.MissionTargetInProgressFactory = _container.Resolve<MissionTargetInProgress.Factory>();
-
 
             MissionTargetRewardCalculator.Init(_container.Resolve<MissionDataCache>());
             MissionTargetSuccessInfoGenerator.Init(_container.Resolve<MissionDataCache>());
@@ -1441,6 +1441,8 @@ namespace Perpetuum.Bootstrapper
 
             _builder.RegisterType<NpcSafeSpawnPointsRepository>().As<ISafeSpawnPointsRepository>();
             _builder.RegisterType<PresenceConfigurationReader>().As<IPresenceConfigurationReader>();
+            _builder.RegisterType<InterzonePresenceConfigReader>().As<IInterzonePresenceConfigurationReader>();
+            _builder.RegisterType<InterzoneGroup>().As<IInterzoneGroup>();
             _builder.RegisterType<PresenceManager>().OnActivated(e =>
             {
                 var pm = e.Context.Resolve<IProcessManager>();
@@ -1467,7 +1469,7 @@ namespace Perpetuum.Bootstrapper
 
                 return ((configuration, presence) =>
                 {
-                    return ctx.ResolveKeyed<Flock>(presence.Configuration.presenceType, TypedParameter.From(configuration), TypedParameter.From(presence));
+                    return ctx.ResolveKeyed<Flock>(presence.Configuration.PresenceType, TypedParameter.From(configuration), TypedParameter.From(presence));
                 });
             });
 
@@ -1478,6 +1480,8 @@ namespace Perpetuum.Bootstrapper
             RegisterFlock<Flock>(PresenceType.Random);
             RegisterFlock<Flock>(PresenceType.Roaming);
             RegisterFlock<NormalFlock>(PresenceType.FreeRoaming);
+            RegisterFlock<NormalFlock>(PresenceType.Interzone);
+            RegisterFlock<NormalFlock>(PresenceType.InterzoneRoaming);
 
             RegisterPresence<Presence>(PresenceType.Normal);
             RegisterPresence<DirectPresence>(PresenceType.Direct).OnActivated(e =>
@@ -1489,20 +1493,22 @@ namespace Perpetuum.Bootstrapper
             RegisterPresence<RandomPresence>(PresenceType.Random);
             RegisterPresence<RoamingPresence>(PresenceType.Roaming);
             RegisterPresence<RoamingPresence>(PresenceType.FreeRoaming);
+            RegisterPresence<InterzonePresence>(PresenceType.Interzone);
+            RegisterPresence<InterzoneRoamingPresence>(PresenceType.InterzoneRoaming);
 
             _builder.Register<PresenceFactory>(x =>
             {
                 var ctx = x.Resolve<IComponentContext>();
                 return ((zone, configuration) =>
                 {
-                    if (!ctx.IsRegisteredWithKey<Presence>(configuration.presenceType))
+                    if (!ctx.IsRegisteredWithKey<Presence>(configuration.PresenceType))
                         return null;
 
-                    var p = ctx.ResolveKeyed<Presence>(configuration.presenceType,TypedParameter.From(zone),TypedParameter.From(configuration));
+                    var p = ctx.ResolveKeyed<Presence>(configuration.PresenceType,TypedParameter.From(zone),TypedParameter.From(configuration));
 
-                    if (p is RoamingPresence roamingPresence)
+                    if (p is IRoamingPresence roamingPresence)
                     {
-                        switch (p.Configuration.presenceType)
+                        switch (p.Configuration.PresenceType)
                         {
                             case PresenceType.Roaming:
                             {
@@ -1510,6 +1516,11 @@ namespace Perpetuum.Bootstrapper
                                 break;
                             }
                             case PresenceType.FreeRoaming:
+                            {
+                                roamingPresence.PathFinder = new FreeRoamingPathFinder(zone);
+                                break;
+                            }
+                            case PresenceType.InterzoneRoaming:
                             {
                                 roamingPresence.PathFinder = new FreeRoamingPathFinder(zone);
                                 break;
@@ -1670,6 +1681,9 @@ namespace Perpetuum.Bootstrapper
                 e.Instance.AttachListener(e.Context.Resolve<ChatEcho>());
                 e.Instance.AttachListener(e.Context.Resolve<NpcChatEcho>());
             });
+
+            //TODO new InterzoneNPCManager
+            RegisterAutoActivate<InterzonePresenceManager>(TimeSpan.FromSeconds(10));
 
             _builder.RegisterType<AccountManager>().As<IAccountManager>();
 
@@ -2520,7 +2534,6 @@ namespace Perpetuum.Bootstrapper
 
                     e.Instance.Zones.Add(zone);
                 };
-
             }).SingleInstance();
 
             _builder.RegisterType<TagHelper>();

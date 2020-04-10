@@ -25,33 +25,13 @@ namespace Perpetuum.Modules
             cycleTime.AddEffectModifier(AggregateField.effect_gathering_cycle_time_modifier);
         }
 
-        private const int MAX_EP_PER_DAY = 720;
+        protected abstract int CalculateEp(int materialType);
 
-        private int CalculateEp()
-        {
-            var activeGathererModules = ParentRobot.ActiveModules.OfType<GathererModule>().Where(m => m.State.Type != ModuleStateType.Idle).ToArray();
-            if (activeGathererModules.Length == 0)
-                return 0;
-
-            var avgCycleTime = activeGathererModules.Select(m => m.CycleTime).Average();
-
-            var t = TimeSpan.FromDays(1).Divide(avgCycleTime);
-            var chance = (double) MAX_EP_PER_DAY/t.Ticks;
-
-            chance /= activeGathererModules.Length;
-
-            var rand = FastRandom.NextDouble();
-            if (rand <= chance)
-                return 1;
-
-            return 0;
-        }
-
-        protected void OnGathererMaterial(IZone zone, Player player)
+        protected void OnGathererMaterial(IZone zone, Player player, int materialType)
         {
             if (zone.Configuration.Type == ZoneType.Training) return;
 
-            var ep = CalculateEp();
+            var ep = CalculateEp(materialType);
 
             if (zone.Configuration.IsBeta)
                 ep *= 2;
@@ -93,6 +73,28 @@ namespace Perpetuum.Modules
                         break;
                     }
             }
+        }
+
+        private const int MAX_EP_PER_DAY = 1440;
+
+        protected override int CalculateEp(int materialType)
+        {
+            var activeGathererModules = ParentRobot.ActiveModules.OfType<HarvesterModule>().Where(m => m.State.Type != ModuleStateType.Idle).ToArray();
+            if (activeGathererModules.Length == 0)
+                return 0;
+
+            var avgCycleTime = activeGathererModules.Select(m => m.CycleTime).Average();
+
+            var t = TimeSpan.FromDays(1).Divide(avgCycleTime);
+            var chance = (double)MAX_EP_PER_DAY / t.Ticks;
+
+            chance /= activeGathererModules.Length;
+
+            var rand = FastRandom.NextDouble();
+            if (rand <= chance)
+                return 1;
+
+            return 0;
         }
 
         protected override void OnAction()
@@ -141,7 +143,7 @@ namespace Perpetuum.Modules
                     //everything went ok, save container
                     container.Save();
 
-                    OnGathererMaterial(zone, player);
+                    OnGathererMaterial(zone, player, (int) plantInfo.type);
 
                     Transaction.Current.OnCommited(() => container.SendUpdateToOwnerAsync());
                     scope.Complete();

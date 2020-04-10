@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Transactions;
 using Perpetuum.Data;
 using Perpetuum.EntityFramework;
@@ -29,7 +31,6 @@ namespace Perpetuum.Modules
             _materialHelper = materialHelper;
             _miningAmountModifier = new MiningAmountModifierProperty(this);
             AddProperty(_miningAmountModifier);
-
         }
 
         public override void AcceptVisitor(IEntityVisitor visitor)
@@ -111,7 +112,6 @@ namespace Perpetuum.Modules
 
             var mineralLayer = zone.Terrain.GetMineralLayerOrThrow(materialInfo.Type);
             var materialAmount = materialInfo.Amount * _miningAmountModifier.Value;
-
             var extractedMaterials = Extract(mineralLayer, terrainLock.Location,(uint) materialAmount);
             extractedMaterials.Count.ThrowIfEqual(0, ErrorCodes.NoMineralOnTile);
 
@@ -147,7 +147,7 @@ namespace Perpetuum.Modules
 
                 //save container
                 container.Save();
-                OnGathererMaterial(zone, player);
+                OnGathererMaterial(zone, player, (int) materialInfo.Type);
 
                 Transaction.Current.OnCommited(() => container.SendUpdateToOwnerAsync());
                 scope.Complete();
@@ -164,6 +164,33 @@ namespace Perpetuum.Modules
 
             var containsEnablerEffect = ParentRobot.EffectHandler.ContainsEffect(EffectCategory.effcat_pbs_mining_tower_effect);
             containsEnablerEffect.ThrowIfFalse(ErrorCodes.MiningEnablerEffectRequired);
+        }
+
+        private const int MAX_EP_PER_DAY = 1440;
+
+        private readonly ISet<int> LIQUIDS = new HashSet<int>(new int[]{ (int)MaterialType.Crude, (int)MaterialType.Liquizit, (int)MaterialType.Epriton });
+
+        protected override int CalculateEp(int materialType)
+        {
+            var activeGathererModules = ParentRobot.ActiveModules.OfType<DrillerModule>().Where(m => m.State.Type != ModuleStateType.Idle).ToArray();
+            if (activeGathererModules.Length == 0)
+                return 0;
+
+            var avgCycleTime = activeGathererModules.Select(m => m.CycleTime).Average();
+
+            var t = TimeSpan.FromDays(1).Divide(avgCycleTime);
+            var chance = (double)MAX_EP_PER_DAY / t.Ticks;
+
+            chance /= activeGathererModules.Length;
+
+            if (LIQUIDS.Contains(materialType))
+                chance /= 2.0;
+
+            var rand = FastRandom.NextDouble();
+            if (rand <= chance)
+                return 1;
+
+            return 0;
         }
     }
 }

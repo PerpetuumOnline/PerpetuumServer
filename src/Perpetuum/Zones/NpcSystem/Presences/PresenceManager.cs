@@ -46,7 +46,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
             return CreatePresence(configuration);
         }
 
-        private Presence CreatePresence(PresenceConfiguration configuration)
+        private Presence CreatePresence(IPresenceConfiguration configuration)
         {
             return _presenceFactory(_zone,configuration);
         }
@@ -62,7 +62,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
         private void OnPresenceExpired(Presence presence)
         {
             ImmutableInterlocked.Update(ref _presences, p => p.Remove(presence));
-            Logger.Info("Presence expired. " + presence.Configuration.name);
+            Logger.Info("Presence expired. " + presence.Configuration.Name);
         }
 
         public override void Update(TimeSpan time)

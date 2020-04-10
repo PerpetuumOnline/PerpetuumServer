@@ -676,10 +676,17 @@
     <Compile Include="Zones\NpcSystem\Flocks\IFlockConfiguration.cs" />
     <Compile Include="Zones\NpcSystem\Flocks\IFlockConfigurationRepository.cs" />
     <Compile Include="Zones\NpcSystem\NpcBossInfo.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\InterzonePresences\IInterzonePresenceConfigurationReader.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\InterzonePresences\InterzoneGroup.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\InterzonePresences\InterzonePresence.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\InterzonePresences\InterzonePresenceConfigReader.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\InterzonePresences\InterzonePresenceManager.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\IPresenceConfiguration.cs" />
     <Compile Include="Zones\NpcSystem\Presences\IPresenceConfigurationReader.cs" />
     <Compile Include="Zones\NpcSystem\Presences\IPresenceManager.cs" />
     <Compile Include="Zones\NpcSystem\Presences\IRandomFlockReader.cs" />
     <Compile Include="Zones\NpcSystem\Presences\IRandomFlockSelector.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\PathFinders\RoamingStates.cs" />
     <Compile Include="Zones\NpcSystem\Presences\PresenceConfigurationReader.cs" />
     <Compile Include="Zones\NpcSystem\Presences\PresenceManager.cs" />
     <Compile Include="Zones\NpcSystem\Presences\RandomFlockInfo.cs" />

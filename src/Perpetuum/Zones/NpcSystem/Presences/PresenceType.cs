@@ -8,6 +8,8 @@ namespace Perpetuum.Zones.NpcSystem.Presences
         Random = 3,
         DynamicPool = 4,
         FreeRoaming = 5,
-        Direct = 6
+        Direct = 6,
+        Interzone = 7,
+        InterzoneRoaming = 8
     }
 }

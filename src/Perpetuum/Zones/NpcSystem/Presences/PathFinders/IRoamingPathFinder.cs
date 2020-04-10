@@ -4,7 +4,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
 {
     public interface IRoamingPathFinder
     {
-        Point FindSpawnPosition(RoamingPresence presence);
-        Point FindNextRoamingPosition(RoamingPresence presence);
+        Point FindSpawnPosition(IRoamingPresence presence);
+        Point FindNextRoamingPosition(IRoamingPresence presence);
     }
 }

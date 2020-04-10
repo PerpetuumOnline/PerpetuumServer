@@ -82,7 +82,7 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
         {
             _elapsedTime += time;
 
-            if (!Presence.Configuration.isRespawnAllowed) 
+            if (!Presence.Configuration.IsRespawnAllowed) 
                 return;
 
             RespawnAllDeadNpcs(time);
