@@ -2,37 +2,41 @@ using Perpetuum.IDGenerators;
 
 namespace Perpetuum.Zones.NpcSystem.Presences
 {
-    public class PresenceConfiguration
+    public class PresenceConfiguration : IPresenceConfiguration
     {
         public int ID { get; private set; }
 
-        public string name;
-        public Area area;
-        public int? spawnId;
-        public string note;
-        public bool roaming; // kell-e meg?
-        public int roamingRespawnSeconds;
-        public readonly PresenceType presenceType;
-        public int maxRandomFlock;
+        public string Name { get; set; }
+        public Area Area { get; set; }
+        public int? SpawnId { get; set; }
+        public string Note { get; set; }
+        public bool Roaming { get; set; }
+        public int RoamingRespawnSeconds { get; set; }
+        public PresenceType PresenceType { get; set; }
+        public int MaxRandomFlock { get; set; }
 
-        public int? randomCenterX;
-        public int? randomCenterY;
-        public int? randomRadius;
+        public int? RandomCenterX { get; set; }
+        public int? RandomCenterY { get; set; }
+        public int? RandomRadius { get; set; }
 
-        public int? dynamicLifeTime;
-        public bool isRespawnAllowed;
+        public int? DynamicLifeTime { get; set; }
+        public bool IsRespawnAllowed { get; set; }
 
-        public Position RandomCenter => new Position((double) randomCenterX,(double) randomCenterY);
+        public int? InterzoneGroupId { get; set; }
 
-        public PresenceConfiguration(int id,PresenceType presenceType)
+        public int ZoneID { get; set; }
+
+        public Position RandomCenter => new Position((double)RandomCenterX, (double)RandomCenterY);
+
+        public PresenceConfiguration(int id, PresenceType presenceType)
         {
             ID = id;
-            this.presenceType = presenceType;
+            this.PresenceType = presenceType;
         }
 
         public override string ToString()
         {
-            return $" ID:{ID} name:{name} area:{area} spawnID:{spawnId} note:{note}";
+            return $" ID:{ID} name:{Name} area:{Area} spawnID:{SpawnId} note:{Note}";
         }
     }
 
@@ -40,12 +44,12 @@ namespace Perpetuum.Zones.NpcSystem.Presences
     {
         private static readonly IIDGenerator<int> _idGenerator = IDGenerator.CreateIntIDGenerator(25000);
 
-        public DirectPresenceConfiguration(IZone zone) : base(_idGenerator.GetNextID(),PresenceType.Direct)
+        public DirectPresenceConfiguration(IZone zone) : base(_idGenerator.GetNextID(), PresenceType.Direct)
         {
-            area = zone.Configuration.Size.ToArea();
-            name = "direct presence " + ID;
-            spawnId = 10; //dynamic kamubol, szerintem kicsit sem kell
-            note = "abs! rulez";
+            Area = zone.Configuration.Size.ToArea();
+            Name = "direct presence " + ID;
+            SpawnId = 10; //dynamic kamubol, szerintem kicsit sem kell
+            Note = "abs! rulez";
         }
     }
 }

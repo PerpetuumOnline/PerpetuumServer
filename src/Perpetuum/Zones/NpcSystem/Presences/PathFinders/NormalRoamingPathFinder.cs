@@ -17,13 +17,13 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
             _zone = zone;
         }
 
-        public Point FindSpawnPosition(RoamingPresence presence)
+        public Point FindSpawnPosition(IRoamingPresence presence)
         {
             var point = _zone.SafeSpawnPoints.GetAll().RandomElement();
             return point.Location;
         }
 
-        public Point FindNextRoamingPosition(RoamingPresence presence)
+        public Point FindNextRoamingPosition(IRoamingPresence presence)
         {
             var homeRange = presence.Flocks.Max(f => f.HomeRange);
             var rangeMax = homeRange * 2;

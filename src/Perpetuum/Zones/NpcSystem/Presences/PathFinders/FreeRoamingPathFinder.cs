@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Perpetuum.Collections;
+using Perpetuum.ExportedTypes;
 using Perpetuum.PathFinders;
 using Perpetuum.Zones.NpcSystem.Flocks;
 
@@ -21,7 +22,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
             _direction = FastRandom.NextDouble();
         }
 
-        public Point FindSpawnPosition(RoamingPresence presence)
+        public Point FindSpawnPosition(IRoamingPresence presence)
         {
             var homeRange = presence.Flocks.Max(f => f.HomeRange);
             var rangeMax = homeRange * 2;
@@ -30,7 +31,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
             return walkableArea.RandomElement();
         }
 
-        public Point FindNextRoamingPosition(RoamingPresence presence)
+        public Point FindNextRoamingPosition(IRoamingPresence presence)
         {
             var minSlope = presence.Flocks.GetMembers().Min(m => m.Slope);
             var maxHomeRange = presence.Flocks.Max(f => f.HomeRange);
@@ -50,7 +51,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
 
             var farPosition = startNode.location.ToPosition().OffsetInDirection(_direction,FastRandom.NextDouble(range.Min,range.Max));
 
-//            _zone.CreateAlignedDebugBeam(BeamType.red_20sec,farPosition);
+            _zone.CreateAlignedDebugBeam(BeamType.red_20sec,farPosition);
 
             Node current;
             while (queue.TryDequeue(out current))
@@ -59,7 +60,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
                 if (d > range.Min)
                 {
                     _direction = startNode.location.DirectionTo(current.location);
-//                    _zone.CreateAlignedDebugBeam(BeamType.green_20sec,current.location.ToPosition());
+                    _zone.CreateAlignedDebugBeam(BeamType.green_20sec,current.location.ToPosition());
                     return current.location;
                 }
 
@@ -76,7 +77,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
                     if ( np.Distance(startNode.location) >= range.Max )
                         continue;
 
-//                    _zone.CreateAlignedDebugBeam(BeamType.orange_20sec,np.ToPosition());
+                    _zone.CreateAlignedDebugBeam(BeamType.orange_20sec,np.ToPosition());
 
                     queue.Enqueue(new Node(np,Heuristic.Manhattan.Calculate(np.X,np.Y,(int) farPosition.X,(int) farPosition.Y)));
                 }

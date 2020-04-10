@@ -11,7 +11,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
         private readonly IRobotTemplateRelations _robotTemplateRelations;
         private readonly FlockConfigurationBuilder.Factory _flockConfigurationBuilderFactory;
 
-        public DirectPresence(IZone zone, PresenceConfiguration configuration,
+        public DirectPresence(IZone zone, IPresenceConfiguration configuration,
                                           IRobotTemplateRelations robotTemplateRelations,
                                           FlockConfigurationBuilder.Factory flockConfigurationBuilderFactory) : base(zone, configuration)
         {

@@ -12,7 +12,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
     {
         private ImmutableHashSet<Flock> _flocks = ImmutableHashSet<Flock>.Empty;
 
-        public PresenceConfiguration Configuration { get; private set; }
+        public IPresenceConfiguration Configuration { get; private set; }
 
         [NotNull]
         public IZone Zone { get; private set; }
@@ -21,7 +21,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
 
         public IEnumerable<Flock> Flocks => _flocks;
 
-        public Presence(IZone zone,PresenceConfiguration configuration)
+        public Presence(IZone zone, IPresenceConfiguration configuration)
         {
             Zone = zone;
             Configuration = configuration;
@@ -81,7 +81,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
         {
             _updateTimer.Update(time);
 
-            if ( !_updateTimer.Passed )
+            if (!_updateTimer.Passed)
                 return;
 
             OnUpdate(_updateTimer.Elapsed);
@@ -101,15 +101,15 @@ namespace Perpetuum.Zones.NpcSystem.Presences
             var result = new Dictionary<string, object>
             {
                 {k.ID, Configuration.ID},
-                {k.name, Configuration.name},
+                {k.name, Configuration.Name},
                 {k.area, Area},
                 {k.zoneID, Zone.Id},
-                {k.roaming, Configuration.roaming},
-                {k.respawnSeconds, Configuration.roamingRespawnSeconds},
-                {k.presenceType,(int)Configuration.presenceType},
-                {k.radius, Configuration.randomRadius},
-                {k.x, Configuration.randomCenterX},
-                {k.y, Configuration.randomCenterY},
+                {k.roaming, Configuration.Roaming},
+                {k.respawnSeconds, Configuration.RoamingRespawnSeconds},
+                {k.presenceType,(int)Configuration.PresenceType},
+                {k.radius, Configuration.RandomRadius},
+                {k.x, Configuration.RandomCenterX},
+                {k.y, Configuration.RandomCenterY},
             };
 
             if (withFlock)
@@ -154,7 +154,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
             return FlockFactory(flockConfiguration, this);
         }
 
-        public virtual Area Area => Configuration.area;
+        public virtual Area Area => Configuration.Area;
 
         public virtual void LoadFlocks()
         {
@@ -167,7 +167,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
             return $"{Name}:{Configuration.ID}:{Zone.Id}";
         }
 
-        public string Name => Configuration.name;
+        public string Name => Configuration.Name;
 
         public IEnumerable<Npc> Members
         {
@@ -176,10 +176,10 @@ namespace Perpetuum.Zones.NpcSystem.Presences
 
         public void AddDebugInfoToDictionary(IDictionary<string, object> dictionary)
         {
-            
+
         }
 
-        protected void Log(string message)
+        public virtual void Log(string message)
         {
             Logger.Info($"[Presence] ({ToString()}) - {message}");
         }
