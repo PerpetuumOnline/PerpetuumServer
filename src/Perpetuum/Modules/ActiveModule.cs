@@ -305,6 +305,15 @@ namespace Perpetuum.Modules
 
         protected abstract void OnAction();
 
+        protected virtual void HandleOffensivePVPCheck(Player parentPlayer, UnitLock unitLockTarget)
+        {
+            if (parentPlayer != null)
+            {
+                // pvp ellenorzes
+                (unitLockTarget.Target as Player)?.CheckPvp().ThrowIfError();
+            }
+        }
+
         protected Lock GetLock()
         {
             var currentLock = Lock.ThrowIfNull(ErrorCodes.LockTargetNotFound);
@@ -319,12 +328,7 @@ namespace Perpetuum.Modules
 
                 if (ED.AttributeFlags.OffensiveModule)
                 {
-                    if ((parentPlayer != null))
-                    {
-                        // pvp ellenorzes
-                        (unitLockTarget.Target as Player)?.CheckPvp().ThrowIfError();
-                    }
-
+                    HandleOffensivePVPCheck(parentPlayer, unitLockTarget);
                     Debug.Assert(ParentRobot != null, "ParentRobot != null");
                     ParentRobot.OnAggression(unitLockTarget.Target);
                 }

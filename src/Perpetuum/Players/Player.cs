@@ -739,23 +739,6 @@ namespace Perpetuum.Players
 
             if (HasPvpEffect && victimPlayer.HasPvpEffect)
                 return;
-
-            var zone = Zone;
-            if (zone == null)
-                return;
-
-            if (zone.Configuration.Protected)
-            {
-                // PROTECTED ISLANDS 
-                if (!victimPlayer.HasPvpEffect && !victimPlayer.HasAggressorEffect)
-                    ApplyAggressorEffect();
-            }
-            else
-            {
-                //PVP ISLANDS
-                if (victimPlayer.States.BigBrother && !victimPlayer.HasPvpEffect)
-                    ApplyAggressorEffect();
-            }
         }
 
         public void OnPvpSupport(Unit target)
