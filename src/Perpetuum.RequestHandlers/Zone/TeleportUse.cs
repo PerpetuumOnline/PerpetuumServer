@@ -50,6 +50,12 @@ namespace Perpetuum.RequestHandlers.Zone
 
                     switch (teleport)
                     {
+                        case MobileStrongholdTeleport mobileStrongholdTeleport:
+                        {
+                            mobileStrongholdTeleport.ApplyTeleportCooldownEffect();
+                            mobileStrongholdTeleport.Activate(player, description);
+                            break;
+                        }
                         case MobileWorldTeleport mobileWorldTeleport:
                         {
                             mobileWorldTeleport.ApplyTeleportCooldownEffect();
@@ -61,6 +67,7 @@ namespace Perpetuum.RequestHandlers.Zone
                             mobileTeleport.ApplyTeleportCooldownEffect();
                             break;
                         }
+
                     }
                 });
                 
@@ -158,7 +165,11 @@ namespace Perpetuum.RequestHandlers.Zone
 
             public override void VisitMobileWorldTeleport(MobileWorldTeleport teleport)
             {
-                _player.HasPvpEffect.ThrowIfTrue(ErrorCodes.CantBeUsedInPvp);
+                VisitMobileTeleport(teleport);
+            }
+
+            public override void VisitMobileStrongholdTeleport(MobileStrongholdTeleport teleport)
+            {
                 VisitMobileTeleport(teleport);
             }
         }

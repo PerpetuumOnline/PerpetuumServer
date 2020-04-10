@@ -1,6 +1,6 @@
 # The Open Perpetuum Server
 This is a fork of the Official Perpetuum Server as released by Avatar Creations [here](https://github.com/PerpetuumOnline/PerpetuumServer).  
-This server is developed under the direction of the [Open Perpetuum Project](https://openperpetuum.com) game design and development team; a 100% volunteer opensource player development and persistant Perpetuum Server hosting project.
+This server is developed under the direction of the [Open Perpetuum Project](https://openperpetuum.com) game design and development team; a 100% volunteer opensource player development and persistent Perpetuum Server hosting project.
 
 To join the Team, find our call for volunteers on our website [here!](https://openperpetuum.com/volunteer-tech) where you will also find our [Volunteer Survey](https://forms.gle/V7B5zNAFCFmSLLxt6).
 
