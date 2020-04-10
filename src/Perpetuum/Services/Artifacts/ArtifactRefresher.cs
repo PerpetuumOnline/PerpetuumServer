@@ -1,4 +1,5 @@
 ﻿using Perpetuum.Data;
+using Perpetuum.Log;
 using Perpetuum.Threading.Process;
 using System;
 
@@ -13,7 +14,7 @@ namespace Perpetuum.Services
 
         public void DoRefresh()
         {
-            Console.WriteLine("Refreshing Artifacts");
+            Logger.Info("Artifact Refresh");
             Db.Query().CommandText("EXEC [opp].[artifactRefresh];").ExecuteNonQuery();
         }
     }
