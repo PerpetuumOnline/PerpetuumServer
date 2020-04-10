@@ -62,20 +62,15 @@ namespace Perpetuum.Services.RiftSystem
         private readonly TimeRange _spawnTime;
         private readonly RiftSpawnPositionFinder _spawnPositionFinder;
         private readonly IEntityServices _entityServices;
-        private readonly ZoneManager _zonemanager;
-        private bool StrongHoldRiftGenerated { get; set; } = false;
-        private Random r;
 
         private readonly LinkedList<TimeTracker> _nextRiftSpawns = new LinkedList<TimeTracker>();
 
-        public RiftManager(IZone zone, TimeRange spawnTime, RiftSpawnPositionFinder spawnPositionFinder, IEntityServices entityServices, ZoneManager zoneManager)
+        public RiftManager(IZone zone, TimeRange spawnTime, RiftSpawnPositionFinder spawnPositionFinder, IEntityServices entityServices)
         {
             _zone = zone;
             _spawnTime = spawnTime;
             _spawnPositionFinder = spawnPositionFinder;
             _entityServices = entityServices;
-            _zonemanager = zoneManager;
-            r = new Random();
         }
 
         private int _riftCounts;
@@ -106,41 +101,12 @@ namespace Perpetuum.Services.RiftSystem
             });
         }
 
-        /// <summary>
-        /// Get a random active stronghold zone.
-        /// </summary>
-        /// <returns>int</returns>
-        private int GetRandomStrongHoldZone()
-        {
-            IEnumerable<Zone> strongholdzones = _zonemanager.Zones.OfType<StrongHoldZone>();
-            // less than elegant. if we only have one stronghold zone just return it.
-            if (strongholdzones.Count() == 1)
-            {
-                return strongholdzones.ElementAt(0).Id;
-            }
-            int index = r.Next(0, strongholdzones.Count());
-            Zone selzone = strongholdzones.ElementAt(index);
-            return selzone.Id;
-        }
-
         private void SpawnRift()
         {
             var rift = (Rift)_entityServices.Factory.CreateWithRandomEID(DefinitionNames.RIFT);
 
             rift.SetDespawnTime(TimeSpan.FromHours(3));
             rift.RemovedFromZone += OnRiftRemovedFromZone;
-
-            // generate a stronghold teleport and make it random chance.
-            // make sure we have at least one stronghold enabled.
-            if (_zonemanager.Zones.OfType<StrongHoldZone>().Count() > 0)
-            {
-                int rand = r.Next(0, 10);
-                if (rand < 2 && !StrongHoldRiftGenerated)
-                {
-                    rift.DestinationStrongholdZone = GetRandomStrongHoldZone();
-                    rift.OriginZone = this._zone.Id;
-                }
-            }
 
             var spawnPosition = _spawnPositionFinder.FindSpawnPosition().ToPosition();
 
@@ -151,7 +117,7 @@ namespace Perpetuum.Services.RiftSystem
             }
 
             rift.AddToZone(_zone, spawnPosition, ZoneEnterType.NpcSpawn);
-            Logger.Info(string.Format("Rift spawned on zone {0} {1} ({2}) Stronghold Zone ID: {3}", _zone.Id, rift.ED.Name, rift.CurrentPosition, rift.DestinationStrongholdZone));
+            Logger.Info(string.Format("Rift spawned on zone {0} {1} ({2})", _zone.Id, rift.ED.Name, rift.CurrentPosition));
         }
 
         private void OnRiftRemovedFromZone(Unit unit)

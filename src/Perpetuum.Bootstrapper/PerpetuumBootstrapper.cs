@@ -965,6 +965,7 @@ namespace Perpetuum.Bootstrapper
             RegisterUnit<SimpleSwitch>();
             RegisterUnit<ItemSupply>();
             RegisterUnit<MobileWorldTeleport>();
+            RegisterUnit<MobileStrongholdTeleport>(); // New Field device
             RegisterUnit<AreaBomb>();
             RegisterUnit<PBSEgg>();
             RegisterPBSObject<PBSReactor>();
@@ -1215,6 +1216,7 @@ namespace Perpetuum.Bootstrapper
                 ByCategoryFlags<SimpleSwitch>(CategoryFlags.cf_simple_switch);
                 ByCategoryFlags<ItemSupply>(CategoryFlags.cf_item_supply);
                 ByCategoryFlags<MobileWorldTeleport>(CategoryFlags.cf_mobile_world_teleport);
+                ByNamePatternAndFlag<MobileStrongholdTeleport>("def_mobile_teleport_stronghold", CategoryFlags.cf_mobile_world_teleport); // TODO new field dev
                 ByCategoryFlags<Item>(CategoryFlags.cf_mission_coin);
                 ByCategoryFlags<AreaBomb>(CategoryFlags.cf_area_bomb);
                 ByCategoryFlags<AreaBombDeployer>(CategoryFlags.cf_plasma_bomb);
@@ -2554,6 +2556,7 @@ namespace Perpetuum.Bootstrapper
 
             _builder.RegisterType<TeleportDescriptionBuilder>();
             _builder.RegisterType<TeleportWorldTargetHelper>();
+            _builder.RegisterType<StrongholdTeleportTargetHelper>();
             _builder.RegisterType<TeleportToAnotherZone>();
             _builder.RegisterType<TeleportWithinZone>();
             _builder.RegisterType<TrainingExitStrategy>();
