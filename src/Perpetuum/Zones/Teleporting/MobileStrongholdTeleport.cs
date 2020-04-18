@@ -56,6 +56,10 @@ namespace Perpetuum.Zones.Teleporting
 
             (testlist.Count == 0).ThrowIfTrue(ErrorCodes.NoTeleportTargetsWereFound);
 
+            // TODO restricting stronghold teleports to alpha use only, address later when new items/strongholds allow for pvp
+            // Needed to prevent abuse for egressing off beta/gamma
+            zone.Configuration.IsAlpha.ThrowIfFalse(ErrorCodes.OnlyProtectedZonesAllowed);
+
             base.CheckDeploymentAndThrow(zone, spawnPosition);
         }
     }
