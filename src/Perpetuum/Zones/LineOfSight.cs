@@ -55,7 +55,8 @@ namespace Perpetuum.Zones
 
             if (targetUnit.HitSize > 0)
             {
-                len = (float)CylinderIntersection(source,direction,targetUnit.CurrentPosition.ToVector3(),target,targetUnit.HitSize);
+                var hitsize = targetUnit.HitSize * 0.6;
+                len = (float)CylinderIntersection(source, direction, targetUnit.CurrentPosition.ToVector3(), target, hitsize);
             }
 
             return IsInLineOfSight(zone,source,direction,len,ballistic);
