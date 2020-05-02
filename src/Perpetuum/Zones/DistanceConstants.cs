@@ -36,7 +36,7 @@ namespace Perpetuum.Zones
         public const double TERRAFORM_MIN_RANGE_FROM_OBJECTS = 25.0;
         public const double TERRAFORM_BUOY_RADIUS = 15;
 
-        public const double MINERAL_DISTANCE_FROM_BASE_MIN = 75;
+        public const double MINERAL_DISTANCE_FROM_BASE_MIN = 100;
         public const double EXCLUDED_TELEPORT_RANGE = 200;
 
         public const double MOBILE_TELEPORT_MIN_DISTANCE_TO_DOCKINGBASE = 50;
