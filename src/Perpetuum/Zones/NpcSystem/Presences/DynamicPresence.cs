@@ -56,4 +56,42 @@ namespace Perpetuum.Zones.NpcSystem.Presences
             PresenceExpired?.Invoke(this);
         }
     }
+
+
+    public class DynamicPresenceExtended : DynamicPresence
+    {
+        public DynamicPresenceExtended(IZone zone, IPresenceConfiguration configuration) : base(zone, configuration)
+        {
+            if (Configuration.DynamicLifeTime != null)
+                LifeTime = TimeSpan.FromSeconds((int)Configuration.DynamicLifeTime);
+        }
+
+        protected override void OnFlockAdded(Flock flock)
+        {
+            flock.AllMembersDead += OnFlockAllMembersDead;
+            base.OnFlockAdded(flock);
+        }
+
+        private void OnFlockAllMembersDead(Flock flock)
+        {
+            flock.AllMembersDead -= OnFlockAllMembersDead;
+            RemoveFlock(flock);
+            OnFlockRemoved();
+        }
+
+        protected override void OnPresenceExpired()
+        {
+            foreach (var flock in Flocks)
+            {
+                flock.AllMembersDead -= OnFlockAllMembersDead;
+            }
+            base.OnPresenceExpired();
+        }
+
+        private void OnFlockRemoved()
+        {
+            if (Flocks.IsNullOrEmpty())
+                OnPresenceExpired();
+        }
+    }
 }

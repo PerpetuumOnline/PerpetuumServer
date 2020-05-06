@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Drawing;
 using Perpetuum.Log;
+using Perpetuum.Services.EventServices;
+using Perpetuum.Services.EventServices.EventMessages;
+using Perpetuum.Services.EventServices.EventProcessors;
 using Perpetuum.Zones.Terrains.Materials.Minerals.Actions;
 using Perpetuum.Zones.Terrains.Materials.Minerals.Generators;
 
@@ -14,12 +17,14 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals
         private readonly IMineralNodeRepository _nodeRepository;
         private readonly IMineralNodeGeneratorFactory _nodeGeneratorFactory;
         private MineralNode[] _nodes = new MineralNode[0];
+        private readonly EventListenerService _eventChannel;
 
-        protected MineralLayer(int width,int height,IMineralConfiguration configuration,IMineralNodeRepository nodeRepository,IMineralNodeGeneratorFactory nodeGeneratorFactory) : base(LayerType.Material,width,height)
+        protected MineralLayer(int width,int height,IMineralConfiguration configuration,IMineralNodeRepository nodeRepository,IMineralNodeGeneratorFactory nodeGeneratorFactory, EventListenerService eventListenerService) : base(LayerType.Material,width,height)
         {
             _configuration = configuration;
             _nodeRepository = nodeRepository;
             _nodeGeneratorFactory = nodeGeneratorFactory;
+            _eventChannel = eventListenerService;
         }
 
         public IMineralNodeRepository NodeRepository => _nodeRepository;
@@ -134,7 +139,7 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals
                 var result = new List<MineralNode>(nodes) {node};
                 return result.ToArray();
             });
-
+            node.Decrease += OnNodeDecrease;
             node.Updated += OnNodeUpdated;
             node.Expired += OnNodeExpired;
         }
@@ -157,6 +162,20 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals
             });
         }
 
+        private bool IsNPCSpawningOre(MineralNode node)
+        {
+            return node.Type == MaterialType.FluxOre;
+        }
+
+        private void OnNodeDecrease(MineralNode node)
+        {
+            if (IsNPCSpawningOre(node))
+            {
+                var msg = new OreNpcSpawnMessage(node, Configuration.ZoneId, OreNodeState.Updated);
+                _eventChannel.PublishMessage(msg);
+            }
+        }
+
         private void OnNodeUpdated(MineralNode node)
         {
             RunAction(new SaveMineralNode(node));
@@ -164,6 +183,11 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals
 
         private void OnNodeExpired(MineralNode node)
         {
+            if (IsNPCSpawningOre(node))
+            {
+                var msg = new OreNpcSpawnMessage(node, Configuration.ZoneId, OreNodeState.Removed);
+                _eventChannel.PublishMessage(msg);
+            }
             RunAction(new DeleteMineralNode(node));
         }
 
@@ -223,7 +247,7 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals
 
         public MineralNode CreateNode(Area area)
         {
-            return new MineralNode(Type,area);
+            return new MineralNode(Type, area);
         }
     }
 }

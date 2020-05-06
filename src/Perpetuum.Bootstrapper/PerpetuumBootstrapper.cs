@@ -1492,6 +1492,7 @@ namespace Perpetuum.Bootstrapper
             });
             RegisterPresence<DynamicPoolPresence>(PresenceType.DynamicPool);
             RegisterPresence<DynamicPresence>(PresenceType.Dynamic);
+            RegisterPresence<DynamicPresenceExtended>(PresenceType.Dynamic);
             RegisterPresence<RandomPresence>(PresenceType.Random);
             RegisterPresence<RoamingPresence>(PresenceType.Roaming);
             RegisterPresence<RoamingPresence>(PresenceType.FreeRoaming);
@@ -1677,6 +1678,7 @@ namespace Perpetuum.Bootstrapper
             _builder.RegisterType<ChatEcho>();
             _builder.RegisterType<NpcChatEcho>();
             _builder.RegisterType<AffectOutpostStability>();
+            _builder.RegisterType<OreNPCSpawner>();
             _builder.RegisterType<EventListenerService>().SingleInstance().OnActivated(e =>
             {
                 e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromSeconds(2.5)));
@@ -2233,6 +2235,9 @@ namespace Perpetuum.Bootstrapper
                 var ctx = x.Resolve<IComponentContext>();
                 return zone =>
                 {
+                    var listener = new OreNPCSpawner(zone);
+                    var eventListenerService = ctx.Resolve<EventListenerService>();
+                    eventListenerService.AttachListener(listener);
                     if (zone is TrainingZone)
                     {
                         var repo = ctx.Resolve<GravelRepository>();
@@ -2249,19 +2254,18 @@ namespace Perpetuum.Bootstrapper
                     foreach (var configuration in reader.ReadAll().Where(c => c.ZoneId == zone.Id))
                     {
                         var repo = new MineralNodeRepository(zone, configuration.Type);
-
                         switch (configuration.ExtractionType)
                         {
                             case MineralExtractionType.Solid:
                             {
-                                var layer = new OreLayer(zone.Size.Width, zone.Size.Height, configuration, repo, nodeGeneratorFactory);
+                                var layer = new OreLayer(zone.Size.Width, zone.Size.Height, configuration, repo, nodeGeneratorFactory, eventListenerService);
                                 layer.LoadMineralNodes();
                                 materialLayers.Add(layer);
                                 break;
                             }
                             case MineralExtractionType.Liquid:
                             {
-                                var layer = new LiquidLayer(zone.Size.Width, zone.Size.Height, configuration, repo, nodeGeneratorFactory);
+                                var layer = new LiquidLayer(zone.Size.Width, zone.Size.Height, configuration, repo, nodeGeneratorFactory, eventListenerService);
                                 layer.LoadMineralNodes();
                                 materialLayers.Add(layer);
                                 break;

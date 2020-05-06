@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using Perpetuum.IO;
+using Perpetuum.Services.EventServices;
 using Perpetuum.Zones.Terrains.Materials.Minerals.Generators;
 
 namespace Perpetuum.Zones.Terrains.Materials.Minerals
@@ -91,8 +92,8 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals
 
     public class GravelLayer : OreLayer
     {
-        public GravelLayer(int width, int height, IMineralConfiguration configuration,GravelRepository repository)
-            : base(width,height,configuration, repository,MineralNodeGeneratorFactory.None)
+        public GravelLayer(int width, int height, IMineralConfiguration configuration, GravelRepository repository)
+            : base(width, height, configuration, repository, MineralNodeGeneratorFactory.None, null)
         {
         }
 

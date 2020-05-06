@@ -291,12 +291,14 @@
     <Compile Include="Services\EventServices\EventMessages\EventMessage.cs" />
     <Compile Include="Services\EventServices\EventMessages\EventMessageSimple.cs" />
     <Compile Include="Services\EventServices\EventMessages\NpcEventMessage.cs" />
+    <Compile Include="Services\EventServices\EventMessages\NpcSpawnMessage.cs" />
     <Compile Include="Services\EventServices\EventMessages\StabilityEffectMessage.cs" />
     <Compile Include="Services\EventServices\EventProcessors\AffectOutpostStability.cs" />
     <Compile Include="Services\EventServices\EventProcessors\ChatEcho.cs" />
     <Compile Include="Services\EventServices\EPBonusEventService.cs" />
     <Compile Include="Services\EventServices\EventListenerService.cs" />
     <Compile Include="Services\EventServices\EventProcessors\EventProcessor.cs" />
+    <Compile Include="Services\EventServices\EventProcessors\OreNPCSpawner.cs" />
     <Compile Include="Services\Mail\PreMadeMailNames.cs" />
     <Compile Include="Services\MissionEngine\DisplayMissionSpotsProcess.cs" />
     <Compile Include="Services\MissionEngine\MissionResolveTester.cs" />

@@ -50,6 +50,13 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals
             get { return _values; }
         }
 
+        public event MineralNodeEventHandler Decrease;
+
+        private void OnDecrease()
+        {
+            Decrease?.Invoke(this);
+        }
+
         public event MineralNodeEventHandler Updated;
 
         private void OnUpdated()
@@ -92,6 +99,7 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals
 
         public uint DecreaseValue(Point p, uint value)
         {
+            OnDecrease();
             return DecreaseValue(p.X, p.Y, value);
         }
 
@@ -228,6 +236,27 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals
             }
 
             return nearest;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as MineralNode);
+        }
+
+        public bool Equals(MineralNode other)
+        {
+            return other.Type == Type && other.Area == _area;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 23;
+                hash = hash * 31 + Type.GetHashCode();
+                hash = hash * 31 + Area.GetHashCode();
+                return hash;
+            }
         }
     }
 }
