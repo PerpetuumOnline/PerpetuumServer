@@ -126,6 +126,7 @@ using Perpetuum.Zones.Gates;
 using Perpetuum.Zones.Intrusion;
 using Perpetuum.Zones.NpcSystem;
 using Perpetuum.Zones.NpcSystem.Flocks;
+using Perpetuum.Zones.NpcSystem.OreNPCSpawns;
 using Perpetuum.Zones.NpcSystem.Presences;
 using Perpetuum.Zones.NpcSystem.Presences.InterzonePresences;
 using Perpetuum.Zones.NpcSystem.Presences.PathFinders;
@@ -1424,6 +1425,8 @@ namespace Perpetuum.Bootstrapper
 
         public void RegisterNpcs()
         {
+            _builder.RegisterType<OreNPCRepository>().SingleInstance().As<IOreNPCRepository>();
+
             _builder.RegisterType<FlockConfiguration>().As<IFlockConfiguration>();
             _builder.RegisterType<FlockConfigurationBuilder>();
             _builder.RegisterType<IntIDGenerator>().Named<IIDGenerator<int>>("directFlockIDGenerator").SingleInstance().WithParameter("startID",25000);
@@ -2235,7 +2238,8 @@ namespace Perpetuum.Bootstrapper
                 var ctx = x.Resolve<IComponentContext>();
                 return zone =>
                 {
-                    var listener = new OreNPCSpawner(zone);
+                    var reader = ctx.Resolve<IMineralConfigurationReader>();
+                    var listener = new OreNPCSpawner(zone, ctx.Resolve<IOreNPCRepository>(), reader);
                     var eventListenerService = ctx.Resolve<EventListenerService>();
                     eventListenerService.AttachListener(listener);
                     if (zone is TrainingZone)
@@ -2248,7 +2252,7 @@ namespace Perpetuum.Bootstrapper
                     }
 
                     var nodeGeneratorFactory = new MineralNodeGeneratorFactory(zone);
-                    var reader = ctx.Resolve<IMineralConfigurationReader>();
+                    
                     var materialLayers = new List<IMaterialLayer>();
 
                     foreach (var configuration in reader.ReadAll().Where(c => c.ZoneId == zone.Id))

@@ -678,6 +678,10 @@
     <Compile Include="Zones\NpcSystem\Flocks\IFlockConfiguration.cs" />
     <Compile Include="Zones\NpcSystem\Flocks\IFlockConfigurationRepository.cs" />
     <Compile Include="Zones\NpcSystem\NpcBossInfo.cs" />
+    <Compile Include="Zones\NpcSystem\OreNPCSpawns\IOreNPCRepository.cs" />
+    <Compile Include="Zones\NpcSystem\OreNPCSpawns\IOreNPCSpawn.cs" />
+    <Compile Include="Zones\NpcSystem\OreNPCSpawns\OreNPCRepository.cs" />
+    <Compile Include="Zones\NpcSystem\OreNPCSpawns\OreNPCSpawn.cs" />
     <Compile Include="Zones\NpcSystem\Presences\InterzonePresences\IInterzonePresenceConfigurationReader.cs" />
     <Compile Include="Zones\NpcSystem\Presences\InterzonePresences\InterzoneGroup.cs" />
     <Compile Include="Zones\NpcSystem\Presences\InterzonePresences\InterzonePresence.cs" />

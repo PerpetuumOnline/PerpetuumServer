@@ -1,25 +1,30 @@
 ﻿using Perpetuum.ExportedTypes;
 using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Zones;
+using Perpetuum.Zones.NpcSystem.OreNPCSpawns;
 using Perpetuum.Zones.NpcSystem.Presences;
 using Perpetuum.Zones.Terrains.Materials.Minerals;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Perpetuum.Services.EventServices.EventProcessors
 {
     /// <summary>
+    /// EventListener for each zone, receives messages for mineralnode mined
     /// </summary>
     public class OreNPCSpawner : EventProcessor<EventMessage>
     {
         private IZone _zone;
         private readonly IDictionary<MineralNode, DynamicPresence> orePresences = new Dictionary<MineralNode, DynamicPresence>();
-        private ulong _lastTotal;
+        private readonly IOreNPCRepository _oreNPCRepository;
+        private readonly IEnumerable<IMineralConfiguration> _mineralConfigs;
 
-
-        public OreNPCSpawner(IZone zone)
+        public OreNPCSpawner(IZone zone, IOreNPCRepository oreNPCRepository, IMineralConfigurationReader mineralConfigurationReader)
         {
             _zone = zone;
+            _oreNPCRepository = oreNPCRepository;
+            _mineralConfigs = mineralConfigurationReader.ReadAll().Where(c => c.ZoneId == zone.Id);
         }
 
         private KeyValuePair<MineralNode, DynamicPresence> FindEntryByValue(Presence presence)
@@ -77,9 +82,13 @@ namespace Perpetuum.Services.EventServices.EventProcessors
                     //There is an active presence
                     return;
                 }
-                var current = node.GetTotalAmount();
-                var spawnPos = _zone.FindPassablePointInRadius(node.Area.Center.ToPosition(), 20);
-                var pres = _zone.AddDynamicPresenceToPosition(1017, spawnPos, TimeSpan.FromSeconds(60));
+                var current = Convert.ToInt32(node.GetTotalAmount());
+                var total = _mineralConfigs.Where(c => c.Type == node.Type).First().TotalAmountPerNode;
+                var percent = (current / (double)total).Clamp(0.0, 1.0);
+                var radius = (int)(node.Area.Diagonal / 2.0);
+                var spawnPos = _zone.FindPassablePointInRadius(node.Area.Center.ToPosition(), radius);
+                var presenceID = _oreNPCRepository.GetPresenceForOreAndThreshold(node.Type, percent);
+                var pres = _zone.AddDynamicPresenceToPosition(presenceID, spawnPos, TimeSpan.FromSeconds(30));
                 pres.PresenceExpired += OnPresenceExpired;
                 orePresences.Add(node, pres);
                 _zone.CreateBeam(BeamType.teleport_storm, b => b.WithPosition(spawnPos).WithDuration(TimeSpan.FromSeconds(100)));
