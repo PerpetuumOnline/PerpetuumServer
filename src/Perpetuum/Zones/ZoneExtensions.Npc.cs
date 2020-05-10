@@ -17,11 +17,12 @@ namespace Perpetuum.Zones
             return presence;
         }
 
-        public static DynamicPresenceExtended AddDynamicPresenceToPosition(this IZone zone, int presenceID, Position position, TimeSpan timeSpan)
+        public static DynamicPresenceExtended AddDynamicPresenceToPosition(this IZone zone, int presenceID, Position homePos, Position startPos, TimeSpan timeSpan)
         {
             var presence = zone.PresenceManager.CreatePresence(presenceID).ThrowIfNotType<DynamicPresenceExtended>(ErrorCodes.ItemNotFound);
             presence.LifeTime = timeSpan;
-            presence.DynamicPosition = position;
+            presence.DynamicPosition = homePos;
+            presence.SpawnLocation = startPos;
             presence.LoadFlocks();
             presence.Flocks.SpawnAllMembers();
             zone.PresenceManager.AddPresence(presence);

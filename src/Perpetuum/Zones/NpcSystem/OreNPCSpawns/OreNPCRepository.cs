@@ -1,56 +1,28 @@
 ﻿using Perpetuum.Data;
 using Perpetuum.Zones.Terrains.Materials;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 
-
 namespace Perpetuum.Zones.NpcSystem.OreNPCSpawns
 {
-    public class OreNPCRepository : IOreNPCRepository
+    public class OreNpcRepository : IOreNpcRepository
     {
-        private readonly Lazy<IDictionary<MaterialType, IOreNPCSpawn>> _cache;
-
-        public OreNPCRepository()
+        public IOreNpcSpawn CreateOreNPCSpawn(MaterialType materialType)
         {
-            _cache = new Lazy<IDictionary<MaterialType, IOreNPCSpawn>>(InitCache);
-        }
-
-        private IDictionary<MaterialType, IOreNPCSpawn> InitCache()
-        {
-            var records = Db.Query().CommandText("SELECT materialType, presenceId, threshold FROM npcorespawn")
+            var records = Db.Query().CommandText("SELECT materialType, presenceId, threshold FROM npcorespawn WHERE @material=materialType")
+                .SetParameter("@material", materialType)
                 .Execute()
                 .Select(CreatePresenceThresholdRecords).ToArray();
-            var dict = new Dictionary<MaterialType, IList<PresenceThreshold>>();
-            foreach (var record in records)
-            {
-                if (!dict.ContainsKey(record.OreType))
-                {
-                    dict[record.OreType] = new List<PresenceThreshold>();
-                }
-                dict[record.OreType].Add(record);
-            }
-            var cacheDict = new Dictionary<MaterialType, IOreNPCSpawn>();
-            foreach (KeyValuePair<MaterialType, IList<PresenceThreshold>> entry in dict)
-            {
-                cacheDict[entry.Key] = new OreNPCSpawn(entry.Key, entry.Value.ToArray());
-            }
-            return cacheDict;
+            return new OreNpcSpawn(materialType, records);
         }
 
-        public int GetPresenceForOreAndThreshold(MaterialType materialType, double threshold)
-        {
-            return _cache.Value[materialType].GetPresenceFor(threshold);
-        }
-
-        private static PresenceThreshold CreatePresenceThresholdRecords(IDataRecord record)
+        private static IOreNpcData CreatePresenceThresholdRecords(IDataRecord record)
         {
             var materialID = record.GetValue<int>("materialType");
             var material = (MaterialType)materialID;
             var presence = record.GetValue<int>("presenceId");
             var threshold = record.GetValue<double>("threshold");
-            var pair = new PresenceThreshold(material, presence, threshold);
+            var pair = new OreNpcData(material, presence, threshold);
             return pair;
         }
 

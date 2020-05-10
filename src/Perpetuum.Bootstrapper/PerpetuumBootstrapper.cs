@@ -1425,7 +1425,7 @@ namespace Perpetuum.Bootstrapper
 
         public void RegisterNpcs()
         {
-            _builder.RegisterType<OreNPCRepository>().SingleInstance().As<IOreNPCRepository>();
+            _builder.RegisterType<OreNpcRepository>().SingleInstance().As<IOreNpcRepository>();
 
             _builder.RegisterType<FlockConfiguration>().As<IFlockConfiguration>();
             _builder.RegisterType<FlockConfigurationBuilder>();
@@ -1482,6 +1482,7 @@ namespace Perpetuum.Bootstrapper
             RegisterFlock<Flock>(PresenceType.Direct);
             RegisterFlock<NormalFlock>(PresenceType.DynamicPool);
             RegisterFlock<NormalFlock>(PresenceType.Dynamic);
+            RegisterFlock<RemoteSpawningFlock>(PresenceType.DynamicExtended);
             RegisterFlock<Flock>(PresenceType.Random);
             RegisterFlock<Flock>(PresenceType.Roaming);
             RegisterFlock<NormalFlock>(PresenceType.FreeRoaming);
@@ -1495,7 +1496,7 @@ namespace Perpetuum.Bootstrapper
             });
             RegisterPresence<DynamicPoolPresence>(PresenceType.DynamicPool);
             RegisterPresence<DynamicPresence>(PresenceType.Dynamic);
-            RegisterPresence<DynamicPresenceExtended>(PresenceType.Dynamic);
+            RegisterPresence<DynamicPresenceExtended>(PresenceType.DynamicExtended);
             RegisterPresence<RandomPresence>(PresenceType.Random);
             RegisterPresence<RoamingPresence>(PresenceType.Roaming);
             RegisterPresence<RoamingPresence>(PresenceType.FreeRoaming);
@@ -1681,7 +1682,7 @@ namespace Perpetuum.Bootstrapper
             _builder.RegisterType<ChatEcho>();
             _builder.RegisterType<NpcChatEcho>();
             _builder.RegisterType<AffectOutpostStability>();
-            _builder.RegisterType<OreNPCSpawner>();
+            _builder.RegisterType<OreNpcSpawner>();
             _builder.RegisterType<EventListenerService>().SingleInstance().OnActivated(e =>
             {
                 e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromSeconds(2.5)));
@@ -2239,7 +2240,7 @@ namespace Perpetuum.Bootstrapper
                 return zone =>
                 {
                     var reader = ctx.Resolve<IMineralConfigurationReader>();
-                    var listener = new OreNPCSpawner(zone, ctx.Resolve<IOreNPCRepository>(), reader);
+                    var listener = new OreNpcSpawner(zone, ctx.Resolve<IOreNpcRepository>(), reader);
                     var eventListenerService = ctx.Resolve<EventListenerService>();
                     eventListenerService.AttachListener(listener);
                     if (zone is TrainingZone)

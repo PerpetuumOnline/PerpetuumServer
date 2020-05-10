@@ -147,7 +147,7 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
             Log($"member spawned to zone:{zone.Id} EID:{npc.Eid}");
         }
 
-        private Position GetSpawnPosition(Position spawnOrigin)
+        protected virtual Position GetSpawnPosition(Position spawnOrigin)
         {
             var spawnRangeMin = Configuration.SpawnRange.Min;
             var spawnRangeMax = Configuration.SpawnRange.Max.Min(HomeRange);
@@ -168,6 +168,11 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
 
             if( Presence is InterzonePresence)
             {
+                return NpcBehavior.Create(Configuration.BehaviorType);
+            }
+            else if(Configuration.BehaviorType == NpcBehaviorType.Aggressive && Presence is DynamicPresenceExtended)
+            {
+                // This is needed to prevent the super class from matching the next condition, which overrides the behaviour type!
                 return NpcBehavior.Create(Configuration.BehaviorType);
             }
             else if (Configuration.BehaviorType == NpcBehaviorType.Aggressive && Presence is DynamicPresence)

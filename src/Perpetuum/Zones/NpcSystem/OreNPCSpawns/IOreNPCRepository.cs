@@ -2,8 +2,11 @@
 
 namespace Perpetuum.Zones.NpcSystem.OreNPCSpawns
 {
-    public interface IOreNPCRepository
+    /// <summary>
+    /// DB lookup interface and factory for IOreNPCSpawns
+    /// </summary>
+    public interface IOreNpcRepository
     {
-        int GetPresenceForOreAndThreshold(MaterialType materialType, double threshold);
+        IOreNpcSpawn CreateOreNPCSpawn(MaterialType materialType);
     }
 }
