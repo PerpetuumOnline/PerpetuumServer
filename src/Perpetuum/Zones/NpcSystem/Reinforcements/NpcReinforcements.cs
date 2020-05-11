@@ -3,21 +3,20 @@ using System;
 using System.Linq;
 using System.Text;
 
-namespace Perpetuum.Zones.NpcSystem.OreNPCSpawns
+namespace Perpetuum.Zones.NpcSystem.Reinforcements
 {
-    public class OreNpcSpawn : IOreNpcSpawn
+    public class NpcReinforcements : INpcReinforcements
     {
         // Sorted array of OreNpcData by threshold
-        private readonly IOreNpcData[] _presences;
-        public MaterialType OreType { get; private set; }
+        private readonly INpcReinforcementWave[] _presences;
 
-        public OreNpcSpawn(MaterialType oreType, IOreNpcData[] presences)
+
+        public NpcReinforcements(INpcReinforcementWave[] presences)
         {
-            OreType = oreType;
             _presences = presences.OrderBy(s => Array.IndexOf(presences, s.Threshold)).ToArray();
         }
 
-        public IOreNpcData GetNextPresence(double percentageOfFieldConsumed)
+        public INpcReinforcementWave GetNextPresence(double percentageOfFieldConsumed)
         {
             for (var i = 0; i < _presences.Length; i++)
             {

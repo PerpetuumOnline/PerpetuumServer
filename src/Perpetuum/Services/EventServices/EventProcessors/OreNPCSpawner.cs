@@ -3,7 +3,7 @@ using Perpetuum.Log;
 using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Zones;
 using Perpetuum.Zones.Finders.PositionFinders;
-using Perpetuum.Zones.NpcSystem.OreNPCSpawns;
+using Perpetuum.Zones.NpcSystem.Reinforcements;
 using Perpetuum.Zones.NpcSystem.Presences;
 using Perpetuum.Zones.Terrains.Materials.Minerals;
 using System;
@@ -23,37 +23,37 @@ namespace Perpetuum.Services.EventServices.EventProcessors
         private readonly int SPAWN_DIST_FROM_FIELD = 50;
 
         private readonly IZone _zone;
-        private readonly IDictionary<MineralNode, DynamicPresence> orePresences = new Dictionary<MineralNode, DynamicPresence>();
-        private readonly IDictionary<MineralNode, IOreNpcSpawn> oreSpawns = new Dictionary<MineralNode, IOreNpcSpawn>();
-        private readonly IOreNpcRepository _oreNPCRepository;
+        private readonly IDictionary<MineralNode, DynamicPresence> spawnedPresences = new Dictionary<MineralNode, DynamicPresence>();
+        private readonly IDictionary<MineralNode, INpcReinforcements> reinforcementsByMineralNode = new Dictionary<MineralNode, INpcReinforcements>();
+        private readonly INpcReinforcementsRepository _npcReinforcementsRepo;
         private readonly IEnumerable<IMineralConfiguration> _mineralConfigs;
 
-        public OreNpcSpawner(IZone zone, IOreNpcRepository oreNPCRepository, IMineralConfigurationReader mineralConfigurationReader)
+        public OreNpcSpawner(IZone zone, INpcReinforcementsRepository reinforcementsRepo, IMineralConfigurationReader mineralConfigurationReader)
         {
             _zone = zone;
-            _oreNPCRepository = oreNPCRepository;
+            _npcReinforcementsRepo = reinforcementsRepo;
             _mineralConfigs = mineralConfigurationReader.ReadAll().Where(c => c.ZoneId == zone.Id);
         }
 
         private void OnPresenceExpired(Presence presence)
         {
-            var matchedEntries = orePresences.Where(p => p.Value.Equals(presence)).ToList();
+            var matchedEntries = spawnedPresences.Where(p => p.Value.Equals(presence)).ToList();
             foreach (var pair in matchedEntries)
             {
                 pair.Value.PresenceExpired -= OnPresenceExpired;
-                orePresences.Remove(pair.Key);
+                spawnedPresences.Remove(pair.Key);
             }
         }
 
         private void RemoveEntry(MineralNode node)
         {
-            if (orePresences.ContainsKey(node))
+            if (spawnedPresences.ContainsKey(node))
             {
-                if (orePresences[node] != null)
+                if (spawnedPresences[node] != null)
                 {
-                    orePresences[node].PresenceExpired -= OnPresenceExpired;
+                    spawnedPresences[node].PresenceExpired -= OnPresenceExpired;
                 }
-                orePresences.Remove(node);
+                spawnedPresences.Remove(node);
             }
         }
 
@@ -99,13 +99,13 @@ namespace Perpetuum.Services.EventServices.EventProcessors
                     return;
                 }
                 var node = msg.GetMineralNode();
-                if (!oreSpawns.ContainsKey(node))
+                if (!reinforcementsByMineralNode.ContainsKey(node))
                 {
-                    var oreSpawn = _oreNPCRepository.CreateOreNPCSpawn(node.Type);
-                    oreSpawns.Add(node, oreSpawn);
+                    var oreSpawn = _npcReinforcementsRepo.CreateOreNPCSpawn(node.Type);
+                    reinforcementsByMineralNode.Add(node, oreSpawn);
                 }
-                Logger.Info(oreSpawns[node].ToString());
-                if (orePresences.ContainsKey(node))
+                Logger.Info(reinforcementsByMineralNode[node].ToString());
+                if (spawnedPresences.ContainsKey(node))
                 {
                     if (msg.GetOreNodeState() == OreNodeState.Removed)
                     {
@@ -122,7 +122,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
                     return; // Failed to find valid spawn location, try again on next cycle
                 }
                 var percent = ComputeFieldPercentConsumed(node);
-                var orePresence = oreSpawns[node].GetNextPresence(percent);
+                var orePresence = reinforcementsByMineralNode[node].GetNextPresence(percent);
                 if (orePresence == null)
                 {
                     return; // Presence already spawned once, or not found
@@ -139,7 +139,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
                         var pres = _zone.AddDynamicPresenceToPosition(orePresence.Presence, fieldCenter, spawnPos, TimeSpan.FromSeconds(180)); // TODO timeout to 3 hr
                         orePresence.Spawned = true;
                         pres.PresenceExpired += OnPresenceExpired;
-                        orePresences.Add(node, pres);
+                        spawnedPresences.Add(node, pres);
                     }
                     catch (Exception ex)
                     {

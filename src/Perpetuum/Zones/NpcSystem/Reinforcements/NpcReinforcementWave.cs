@@ -1,16 +1,14 @@
 ﻿using Perpetuum.Zones.Terrains.Materials;
 
-namespace Perpetuum.Zones.NpcSystem.OreNPCSpawns
+namespace Perpetuum.Zones.NpcSystem.Reinforcements
 {
-    public class OreNpcData : IOreNpcData
+    public class NpcReinforcementWave : INpcReinforcementWave
     {
-        public MaterialType OreType { get; private set; }
         public int Presence { get; private set; }
         public double Threshold { get; private set; }
         public bool Spawned { get; set; }
-        public OreNpcData(MaterialType oreType, int presenceID, double threshold)
+        public NpcReinforcementWave(int presenceID, double threshold)
         {
-            OreType = oreType;
             Presence = presenceID;
             Threshold = threshold;
         }

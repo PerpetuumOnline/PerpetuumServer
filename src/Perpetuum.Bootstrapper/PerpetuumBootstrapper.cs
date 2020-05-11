@@ -126,7 +126,7 @@ using Perpetuum.Zones.Gates;
 using Perpetuum.Zones.Intrusion;
 using Perpetuum.Zones.NpcSystem;
 using Perpetuum.Zones.NpcSystem.Flocks;
-using Perpetuum.Zones.NpcSystem.OreNPCSpawns;
+using Perpetuum.Zones.NpcSystem.Reinforcements;
 using Perpetuum.Zones.NpcSystem.Presences;
 using Perpetuum.Zones.NpcSystem.Presences.InterzonePresences;
 using Perpetuum.Zones.NpcSystem.Presences.PathFinders;
@@ -1425,7 +1425,7 @@ namespace Perpetuum.Bootstrapper
 
         public void RegisterNpcs()
         {
-            _builder.RegisterType<OreNpcRepository>().SingleInstance().As<IOreNpcRepository>();
+            _builder.RegisterType<NpcReinforcementsRepository>().SingleInstance().As<INpcReinforcementsRepository>();
 
             _builder.RegisterType<FlockConfiguration>().As<IFlockConfiguration>();
             _builder.RegisterType<FlockConfigurationBuilder>();
@@ -2240,7 +2240,7 @@ namespace Perpetuum.Bootstrapper
                 return zone =>
                 {
                     var reader = ctx.Resolve<IMineralConfigurationReader>();
-                    var listener = new OreNpcSpawner(zone, ctx.Resolve<IOreNpcRepository>(), reader);
+                    var listener = new OreNpcSpawner(zone, ctx.Resolve<INpcReinforcementsRepository>(), reader);
                     var eventListenerService = ctx.Resolve<EventListenerService>();
                     eventListenerService.AttachListener(listener);
                     if (zone is TrainingZone)
