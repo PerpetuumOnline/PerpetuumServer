@@ -22,13 +22,15 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals.Generators
         public int MaxTiles { protected get; set; }
         public int TotalAmount { private get; set; }
         public double MinThreshold { private get; set; }
+        public MaterialType Material { private get; set; }
+
 
         public MineralNode Generate(MineralLayer layer)
         {
             var startPosition = FindStartPosition(layer);
             var noise = GenerateNoise(startPosition);
             var normalizedNoise = NormalizeNoise(noise);
-            var node = CreateMineralNode(layer,normalizedNoise);
+            var node = CreateMineralNode(layer, normalizedNoise);
             return node;
         }
 
@@ -40,13 +42,13 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals.Generators
 
             foreach (var kvp in noise)
             {
-                result[kvp.Key] = (kvp.Value/max).Clamp().Normalize(MinThreshold,1.0);
+                result[kvp.Key] = (kvp.Value / max).Clamp().Normalize(MinThreshold, 1.0);
             }
 
             return result;
         }
-       
-        protected abstract Dictionary<Point,double> GenerateNoise(Position startPosition);
+
+        protected abstract Dictionary<Point, double> GenerateNoise(Position startPosition);
 
         protected bool IsValid(Point location)
         {
@@ -75,17 +77,7 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals.Generators
             return true;
         }
 
-        private bool IsInRangeOfBaseOrTeleports(Point location)
-        {
-            if (_zone.Units.OfType<DockingBase>().WithinRange(location.ToPosition(), DistanceConstants.MINERAL_DISTANCE_FROM_BASE_MIN).Any())
-                return true;
-
-            if (_zone.Units.OfType<Teleport>().WithinRange(location.ToPosition(), DistanceConstants.MINERAL_DISTANCE_FROM_BASE_MIN).Any())
-                return true;
-            return false;
-        }
-
-        private MineralNode CreateMineralNode(MineralLayer layer,Dictionary<Point,double> tiles)
+        private MineralNode CreateMineralNode(MineralLayer layer, Dictionary<Point, double> tiles)
         {
             int minx = int.MaxValue, miny = int.MaxValue, maxx = 0, maxy = 0;
 
@@ -110,10 +102,38 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals.Generators
             {
                 var u = (t.Value / sum) * TotalAmount;
                 u *= FastRandom.NextFloat(0.9f, 1.1f);
-                node.SetValue(t.Key, (uint) u);
+                node.SetValue(t.Key, (uint)u);
             }
 
             return node;
+        }
+
+        private bool IsInRangeOfBaseOrTeleports(Point location, double dist)
+        {
+            if (_zone.Units.OfType<DockingBase>().WithinRange2D(location.ToPosition(), dist).Any())
+                return true;
+
+            if (_zone.Units.OfType<Teleport>().WithinRange2D(location.ToPosition(), dist).Any())
+                return true;
+            return false;
+        }
+
+        private static double KeepOutDist(MaterialType material)
+        {
+            switch (material)
+            {
+                case MaterialType.Epriton:
+                    return DistanceConstants.MINERAL_DISTANCE_FROM_BASE_MIN;
+                case MaterialType.FluxOre:
+                    return DistanceConstants.MINERAL_DISTANCE_FROM_BASE_MIN * 2.0;
+                default:
+                    return 0;
+            }
+        }
+
+        private static bool IsKeepOutMaterial(MaterialType material)
+        {
+            return material == MaterialType.Epriton || material == MaterialType.FluxOre;
         }
 
         private Position FindStartPosition(MineralLayer layer)
@@ -125,23 +145,24 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals.Generators
                 if (!finder.Find(out Position startPosition))
                     continue;
 
-                if ( !IsValid(startPosition) )
-                    continue;
-
-                if( layer.Configuration.Type == MaterialType.Epriton)
+                // Check keepout distances for special ore types
+                if (IsKeepOutMaterial(Material))
                 {
-                    if (IsInRangeOfBaseOrTeleports(startPosition))
+                    if (IsInRangeOfBaseOrTeleports(startPosition, KeepOutDist(Material)))
                     {
                         continue;
                     }
                 }
+
+                if (!IsValid(startPosition))
+                    continue;
 
                 var n = layer.GetNearestNode(startPosition);
                 if (n == null)
                     return startPosition;
 
                 var d = n.Area.Distance(startPosition);
-                if (d < Radius*2)
+                if (d < Radius * 2)
                 {
                     // ha tul kozel van akkor keresunk ujat
                     continue;

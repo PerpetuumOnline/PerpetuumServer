@@ -579,7 +579,7 @@ namespace Perpetuum.Services.MissionEngine.MissionDataCacheObjects
 
 
         /// <summary>
-        /// NOT gravel, gammaterial, energymineral
+        /// NOT gravel, gammaterial, energymineral, fluxore
         /// </summary>
         private void InitPossibleMinerals()
         {
@@ -590,7 +590,7 @@ namespace Perpetuum.Services.MissionEngine.MissionDataCacheObjects
 SELECT m.definition FROM dbo.mineralconfigs mc 
 JOIN dbo.minerals m ON m.idx = mc.materialtype 
  WHERE mc.zoneid=@zoneId
-  AND mc.materialtype !=10 and mc.materialtype != 15 and mc.materialtype != 13
+  AND mc.materialtype !=10 and mc.materialtype != 15 and mc.materialtype != 13 AND mc.materialtype != 16
 ";
             foreach (var zone in _zoneManager.Zones)
             {

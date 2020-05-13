@@ -17,7 +17,7 @@ namespace Perpetuum.Zones.Terrains.Materials
         Silgium, //12
         Gammaterial, //13
         Plants, //14
-        EnergyMineral //15
-
+        EnergyMineral, //15
+        FluxOre //16
     }
 }
