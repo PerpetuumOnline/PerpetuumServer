@@ -301,6 +301,7 @@
     <Compile Include="Services\MissionEngine\DisplayMissionSpotsProcess.cs" />
     <Compile Include="Services\MissionEngine\MissionResolveTester.cs" />
     <Compile Include="Services\MissionEngine\OneLocationTest.cs" />
+    <Compile Include="Services\ProductionEngine\ProductionCost.cs" />
     <Compile Include="Services\Relay\GoodiePack.cs" />
     <Compile Include="IMessageSender.cs" />
     <Compile Include="MessageSender.cs" />
