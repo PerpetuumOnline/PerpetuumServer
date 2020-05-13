@@ -20,7 +20,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
     /// </summary>
     public class OreNpcSpawner : EventProcessor<EventMessage>
     {
-        private readonly int SPAWN_DIST_FROM_FIELD = 50;
+        private const int SPAWN_DIST_FROM_FIELD = 50;
 
         private readonly IZone _zone;
         private readonly IDictionary<MineralNode, DynamicPresence> spawnedPresences = new Dictionary<MineralNode, DynamicPresence>();

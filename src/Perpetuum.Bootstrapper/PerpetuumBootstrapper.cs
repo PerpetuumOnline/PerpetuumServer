@@ -1685,7 +1685,7 @@ namespace Perpetuum.Bootstrapper
             _builder.RegisterType<OreNpcSpawner>();
             _builder.RegisterType<EventListenerService>().SingleInstance().OnActivated(e =>
             {
-                e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromSeconds(2.5)));
+                e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromSeconds(0.75)));
                 e.Instance.AttachListener(e.Context.Resolve<ChatEcho>());
                 e.Instance.AttachListener(e.Context.Resolve<NpcChatEcho>());
             });

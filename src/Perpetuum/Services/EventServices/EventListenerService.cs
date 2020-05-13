@@ -12,8 +12,8 @@ namespace Perpetuum.Services.EventServices
     /// </summary>
     public class EventListenerService : Process
     {
-        private IList<EventProcessor<EventMessage>> _observers;
-        private ConcurrentQueue<EventMessage> _queue;
+        private readonly IList<EventProcessor<EventMessage>> _observers;
+        private readonly ConcurrentQueue<EventMessage> _queue;
 
         public EventListenerService()
         {
@@ -47,12 +47,14 @@ namespace Perpetuum.Services.EventServices
             _observers.Add(observer);
         }
 
-
         public override void Update(TimeSpan time)
         {
-            if (_queue.TryDequeue(out var message))
+            while (!_queue.IsEmpty)
             {
-                NotifyListeners(message);
+                if (_queue.TryDequeue(out var message))
+                {
+                    NotifyListeners(message);
+                }
             }
         }
 
