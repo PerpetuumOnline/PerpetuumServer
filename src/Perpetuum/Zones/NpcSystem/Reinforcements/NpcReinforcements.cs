@@ -10,7 +10,6 @@ namespace Perpetuum.Zones.NpcSystem.Reinforcements
         // Sorted array of OreNpcData by threshold
         private readonly INpcReinforcementWave[] _presences;
 
-
         public NpcReinforcements(INpcReinforcementWave[] presences)
         {
             _presences = presences.OrderBy(s => Array.IndexOf(presences, s.Threshold)).ToArray();
