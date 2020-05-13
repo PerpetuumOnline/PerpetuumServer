@@ -2,9 +2,6 @@ using System.Linq;
 using Perpetuum.EntityFramework;
 using Perpetuum.Log;
 using Perpetuum.Services.ProductionEngine.CalibrationPrograms;
-using Perpetuum.ExportedTypes;
-using System;
-using System.Collections.Generic;
 
 namespace Perpetuum.Services.ProductionEngine
 {
@@ -74,16 +71,6 @@ namespace Perpetuum.Services.ProductionEngine
             return 1.0;
         }
 
-
-        //TODO fixme: this is bad
-        private static readonly double[] TechLevelMods = { 1, 2, 3, 4 };
-        private static readonly double[] BotClassMods = { 1, 2, 3, 4 };
-        //This is worse
-        private static IEnumerable<CategoryFlags> lights = new List<CategoryFlags>() { CategoryFlags.cf_thelodica_runners, CategoryFlags.cf_nuimqol_runners, CategoryFlags.cf_pelistal_runners, CategoryFlags.cf_syndicate_runners, CategoryFlags.cf_industrial_runners};
-        private static IEnumerable<CategoryFlags> assaults = new List<CategoryFlags>() { CategoryFlags.cf_thelodica_crawlers, CategoryFlags.cf_nuimqol_crawlers, CategoryFlags.cf_pelistal_crawlers, CategoryFlags.cf_syndicate_crawlers, CategoryFlags.cf_industrial_crawlers};
-        private static IEnumerable<CategoryFlags> mechs = new List<CategoryFlags>() { CategoryFlags.cf_thelodica_mechs, CategoryFlags.cf_nuimqol_mechs, CategoryFlags.cf_pelistal_mechs, CategoryFlags.cf_syndicate_mechs, CategoryFlags.cf_industrial_mechs};
-        private static IEnumerable<CategoryFlags> heavies = new List<CategoryFlags>() { CategoryFlags.cf_thelodica_heavymechs, CategoryFlags.cf_nuimqol_heavymechs, CategoryFlags.cf_pelistal_heavymechs, CategoryFlags.cf_syndicate_heavymechs, CategoryFlags.cf_industrial_heavymechs, CategoryFlags.cf_industrial_heavy_gliders};
-        //Compute price modifier based on category of entity
         public static double GetProductionPriceModifier(this IProductionDataAccess dataAccess, int targetDefinition)
         {
             if (!EntityDefault.TryGet(targetDefinition, out EntityDefault ed))
@@ -94,31 +81,17 @@ namespace Perpetuum.Services.ProductionEngine
 
             var modifier = 1.0;
 
-            if (CategoryFlagsExtensions.IsAny(ed.CategoryFlags, lights))
+            if (dataAccess.ProductionCostByCategory.TryGetValue(ed.CategoryFlags, out ProductionCost costByCat))
             {
-                modifier = BotClassMods[0];
+                modifier = costByCat.costModifier;
             }
-            else if (CategoryFlagsExtensions.IsAny(ed.CategoryFlags, assaults))
+            else if (dataAccess.ProductionCostByTechLevel.TryGetValue(ed.Tier.level, out ProductionCost costByLevel))
             {
-                modifier = BotClassMods[1];
-            }
-            else if (CategoryFlagsExtensions.IsAny(ed.CategoryFlags, mechs))
-            {
-                modifier = BotClassMods[2];
-            }
-            else if (CategoryFlagsExtensions.IsAny(ed.CategoryFlags, heavies))
-            {
-                modifier = BotClassMods[3];
-            }
-            else
-            {
-                var techLevel = Math.Min(Math.Max(1, ed.Tier.level) - 1, TechLevelMods.Length - 1);
-                modifier = TechLevelMods[techLevel];
+                modifier = costByLevel.costModifier;
             }
 
             return modifier;
         }
-
 
         public static void GetCalibrationDefault(this IProductionDataAccess dataAccess, EntityDefault ed, out int materialEfficiency, out int timeEfficiency)
         {

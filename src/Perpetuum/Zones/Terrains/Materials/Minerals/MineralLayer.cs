@@ -76,6 +76,7 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals
             generator.MaxTiles = _configuration.MaxTilesPerNode;
             generator.TotalAmount = _configuration.TotalAmountPerNode;
             generator.MinThreshold = _configuration.MinThreshold;
+            generator.Material = _configuration.Type;
 
             RunAction(new GenerateMineralNode(generator));
         }
