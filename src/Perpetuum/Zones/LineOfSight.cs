@@ -55,14 +55,14 @@ namespace Perpetuum.Zones
 
             if (targetUnit.HitSize > 0)
             {
-                var hitsize = targetUnit.HitSize * 0.6;
+                var hitsize = (targetUnit.HitSize * 0.5).Clamp(1, 10);
                 len = (float)CylinderIntersection(source, direction, targetUnit.CurrentPosition.ToVector3(), target, hitsize);
             }
 
-            return IsInLineOfSight(zone,source,direction,len,ballistic);
+            return IsInLineOfSight(zone, source, direction, len, ballistic);
         }
 
-        private static double CylinderIntersection(Vector3 start,Vector3 dir,Vector3 cylinderStart,Vector3 cylinderEnd,double radius)
+        private static double CylinderIntersection(Vector3 start, Vector3 dir, Vector3 cylinderStart, Vector3 cylinderEnd, double radius)
         {
             var ab = cylinderEnd - cylinderStart;
             var ao = start - cylinderStart;
