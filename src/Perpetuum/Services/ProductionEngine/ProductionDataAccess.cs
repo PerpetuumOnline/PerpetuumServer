@@ -16,6 +16,8 @@ namespace Perpetuum.Services.ProductionEngine
         private IDictionary<int, ItemResearchLevel> _researchlevels;
         private ILookup<int, ProductionComponent> _productionComponents;
         private IDictionary<CategoryFlags, double> _productionDurations;
+        private IDictionary<CategoryFlags, ProductionCost> _productionCostByCategory;
+        private IDictionary<int, ProductionCost> _productionCostByTechLevel;
         private IDictionary<int, CalibrationDefault> _calibrationDefaults;
         private IDictionary<CategoryFlags, ProductionDecalibration> _productionDecalibrations;
 
@@ -26,8 +28,8 @@ namespace Perpetuum.Services.ProductionEngine
 
         public void Init()
         {
-            _prototypes = Database.CreateCache<int, int>("prototypes", "definition", "prototype");
-            _researchlevels = Database.CreateCache<int, ItemResearchLevel>("itemresearchlevels", "definition", r =>
+            _prototypes = Database.CreateCache<int, int>("prototypes", k.definition, "prototype");
+            _researchlevels = Database.CreateCache<int, ItemResearchLevel>("itemresearchlevels", k.definition, r =>
             {
                 var level = new ItemResearchLevel
                 {
@@ -36,24 +38,76 @@ namespace Perpetuum.Services.ProductionEngine
                     calibrationProgramDefinition = r.GetValue<int?>(k.calibrationProgram.ToLower())
                 };
                 return level;
-            },ItemResearchLevelFilter);
+            }, ItemResearchLevelFilter);
 
-            _productionComponents = Database.CreateLookupCache<int, ProductionComponent>("components", "definition", r =>
+            _productionComponents = Database.CreateLookupCache<int, ProductionComponent>("components", k.definition, r =>
             {
                 var ed = _entityDefaultReader.Get(r.GetValue<int>(k.componentDefinition.ToLower()));
                 var amount = r.GetValue<int>(k.componentAmount.ToLower());
                 return new ProductionComponent(ed, amount);
             }, r => _entityDefaultReader.Exists(r.GetValue<int>(k.definition)));
 
-            _productionDurations = Database.CreateCache<CategoryFlags, double>("productionduration", "category", "durationmodifier");
-            _calibrationDefaults = Database.CreateCache<int, CalibrationDefault>("calibrationdefaults", "definition", r => new CalibrationDefault(r));
+            _productionDurations = Database.CreateCache<CategoryFlags, double>("productionduration", k.category, "durationmodifier");
+            _calibrationDefaults = Database.CreateCache<int, CalibrationDefault>("calibrationdefaults", k.definition, r => new CalibrationDefault(r));
             _productionDecalibrations = Database.CreateCache<CategoryFlags, ProductionDecalibration>("productiondecalibration", "categoryflag", r =>
             {
                 var distorsionMin = r.GetValue<double>(k.distorsionMin.ToLower());
                 var distorsionMax = r.GetValue<double>(k.distorsionMax.ToLower());
                 var decrease = r.GetValue<double>("decrease");
-                return new ProductionDecalibration(distorsionMin,distorsionMax,decrease);
+                return new ProductionDecalibration(distorsionMin, distorsionMax, decrease);
             });
+
+            _researchlevels = Database.CreateCache<int, ItemResearchLevel>("itemresearchlevels", k.definition, r =>
+            {
+                var level = new ItemResearchLevel
+                {
+                    definition = r.GetValue<int>(k.definition),
+                    researchLevel = r.GetValue<int>(k.researchLevel.ToLower()),
+                    calibrationProgramDefinition = r.GetValue<int?>(k.calibrationProgram.ToLower())
+                };
+                return level;
+            }, ItemResearchLevelFilter);
+
+            _productionCostByCategory = Database.CreateCache<CategoryFlags, ProductionCost>("productioncost", k.category, r =>
+            {
+                var cost = new ProductionCost
+                {
+                    categoryFlag = r.GetValue<long?>(k.category),
+                    tierType = r.GetValue<int?>(k.tierType),
+                    tierLevel = r.GetValue<int?>(k.tierLevel),
+                    costModifier = r.GetValue<double>("costmodifier")
+                };
+                return cost;
+            }, ProductionCostCategoryFilter);
+
+            _productionCostByTechLevel = Database.CreateCache<int, ProductionCost>("productioncost", k.tierLevel, r =>
+            {
+                var cost = new ProductionCost
+                {
+                    categoryFlag = r.GetValue<long?>(k.category),
+                    tierType = r.GetValue<int?>(k.tierType),
+                    tierLevel = r.GetValue<int?>(k.tierLevel),
+                    costModifier = r.GetValue<double>("costmodifier")
+                };
+                return cost;
+            }, ProductionCostTechFilter);
+        }
+
+        public bool ProductionCostCategoryFilter(IDataRecord record)
+        {
+            long? categoryFlag = record.GetValue<long?>(k.category);
+            if (categoryFlag == null)
+                return false;
+            CategoryFlags flag = (CategoryFlags)categoryFlag;
+            return flag.IsCategoryExists();
+        }
+
+        public bool ProductionCostTechFilter(IDataRecord record)
+        {
+            int? level = record.GetValue<int?>(k.tierLevel);
+            if (level == null)
+                return false;
+            return level > 0;
         }
 
         public bool ItemResearchLevelFilter(IDataRecord record)
@@ -77,12 +131,12 @@ namespace Perpetuum.Services.ProductionEngine
             return false;
         }
 
-
-
         public IDictionary<int, int> Prototypes => _prototypes;
         public IDictionary<int, ItemResearchLevel> ResearchLevels => _researchlevels;
         public ILookup<int, ProductionComponent> ProductionComponents => _productionComponents;
         public IDictionary<CategoryFlags, double> ProductionDurations => _productionDurations;
+        public IDictionary<CategoryFlags, ProductionCost> ProductionCostByCategory => _productionCostByCategory;
+        public IDictionary<int, ProductionCost> ProductionCostByTechLevel => _productionCostByTechLevel;
         public IDictionary<int, CalibrationDefault> CalibrationDefaults => _calibrationDefaults;
 
         public ProductionDecalibration GetDecalibration(int targetDefinition)

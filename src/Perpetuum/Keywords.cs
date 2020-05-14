@@ -1072,6 +1072,8 @@ namespace Perpetuum
         public const string threshold = "threshold";
         public const string tickets = "tickets";
         public const string tier = "tier";
+        public const string tierType = "tiertype";
+        public const string tierLevel = "tierlevel";
         public const string time = "time";
         public const string timeEfficiency = "timeEfficiency";
         public const string timeExtensionPoints = "timeExtensionPoints";
