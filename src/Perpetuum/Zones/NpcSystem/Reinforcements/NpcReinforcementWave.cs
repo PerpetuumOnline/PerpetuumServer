@@ -1,11 +1,9 @@
-﻿using Perpetuum.Zones.Terrains.Materials;
-
-namespace Perpetuum.Zones.NpcSystem.Reinforcements
+﻿namespace Perpetuum.Zones.NpcSystem.Reinforcements
 {
     public class NpcReinforcementWave : INpcReinforcementWave
     {
-        public int Presence { get; private set; }
-        public double Threshold { get; private set; }
+        public int Presence { get; }
+        public double Threshold { get; }
         public bool Spawned { get; set; }
         public NpcReinforcementWave(int presenceID, double threshold)
         {

@@ -10,30 +10,15 @@ namespace Perpetuum.Services.EventServices.EventMessages
 
     public class OreNpcSpawnMessage : EventMessage
     {
-        private readonly int _zoneId;
-        private readonly MineralNode _node;
-        private readonly OreNodeState _state;
+        public OreNodeState NodeState { get; }
+        public MineralNode Node { get; }
+        public int ZoneId { get; }
 
         public OreNpcSpawnMessage(MineralNode node, int zoneID, OreNodeState state)
         {
-            _zoneId = zoneID;
-            _node = node;
-            _state = state;
-        }
-
-        public OreNodeState GetOreNodeState()
-        {
-            return _state;
-        }
-
-        public int GetZoneID()
-        {
-            return _zoneId;
-        }
-
-        public MineralNode GetMineralNode()
-        {
-            return _node;
+            ZoneId = zoneID;
+            Node = node;
+            NodeState = state;
         }
     }
 }

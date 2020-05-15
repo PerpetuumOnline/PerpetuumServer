@@ -5,6 +5,7 @@ using System.Drawing;
 using Perpetuum.Log;
 using Perpetuum.Services.EventServices;
 using Perpetuum.Services.EventServices.EventMessages;
+using Perpetuum.Timers;
 using Perpetuum.Zones.Terrains.Materials.Minerals.Actions;
 using Perpetuum.Zones.Terrains.Materials.Minerals.Generators;
 
@@ -168,20 +169,17 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals
         }
 
         // Timer to buffer excessive decrease messages on ore mining
-        private TimeSpan _bufferTime = TimeSpan.FromSeconds(1);
-        private DateTime _lastDecrease = DateTime.UtcNow;
+        private readonly TimeKeeper _time = new TimeKeeper(TimeSpan.FromSeconds(1));
         private void OnNodeDecrease(MineralNode node)
         {
-            var now = DateTime.UtcNow;
-            var diff = now - _lastDecrease;
-            if (diff > _bufferTime)
+            if (_time.Expired)
             {
                 if (IsNPCSpawningOre(node))
                 {
                     var msg = new OreNpcSpawnMessage(node, Configuration.ZoneId, OreNodeState.Updated);
                     _eventChannel.PublishMessage(msg);
                 }
-                _lastDecrease = now;
+                _time.Reset();
             }
         }
 

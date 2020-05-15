@@ -60,38 +60,32 @@ namespace Perpetuum.Services.EventServices.EventProcessors
 
         private Position TryFindSpawnLocation(Position start, double range)
         {
-            var p = new Position();
-            List<Point> result = null;
             for (int i = 0; i < 10; i++)
             {
                 var random = FastRandom.NextDouble(0.0, 1.0);
                 var pos = start.OffsetInDirection(random, range);
                 var posFinder = new ClosestWalkablePositionFinder(_zone, pos);
-                posFinder.Find(out p);
-                result = _zone.FindWalkableArea(p, _zone.Size.ToArea(), 100);
+                posFinder.Find(out Position p);
+                var result = _zone.FindWalkableArea(p, _zone.Size.ToArea(), 100);
                 if (result != null)
                 {
-                    break;
+                    return p;
                 }
             }
-            if (result == null)
-            {
-                return Position.Empty;
-            }
-            return p;
+            return Position.Empty;
         }
 
         private double ComputeFieldPercentConsumed(MineralNode node)
         {
             var current = Convert.ToInt32(node.GetTotalAmount());
-            var total = _mineralConfigs.Where(c => c.Type == node.Type).First().TotalAmountPerNode;
+            var total = _mineralConfigs.Single(c => c.Type == node.Type).TotalAmountPerNode;
             var percent = 1.0 - (current / (double)total).Clamp();
             return percent;
         }
 
         private void CheckMineralNodeReinforcements(OreNpcSpawnMessage msg)
         {
-            var node = msg.GetMineralNode();
+            var node = msg.Node;
             if (!reinforcementsByMineralNode.ContainsKey(node))
             {
                 var oreSpawn = _npcReinforcementsRepo.CreateOreNPCSpawn(node.Type);
@@ -101,9 +95,9 @@ namespace Perpetuum.Services.EventServices.EventProcessors
 
         private bool IsNodeDead(OreNpcSpawnMessage msg)
         {
-            if (msg.GetOreNodeState() == OreNodeState.Removed)
+            if (msg.NodeState == OreNodeState.Removed)
             {
-                RemoveEntry(msg.GetMineralNode());
+                RemoveEntry(msg.Node);
                 return true;
             }
             return false;
@@ -111,26 +105,25 @@ namespace Perpetuum.Services.EventServices.EventProcessors
 
         private bool AlreadyHasActivePresence(OreNpcSpawnMessage msg)
         {
-            return spawnedPresences.ContainsKey(msg.GetMineralNode());
+            return spawnedPresences.ContainsKey(msg.Node);
         }
 
         private Position FindSpawnPosition(OreNpcSpawnMessage msg)
         {
-            var node = msg.GetMineralNode();
-            var fieldCenter = node.Area.Center.ToPosition();
+            var fieldCenter = msg.Node.Area.Center.ToPosition();
             return TryFindSpawnLocation(fieldCenter, SPAWN_DIST_FROM_FIELD);
         }
 
         private INpcReinforcementWave GetNextWave(OreNpcSpawnMessage msg)
         {
-            var node = msg.GetMineralNode();
+            var node = msg.Node;
             var percent = ComputeFieldPercentConsumed(node);
             return reinforcementsByMineralNode[node].GetNextPresence(percent);
         }
 
         private Position GetOreFieldCenter(OreNpcSpawnMessage msg)
         {
-            return msg.GetMineralNode().Area.Center.ToPosition();
+            return msg.Node.Area.Center.ToPosition();
         }
 
         private void DoBeams(Position beamLocation)
@@ -151,7 +144,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
 
         public override void OnNext(EventMessage value)
         {
-            if (value is OreNpcSpawnMessage msg && _zone.Id == msg.GetZoneID())
+            if (value is OreNpcSpawnMessage msg && _zone.Id == msg.ZoneId)
             {
                 if (_spawning)
                     return;
@@ -172,7 +165,6 @@ namespace Perpetuum.Services.EventServices.EventProcessors
                 if (wave == null)
                     return; // Presence already spawned once, or not found
 
-                var node = msg.GetMineralNode();
                 var fieldCenter = GetOreFieldCenter(msg);
 
                 DoBeams(fieldCenter);
@@ -182,7 +174,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
                 {
                     try
                     {
-                        DoSpawning(wave, fieldCenter, spawnPos, node);
+                        DoSpawning(wave, fieldCenter, spawnPos, msg.Node);
                     }
                     catch (Exception ex)
                     {

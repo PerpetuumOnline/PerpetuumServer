@@ -1,5 +1,4 @@
-﻿using Perpetuum.Zones.Terrains.Materials;
-using System;
+﻿using System;
 using System.Linq;
 using System.Text;
 
@@ -15,17 +14,18 @@ namespace Perpetuum.Zones.NpcSystem.Reinforcements
             _presences = presences.OrderBy(s => Array.IndexOf(presences, s.Threshold)).ToArray();
         }
 
+        /// <summary>
+        /// Get the next unspawned presence in the list with the next greatest threshold
+        /// </summary>
+        /// <param name="percentageOfFieldConsumed">percentage expressed as [0.0-1.0]</param>
+        /// <returns>INpcReinforcementWave or null</returns>
         public INpcReinforcementWave GetNextPresence(double percentageOfFieldConsumed)
         {
             for (var i = 0; i < _presences.Length; i++)
             {
                 if (_presences[i].Threshold > percentageOfFieldConsumed)
                 {
-                    if (_presences[i].Spawned)
-                    {
-                        return null;
-                    }
-                    return _presences[i];
+                    return _presences[i].Spawned ? null : _presences[i];
                 }
             }
             return null;

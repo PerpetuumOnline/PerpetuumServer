@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Services.EventServices.EventProcessors;
+using Perpetuum.Timers;
 
 namespace Perpetuum.Services.EventServices
 {
@@ -49,7 +50,8 @@ namespace Perpetuum.Services.EventServices
 
         public override void Update(TimeSpan time)
         {
-            while (!_queue.IsEmpty)
+            var timer = new TimeKeeper(TimeSpan.FromSeconds(1));
+            while (!_queue.IsEmpty && !timer.Expired)
             {
                 if (_queue.TryDequeue(out var message))
                 {

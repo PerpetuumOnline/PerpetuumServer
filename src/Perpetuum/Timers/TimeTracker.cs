@@ -18,13 +18,13 @@ namespace Perpetuum.Timers
             Duration = duration;
         }
 
-        public void Update(TimeSpan time)
+        public virtual void Update(TimeSpan time)
         {
             Elapsed += time;
         }
 
-        public TimeSpan Duration { get; private set; }
-        public TimeSpan Elapsed { get; private set; }
+        public TimeSpan Duration { get; protected set; }
+        public virtual TimeSpan Elapsed { get; protected set; }
 
         public bool Expired
         {
@@ -36,7 +36,7 @@ namespace Perpetuum.Timers
             get { return Duration - Elapsed; }
         }
 
-        public void Reset()
+        public virtual void Reset()
         {
             Elapsed = TimeSpan.Zero;
         }
