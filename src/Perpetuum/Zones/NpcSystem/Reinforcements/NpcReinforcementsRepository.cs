@@ -7,11 +7,14 @@ namespace Perpetuum.Zones.NpcSystem.Reinforcements
 {
     public class NpcReinforcementsRepository : INpcReinforcementsRepository
     {
-        public INpcReinforcements CreateOreNPCSpawn(MaterialType materialType)
+        private const string queryStr = "SELECT threshold, presenceId from npcreinforcements WHERE targetId=@target AND reinforcementType=@type AND (zoneId IS NULL OR zoneId=@zone);";
+
+        public INpcReinforcements CreateOreNPCSpawn(MaterialType materialType, int zoneId)
         {
-            var records = Db.Query().CommandText("SELECT threshold, presenceId from npcreinforcements WHERE targetId=@target AND reinforcementType=@type")
+            var records = Db.Query().CommandText(queryStr)
                 .SetParameter("@target", materialType)
                 .SetParameter("@type", ReinforcementType.Minerals)
+                .SetParameter("@zone", zoneId)
                 .Execute()
                 .Select(CreateFromRecord).ToArray();
             return new NpcReinforcements(records);
@@ -25,7 +28,7 @@ namespace Perpetuum.Zones.NpcSystem.Reinforcements
             return pair;
         }
 
-        public INpcReinforcements CreateNpcBossAddSpawn(NpcBossInfo npcBossInfo)
+        public INpcReinforcements CreateNpcBossAddSpawn(NpcBossInfo npcBossInfo, int zoneId)
         {
             throw new System.NotImplementedException(); //TODO new feature =)
         }

@@ -7,7 +7,7 @@ namespace Perpetuum.Zones.NpcSystem.Reinforcements
     /// </summary>
     public interface INpcReinforcementsRepository
     {
-        INpcReinforcements CreateOreNPCSpawn(MaterialType materialType);
-        INpcReinforcements CreateNpcBossAddSpawn(NpcBossInfo npcBossInfo);
+        INpcReinforcements CreateOreNPCSpawn(MaterialType materialType, int zoneId);
+        INpcReinforcements CreateNpcBossAddSpawn(NpcBossInfo npcBossInfo, int zoneId);
     }
 }

@@ -88,7 +88,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             var node = msg.Node;
             if (!reinforcementsByMineralNode.ContainsKey(node))
             {
-                var oreSpawn = _npcReinforcementsRepo.CreateOreNPCSpawn(node.Type);
+                var oreSpawn = _npcReinforcementsRepo.CreateOreNPCSpawn(node.Type, msg.ZoneId);
                 reinforcementsByMineralNode.Add(node, oreSpawn);
             }
         }
