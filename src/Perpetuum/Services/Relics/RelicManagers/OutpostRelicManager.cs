@@ -16,17 +16,17 @@ namespace Perpetuum.Services.Relics
         private readonly TimeSpan RESPAWN_RANDOM_WINDOW = TimeSpan.FromHours(1);
         private readonly TimeSpan _respawnRate = TimeSpan.FromHours(4);
 
-        private Outpost _outpost;
-        private Random _random;
-        private RelicInfo _sapRelicInfo;
+        private readonly Outpost _outpost;
+        private readonly Random _random;
+        private readonly RelicInfo _sapRelicInfo;
 
         //Beam Draw refresh
         private readonly TimeSpan _relicRefreshRate = TimeSpan.FromSeconds(19.95);
 
         // Spawn range and area
-        private readonly int SPAWN_MINIMUM_OUTPOST_DISTANCE = 90;
-        private readonly int SPAWN_MAXIMUM_OUTPOST_DISTANCE = 350;
-        private readonly int SPAWN_AREA_REQUIRED_SIZE = 200;
+        private const int SPAWN_MINIMUM_OUTPOST_DISTANCE = 90;
+        private const int SPAWN_MAXIMUM_OUTPOST_DISTANCE = 350;
+        private const int SPAWN_AREA_REQUIRED_SIZE = 3000;
 
         private IZone _zone;
         protected override IZone Zone
@@ -77,30 +77,20 @@ namespace Perpetuum.Services.Relics
 
         protected override Point FindRelicPosition(RelicInfo info)
         {
-            Position p = new Position();
-            Position invalidPosition = new Position(0, 0);
-
-            List<Point> result = null;
             for(int i = 0; i < 10; i++)
             {
                 var randomPos = _outpost.CurrentPosition.GetRandomPositionInRange2D(
                     SPAWN_MINIMUM_OUTPOST_DISTANCE, SPAWN_MAXIMUM_OUTPOST_DISTANCE);
                 var posFinder = new ClosestWalkablePositionFinder(_zone, randomPos);
 
-                posFinder.Find(out p);
-                result = _zone.FindWalkableArea(p, _zone.Size.ToArea(), SPAWN_AREA_REQUIRED_SIZE);
+                posFinder.Find(out Position p);
+                var result = _zone.FindWalkableArea(p, _zone.Size.ToArea(), SPAWN_AREA_REQUIRED_SIZE);
                 if(result != null)
                 {
-                    break;
+                    return p;
                 }
             }
-
-            if (result == null)
-            {
-                p = invalidPosition;
-            }
-
-            return p;
+            return Point.Empty;
         }
 
         protected override void RefreshBeam(IRelic relic)
