@@ -3,12 +3,14 @@ using Perpetuum.Players;
 using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Zones;
 using Perpetuum.Zones.Intrusion;
+using System;
 
 namespace Perpetuum.Services.Relics
 {
     public class SAPRelic : AbstractRelic
     {
         private Outpost _outpost;
+        protected override TimeSpan MAXLIFESPAN { get { return TimeSpan.FromHours(12); } }
 
         [CanBeNull]
         public static IRelic BuildAndAddToZone(RelicInfo info, IZone zone, Position position, RelicLootItems lootItems, Outpost outpost)
