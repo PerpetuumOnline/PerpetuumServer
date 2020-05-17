@@ -8,7 +8,6 @@ using Perpetuum.Zones.NpcSystem.Presences;
 using Perpetuum.Zones.Terrains.Materials.Minerals;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,12 +18,11 @@ namespace Perpetuum.Services.EventServices.EventProcessors
     /// </summary>
     public class OreNpcSpawner : EventProcessor<EventMessage>
     {
-        private const int SPAWN_DIST_FROM_FIELD = 50;
+        private const int SPAWN_DIST_FROM_FIELD = 60;
         private readonly TimeSpan ORE_SPAWN_LIFETIME = TimeSpan.FromHours(3);
         private readonly TimeSpan SPAWN_DELAY = TimeSpan.FromSeconds(10);
 
         private readonly IZone _zone;
-        private readonly IDictionary<MineralNode, DynamicPresence> spawnedPresences = new Dictionary<MineralNode, DynamicPresence>();
         private readonly IDictionary<MineralNode, INpcReinforcements> reinforcementsByMineralNode = new Dictionary<MineralNode, INpcReinforcements>();
         private readonly INpcReinforcementsRepository _npcReinforcementsRepo;
         private readonly IEnumerable<IMineralConfiguration> _mineralConfigs;
@@ -38,24 +36,31 @@ namespace Perpetuum.Services.EventServices.EventProcessors
 
         private void OnPresenceExpired(Presence presence)
         {
-            var matchedEntries = spawnedPresences.Where(p => p.Value.Equals(presence)).ToList();
+            var matchedEntries = reinforcementsByMineralNode.Where(p => p.Value.HasActivePresence(presence)).ToList();
             foreach (var pair in matchedEntries)
             {
-                pair.Value.PresenceExpired -= OnPresenceExpired;
-                spawnedPresences.Remove(pair.Key);
+                var wave = pair.Value.GetActiveWaveOfPresence(presence);
+                ExpireWave(wave);
             }
         }
 
-        private void RemoveEntry(MineralNode node)
+        private void CleanupMineralNodeReinforcements(MineralNode node)
         {
-            if (spawnedPresences.ContainsKey(node))
+            if (reinforcementsByMineralNode.ContainsKey(node))
             {
-                if (spawnedPresences[node] != null)
+                var activeWaves = reinforcementsByMineralNode[node].GetAllActiveWaves();
+                foreach (var wave in activeWaves)
                 {
-                    spawnedPresences[node].PresenceExpired -= OnPresenceExpired;
+                    ExpireWave(wave);
                 }
-                spawnedPresences.Remove(node);
+                reinforcementsByMineralNode.Remove(node);
             }
+        }
+
+        private void ExpireWave(INpcReinforcementWave wave)
+        {
+            wave.ActivePresence.PresenceExpired -= OnPresenceExpired;
+            wave.DeactivatePresence();
         }
 
         private Position TryFindSpawnLocation(Position start, double range)
@@ -97,15 +102,10 @@ namespace Perpetuum.Services.EventServices.EventProcessors
         {
             if (msg.NodeState == OreNodeState.Removed)
             {
-                RemoveEntry(msg.Node);
+                CleanupMineralNodeReinforcements(msg.Node);
                 return true;
             }
             return false;
-        }
-
-        private bool AlreadyHasActivePresence(OreNpcSpawnMessage msg)
-        {
-            return spawnedPresences.ContainsKey(msg.Node);
         }
 
         private Position FindSpawnPosition(OreNpcSpawnMessage msg)
@@ -134,10 +134,9 @@ namespace Perpetuum.Services.EventServices.EventProcessors
 
         private void DoSpawning(INpcReinforcementWave wave, Position homePosition, Position spawnPosition, MineralNode node)
         {
-            var pres = _zone.AddDynamicPresenceToPosition(wave.Presence, homePosition, spawnPosition, ORE_SPAWN_LIFETIME);
-            wave.Spawned = true;
+            var pres = _zone.AddDynamicPresenceToPosition(wave.PresenceId, homePosition, spawnPosition, ORE_SPAWN_LIFETIME);
             pres.PresenceExpired += OnPresenceExpired;
-            spawnedPresences.Add(node, pres);
+            wave.ActivePresence = pres;
         }
 
         private bool _spawning = false;
@@ -152,9 +151,6 @@ namespace Perpetuum.Services.EventServices.EventProcessors
                 CheckMineralNodeReinforcements(msg);
 
                 if (IsNodeDead(msg))
-                    return;
-
-                if (AlreadyHasActivePresence(msg))
                     return;
 
                 var spawnPos = FindSpawnPosition(msg);

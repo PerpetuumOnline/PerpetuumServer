@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Perpetuum.Zones.NpcSystem.Presences;
+using System;
 using System.Linq;
 using System.Text;
 
@@ -29,6 +30,21 @@ namespace Perpetuum.Zones.NpcSystem.Reinforcements
                 }
             }
             return null;
+        }
+
+        public bool HasActivePresence(Presence presence)
+        {
+            return _presences.Any(w => w.IsActivePresence(presence));
+        }
+
+        public INpcReinforcementWave GetActiveWaveOfPresence(Presence presence)
+        {
+            return _presences.Single(w => w.IsActivePresence(presence));
+        }
+
+        public INpcReinforcementWave[] GetAllActiveWaves()
+        {
+            return _presences.Where(w => !w.IsActivePresence(null)).ToArray();
         }
 
         public override string ToString()
