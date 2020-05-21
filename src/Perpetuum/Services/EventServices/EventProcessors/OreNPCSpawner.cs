@@ -18,7 +18,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
     /// </summary>
     public class OreNpcSpawner : EventProcessor<EventMessage>
     {
-        private const int SPAWN_DIST_FROM_FIELD = 60;
+        private const int SPAWN_DIST_FROM_FIELD = 100;
         private readonly TimeSpan ORE_SPAWN_LIFETIME = TimeSpan.FromHours(3);
         private readonly TimeSpan SPAWN_DELAY = TimeSpan.FromSeconds(10);
 
