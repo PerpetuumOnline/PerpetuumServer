@@ -1,11 +1,12 @@
+using Perpetuum.Services.EventServices;
 using Perpetuum.Zones.Terrains.Materials.Minerals.Generators;
 
 namespace Perpetuum.Zones.Terrains.Materials.Minerals
 {
     public class LiquidLayer : MineralLayer
     {
-        public LiquidLayer(int width, int height, IMineralConfiguration configuration, MineralNodeRepository nodeRepository, IMineralNodeGeneratorFactory nodeGeneratorFactory)
-            : base(width,height,configuration, nodeRepository,nodeGeneratorFactory)
+        public LiquidLayer(int width, int height, IMineralConfiguration configuration, IMineralNodeRepository nodeRepository, IMineralNodeGeneratorFactory nodeGeneratorFactory, EventListenerService eventListenerService)
+            : base(width, height, configuration, nodeRepository, nodeGeneratorFactory, eventListenerService)
         {
         }
 

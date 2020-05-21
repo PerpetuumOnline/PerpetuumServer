@@ -126,6 +126,7 @@ using Perpetuum.Zones.Gates;
 using Perpetuum.Zones.Intrusion;
 using Perpetuum.Zones.NpcSystem;
 using Perpetuum.Zones.NpcSystem.Flocks;
+using Perpetuum.Zones.NpcSystem.Reinforcements;
 using Perpetuum.Zones.NpcSystem.Presences;
 using Perpetuum.Zones.NpcSystem.Presences.InterzonePresences;
 using Perpetuum.Zones.NpcSystem.Presences.PathFinders;
@@ -1424,6 +1425,8 @@ namespace Perpetuum.Bootstrapper
 
         public void RegisterNpcs()
         {
+            _builder.RegisterType<NpcReinforcementsRepository>().SingleInstance().As<INpcReinforcementsRepository>();
+
             _builder.RegisterType<FlockConfiguration>().As<IFlockConfiguration>();
             _builder.RegisterType<FlockConfigurationBuilder>();
             _builder.RegisterType<IntIDGenerator>().Named<IIDGenerator<int>>("directFlockIDGenerator").SingleInstance().WithParameter("startID",25000);
@@ -1479,6 +1482,7 @@ namespace Perpetuum.Bootstrapper
             RegisterFlock<Flock>(PresenceType.Direct);
             RegisterFlock<NormalFlock>(PresenceType.DynamicPool);
             RegisterFlock<NormalFlock>(PresenceType.Dynamic);
+            RegisterFlock<RemoteSpawningFlock>(PresenceType.DynamicExtended);
             RegisterFlock<Flock>(PresenceType.Random);
             RegisterFlock<Flock>(PresenceType.Roaming);
             RegisterFlock<NormalFlock>(PresenceType.FreeRoaming);
@@ -1492,6 +1496,7 @@ namespace Perpetuum.Bootstrapper
             });
             RegisterPresence<DynamicPoolPresence>(PresenceType.DynamicPool);
             RegisterPresence<DynamicPresence>(PresenceType.Dynamic);
+            RegisterPresence<DynamicPresenceExtended>(PresenceType.DynamicExtended);
             RegisterPresence<RandomPresence>(PresenceType.Random);
             RegisterPresence<RoamingPresence>(PresenceType.Roaming);
             RegisterPresence<RoamingPresence>(PresenceType.FreeRoaming);
@@ -1677,9 +1682,10 @@ namespace Perpetuum.Bootstrapper
             _builder.RegisterType<ChatEcho>();
             _builder.RegisterType<NpcChatEcho>();
             _builder.RegisterType<AffectOutpostStability>();
+            _builder.RegisterType<OreNpcSpawner>();
             _builder.RegisterType<EventListenerService>().SingleInstance().OnActivated(e =>
             {
-                e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromSeconds(2.5)));
+                e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromSeconds(0.75)));
                 e.Instance.AttachListener(e.Context.Resolve<ChatEcho>());
                 e.Instance.AttachListener(e.Context.Resolve<NpcChatEcho>());
             });
@@ -2233,6 +2239,10 @@ namespace Perpetuum.Bootstrapper
                 var ctx = x.Resolve<IComponentContext>();
                 return zone =>
                 {
+                    var reader = ctx.Resolve<IMineralConfigurationReader>();
+                    var listener = new OreNpcSpawner(zone, ctx.Resolve<INpcReinforcementsRepository>(), reader);
+                    var eventListenerService = ctx.Resolve<EventListenerService>();
+                    eventListenerService.AttachListener(listener);
                     if (zone is TrainingZone)
                     {
                         var repo = ctx.Resolve<GravelRepository>();
@@ -2243,25 +2253,24 @@ namespace Perpetuum.Bootstrapper
                     }
 
                     var nodeGeneratorFactory = new MineralNodeGeneratorFactory(zone);
-                    var reader = ctx.Resolve<IMineralConfigurationReader>();
+                    
                     var materialLayers = new List<IMaterialLayer>();
 
                     foreach (var configuration in reader.ReadAll().Where(c => c.ZoneId == zone.Id))
                     {
                         var repo = new MineralNodeRepository(zone, configuration.Type);
-
                         switch (configuration.ExtractionType)
                         {
                             case MineralExtractionType.Solid:
                             {
-                                var layer = new OreLayer(zone.Size.Width, zone.Size.Height, configuration, repo, nodeGeneratorFactory);
+                                var layer = new OreLayer(zone.Size.Width, zone.Size.Height, configuration, repo, nodeGeneratorFactory, eventListenerService);
                                 layer.LoadMineralNodes();
                                 materialLayers.Add(layer);
                                 break;
                             }
                             case MineralExtractionType.Liquid:
                             {
-                                var layer = new LiquidLayer(zone.Size.Width, zone.Size.Height, configuration, repo, nodeGeneratorFactory);
+                                var layer = new LiquidLayer(zone.Size.Width, zone.Size.Height, configuration, repo, nodeGeneratorFactory, eventListenerService);
                                 layer.LoadMineralNodes();
                                 materialLayers.Add(layer);
                                 break;

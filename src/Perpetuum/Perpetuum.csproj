@@ -291,12 +291,14 @@
     <Compile Include="Services\EventServices\EventMessages\EventMessage.cs" />
     <Compile Include="Services\EventServices\EventMessages\EventMessageSimple.cs" />
     <Compile Include="Services\EventServices\EventMessages\NpcEventMessage.cs" />
+    <Compile Include="Services\EventServices\EventMessages\OreNpcSpawnMessage.cs" />
     <Compile Include="Services\EventServices\EventMessages\StabilityEffectMessage.cs" />
     <Compile Include="Services\EventServices\EventProcessors\AffectOutpostStability.cs" />
     <Compile Include="Services\EventServices\EventProcessors\ChatEcho.cs" />
     <Compile Include="Services\EventServices\EPBonusEventService.cs" />
     <Compile Include="Services\EventServices\EventListenerService.cs" />
     <Compile Include="Services\EventServices\EventProcessors\EventProcessor.cs" />
+    <Compile Include="Services\EventServices\EventProcessors\OreNPCSpawner.cs" />
     <Compile Include="Services\Mail\PreMadeMailNames.cs" />
     <Compile Include="Services\MissionEngine\DisplayMissionSpotsProcess.cs" />
     <Compile Include="Services\MissionEngine\MissionResolveTester.cs" />
@@ -564,6 +566,7 @@
     <Compile Include="TimeRange.cs" />
     <Compile Include="Timers\GlobalTimer.cs" />
     <Compile Include="Timers\IntervalTimer.cs" />
+    <Compile Include="Timers\TimeKeeper.cs" />
     <Compile Include="Timers\TimerAction.cs" />
     <Compile Include="Timers\TimerList.cs" />
     <Compile Include="Timers\TimeTracker.cs" />
@@ -676,7 +679,14 @@
     <Compile Include="Zones\NpcSystem\Flocks\FlockConfigurationRepository.cs" />
     <Compile Include="Zones\NpcSystem\Flocks\IFlockConfiguration.cs" />
     <Compile Include="Zones\NpcSystem\Flocks\IFlockConfigurationRepository.cs" />
+    <Compile Include="Zones\NpcSystem\Flocks\RemoteSpawningFlock.cs" />
     <Compile Include="Zones\NpcSystem\NpcBossInfo.cs" />
+    <Compile Include="Zones\NpcSystem\Reinforcements\INpcReinforcementWave.cs" />
+    <Compile Include="Zones\NpcSystem\Reinforcements\INpcReinforcementsRepository.cs" />
+    <Compile Include="Zones\NpcSystem\Reinforcements\INpcReinforcements.cs" />
+    <Compile Include="Zones\NpcSystem\Reinforcements\NpcReinforcementWave.cs" />
+    <Compile Include="Zones\NpcSystem\Reinforcements\NpcReinforcementsRepository.cs" />
+    <Compile Include="Zones\NpcSystem\Reinforcements\NpcReinforcements.cs" />
     <Compile Include="Zones\NpcSystem\Presences\InterzonePresences\IInterzonePresenceConfigurationReader.cs" />
     <Compile Include="Zones\NpcSystem\Presences\InterzonePresences\InterzoneGroup.cs" />
     <Compile Include="Zones\NpcSystem\Presences\InterzonePresences\InterzonePresence.cs" />
@@ -693,6 +703,7 @@
     <Compile Include="Zones\NpcSystem\Presences\RandomFlockInfo.cs" />
     <Compile Include="Zones\NpcSystem\Presences\RandomFlockReader.cs" />
     <Compile Include="Zones\NpcSystem\Presences\RandomFlockSelector.cs" />
+    <Compile Include="Zones\NpcSystem\Reinforcements\ReinforcementType.cs" />
     <Compile Include="Zones\ProximityProbes\PBSRegisterHelper.cs" />
     <Compile Include="Zones\ProximityProbes\VisibilityBasedProximityProbe.cs" />
     <Compile Include="Accounting\Characters\CharacterCleaner.cs" />
