@@ -20,8 +20,8 @@ namespace Perpetuum.Services.Relics
         protected bool _alive;
 
         protected const double ACTIVATION_RANGE = 3; //30m
-        protected readonly TimeSpan MAXLIFESPAN = TimeSpan.FromDays(3);
         protected TimeSpan lifespan = TimeSpan.Zero;
+        protected virtual TimeSpan MAXLIFESPAN { get { return TimeSpan.FromDays(3); } }
 
         // Locks - Be sure to use locks independently and do not nest calls into other locks!
         // Lock for Live/Dead state of Relic
