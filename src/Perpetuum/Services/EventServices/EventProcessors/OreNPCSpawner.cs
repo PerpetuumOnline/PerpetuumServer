@@ -136,7 +136,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
         {
             var pres = _zone.AddDynamicPresenceToPosition(wave.PresenceId, homePosition, spawnPosition, ORE_SPAWN_LIFETIME);
             pres.PresenceExpired += OnPresenceExpired;
-            wave.ActivePresence = pres;
+            wave.SetActivePresence(pres);
         }
 
         private bool _spawning = false;
