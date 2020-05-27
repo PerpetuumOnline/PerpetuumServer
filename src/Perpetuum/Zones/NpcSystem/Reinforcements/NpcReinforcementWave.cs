@@ -6,8 +6,8 @@ namespace Perpetuum.Zones.NpcSystem.Reinforcements
     {
         public int PresenceId { get; }
         public double Threshold { get; }
-        public bool Spawned => ActivePresence != null;
-        public DynamicPresence ActivePresence { get; set; }
+        public bool Spawned { get; private set; }
+        public DynamicPresence ActivePresence { get; private set; }
 
         public NpcReinforcementWave(int presenceID, double threshold)
         {
@@ -18,6 +18,12 @@ namespace Perpetuum.Zones.NpcSystem.Reinforcements
         public override string ToString()
         {
             return $"{Threshold}:{PresenceId} Spawned? {Spawned}";
+        }
+
+        public void SetActivePresence(DynamicPresence presence)
+        {
+            ActivePresence = presence;
+            Spawned = true;
         }
 
         public bool IsActivePresence(Presence presence)
