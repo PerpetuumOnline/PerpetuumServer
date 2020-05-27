@@ -19,6 +19,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
     public class OreNpcSpawner : EventProcessor<EventMessage>
     {
         private const int SPAWN_DIST_FROM_FIELD = 100;
+        private const int SPAWN_AREA_REQUIRED_SIZE = 3000;
         private readonly TimeSpan ORE_SPAWN_LIFETIME = TimeSpan.FromHours(3);
         private readonly TimeSpan SPAWN_DELAY = TimeSpan.FromSeconds(10);
 
@@ -71,7 +72,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
                 var pos = start.OffsetInDirection(random, range);
                 var posFinder = new ClosestWalkablePositionFinder(_zone, pos);
                 posFinder.Find(out Position p);
-                var result = _zone.FindWalkableArea(p, _zone.Size.ToArea(), 100);
+                var result = _zone.FindWalkableArea(p, _zone.Size.ToArea(), SPAWN_AREA_REQUIRED_SIZE);
                 if (result != null)
                 {
                     return p;
