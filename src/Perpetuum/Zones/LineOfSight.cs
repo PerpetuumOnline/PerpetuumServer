@@ -100,7 +100,7 @@ namespace Perpetuum.Zones
         [NotNull]
         private static LOSResult IsInLineOfSight(IZone zone, Vector3 origin, Vector3 direction, float distance, bool ballistic)
         {
-            if (distance == 0.0)
+            if (distance.IsApproximatelyEqual(0.0f))
             {
                 var blockingInfo = zone.Terrain.Blocks.GetValue(origin);
                 var losResult = new LOSResult

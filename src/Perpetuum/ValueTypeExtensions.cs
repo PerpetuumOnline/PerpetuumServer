@@ -85,6 +85,18 @@ namespace Perpetuum
             return Math.Abs(num) < float.Epsilon;
         }
 
+        public static bool IsApproximatelyEqual(this double left, double right, double precision = 0.0000001)
+        {
+            var result = Math.Abs(left - right);
+            return result <= precision;
+        }
+
+        public static bool IsApproximatelyEqual(this float left, float right, float precision = 0.0000001f)
+        {
+            var result = Math.Abs(left - right);
+            return result <= precision;
+        }
+
         public static double Clamp(this double value, double lowerBound = 0.0, double upperBound = 1.0)
         {
             return Math.Min(upperBound, Math.Max(lowerBound, value));
