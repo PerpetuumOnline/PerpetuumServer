@@ -98,8 +98,20 @@ namespace Perpetuum.Zones
         }
 
         [NotNull]
-        private static LOSResult IsInLineOfSight(IZone zone,Vector3 origin,Vector3 direction,float distance,bool ballistic)
+        private static LOSResult IsInLineOfSight(IZone zone, Vector3 origin, Vector3 direction, float distance, bool ballistic)
         {
+            if (distance.IsApproximatelyEqual(0.0f))
+            {
+                var blockingInfo = zone.Terrain.Blocks.GetValue(origin);
+                var losResult = new LOSResult
+                {
+                    hit = true,
+                    position = (Position)origin,
+                    blockingFlags = blockingInfo.Flags
+                };
+                return losResult;
+            }
+
             var lastAltitude = zone.Terrain.Altitude.GetAltitudeAsDouble(origin) + 2;
 
             var lx = (int) origin.X;

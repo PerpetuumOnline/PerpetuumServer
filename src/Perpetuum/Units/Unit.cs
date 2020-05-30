@@ -482,9 +482,21 @@ namespace Perpetuum.Units
             Task.Delay(FastRandom.NextInt(0, 3000)).ContinueWith(t => zone.DoAoeDamage(damageBuilder));
         }
 
+        /// <summary>
+        /// Fitted curve to achieve desired explosion distances for bots of certain sizes by class
+        /// Ensures output will be bounded and that arbitrary input will not result in error or undesired output
+        /// </summary>
+        /// <param name="x">SignativeRadius of bot</param>
+        /// <returns>Radius in number of tiles (10m)</returns>
+        private double SigRadiusToExplosionRadius(double x)
+        {
+            x = x.Clamp(3.0, 40.0);
+            return (-3.336453 + 1.617863 * x - 0.09721877 * (x * x) + 0.002064723 * (x * x * x)).Clamp(1.0, 30.0);
+        }
+
         private IDamageBuilder GetExplosionDamageBuilder()
         {
-            var radius = SignatureRadius * 0.5; //Note: reduced for increased bot srf-areas
+            var radius = SigRadiusToExplosionRadius(SignatureRadius);
             var damageBuilder = DamageInfo.Builder.WithAttacker(this)
                                           .WithOptimalRange(1)
                                           .WithFalloff(radius)
@@ -500,7 +512,7 @@ namespace Perpetuum.Units
             if (coreMax.IsZero())
                 coreMax = 1.0;
 
-            var damage = (Math.Sin( Core.Ratio(coreMax) * Math.PI) + 1)*(armorMaxValue*0.1);
+            var damage = (Math.Sin(Core.Ratio(coreMax) * Math.PI) + 1) * (armorMaxValue * 0.1);
             damageBuilder.WithAllDamageTypes(damage);
             return damageBuilder;
         }
