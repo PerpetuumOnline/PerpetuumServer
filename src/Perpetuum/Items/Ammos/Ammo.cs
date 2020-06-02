@@ -20,6 +20,14 @@ namespace Perpetuum.Items.Ammos
             }
         }
 
+        public ItemPropertyModifier FalloffRangePropertyModifier
+        {
+            get
+            {
+                return GetPropertyModifier(AggregateField.falloff);
+            }
+        }
+
         public override void AcceptVisitor(IEntityVisitor visitor)
         {
             if (!TryAcceptVisitor(this, visitor))

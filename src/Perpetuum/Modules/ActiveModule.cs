@@ -113,8 +113,7 @@ namespace Perpetuum.Modules
             var optimalRange = ItemPropertyModifier.Create(AggregateField.optimal_range);
 
             var ammo = _module.GetAmmo();
-            var m = module as MissileWeaponModule;
-            if (m != null)
+            if (module is MissileWeaponModule m)
             {
                 if (ammo != null)
                 {
@@ -138,18 +137,31 @@ namespace Perpetuum.Modules
 
     public class FalloffProperty : ModuleProperty
     {
-        public FalloffProperty(Module module) : base(module, AggregateField.falloff)
+        public FalloffProperty(ActiveModule module) : base(module, AggregateField.falloff)
         {
         }
 
         protected override double CalculateValue()
         {
-            var p = module.GetPropertyModifier(AggregateField.falloff);
-
-            var ammo = ((ActiveModule) module).GetAmmo();
-            ammo?.ModifyFalloff(ref p);
-
-            return p.Value;
+            var falloff = ItemPropertyModifier.Create(AggregateField.falloff);
+            var ammo = ((ActiveModule)module).GetAmmo();
+            if (module is MissileWeaponModule m)
+            {
+                if (ammo != null)
+                {
+                    falloff = ammo.FalloffRangePropertyModifier;
+                    var missileRangeMod = m.MissileFalloffModifier.ToPropertyModifier();
+                    missileRangeMod.Modify(ref falloff);
+                    module.ApplyRobotPropertyModifiers(ref falloff);
+                }
+            }
+            else
+            {
+                falloff = module.GetPropertyModifier(AggregateField.falloff);
+                ammo?.ModifyFalloff(ref falloff);
+            }
+            ApplyEffectModifiers(ref falloff);
+            return falloff.Value;
         }
     }
 
@@ -159,7 +171,7 @@ namespace Perpetuum.Modules
         private Lock _lock;
         protected readonly ModuleProperty coreUsage;
         protected readonly CycleTimeProperty cycleTime;
-        private readonly ItemProperty _falloff = ItemProperty.None;
+        protected readonly ItemProperty falloff = ItemProperty.None;
         protected readonly ModuleProperty optimalRange;
 
         private readonly CategoryFlags _ammoCategoryFlags;
@@ -176,8 +188,8 @@ namespace Perpetuum.Modules
             {
                 optimalRange = new OptimalRangeProperty(this);
                 AddProperty(optimalRange);
-                _falloff = new FalloffProperty(this);
-                AddProperty(_falloff);
+                falloff = new FalloffProperty(this);
+                AddProperty(falloff);
             }
 
             _ammoCategoryFlags = ammoCategoryFlags;
@@ -212,7 +224,7 @@ namespace Perpetuum.Modules
 
         protected double Falloff
         {
-            get { return _falloff.Value; }
+            get { return falloff.Value; }
         }
 
         public Lock Lock
@@ -463,7 +475,7 @@ namespace Perpetuum.Modules
                 }
                 case AggregateField.falloff:
                 {
-                    _falloff.Update();
+                    falloff.Update();
                     break;
                 }
             }

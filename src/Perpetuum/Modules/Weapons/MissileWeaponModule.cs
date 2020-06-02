@@ -9,6 +9,7 @@ namespace Perpetuum.Modules.Weapons
     {
         private readonly ItemProperty _propertyExplosionRadius;
         public readonly ModuleProperty MissileRangeModifier;
+        public readonly ModuleProperty MissileFalloffModifier;
 
         public MissileWeaponModule(CategoryFlags ammoCategoryFlags) : base(ammoCategoryFlags)
         {
@@ -17,6 +18,8 @@ namespace Perpetuum.Modules.Weapons
             MissileRangeModifier = new ModuleProperty(this, AggregateField.module_missile_range_modifier);
             MissileRangeModifier.AddEffectModifier(AggregateField.effect_missile_range_modifier);
             AddProperty(MissileRangeModifier);
+            MissileFalloffModifier = new ModuleProperty(this, AggregateField.module_missile_falloff_modifier);
+            AddProperty(MissileFalloffModifier);
         }
 
         public override void AcceptVisitor(IEntityVisitor visitor)
@@ -39,6 +42,11 @@ namespace Perpetuum.Modules.Weapons
                 case AggregateField.effect_missile_range_modifier:
                     {
                         MissileRangeModifier.Update();
+                        return;
+                    }
+                case AggregateField.module_missile_falloff_modifier:
+                    {
+                        MissileFalloffModifier.Update();
                         return;
                     }
             }
