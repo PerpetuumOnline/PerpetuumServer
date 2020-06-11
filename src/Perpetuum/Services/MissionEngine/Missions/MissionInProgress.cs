@@ -1355,12 +1355,12 @@ namespace Perpetuum.Services.MissionEngine.Missions
                     //If item is tokens, split amoung participants
                     if (myLocation.GetRaceSpecificCoinDefinition() == reward.ItemInfo.Definition)
                     {
-                        if (_participants.Count > 0 && myLocation.GetRaceSpecificCoinDefinition() == reward.ItemInfo.Definition)
+                        if (GetParticipants().Count > 0 && myLocation.GetRaceSpecificCoinDefinition() == reward.ItemInfo.Definition)
                         {
-                            var tokenSplitQuantity = (int)Math.Ceiling((double)reward.ItemInfo.Quantity / (double)_participants.Count);
+                            var tokenSplitQuantity = (int)Math.Ceiling((double)reward.ItemInfo.Quantity / (double)GetParticipants().Count);
                             var splitTokens = new MissionReward(new ItemInfo(reward.ItemInfo.Definition, tokenSplitQuantity));
                             Item tokenItem = null;
-                            foreach (var participant in _participants)
+                            foreach (var participant in GetParticipants())
                             {
                                 var rewardItem = publicContainer.CreateAndAddItem(splitTokens.ItemInfo, false, item => { item.Owner = participant.Eid; });
 
@@ -1461,10 +1461,10 @@ namespace Perpetuum.Services.MissionEngine.Missions
 
         public double GetParticipantBonusModifier()
         {
-            return computeParticipantBonusMultiplier(this._participants.Count);
+            return ComputeParticipantBonusMultiplier(GetParticipants().Count);
         }
 
-        private double computeParticipantBonusMultiplier(int paricipantCount)
+        private double ComputeParticipantBonusMultiplier(int paricipantCount)
         {
             //Solo or squad of 1 and initial estimate
             if (paricipantCount < 2)
@@ -1479,10 +1479,10 @@ namespace Perpetuum.Services.MissionEngine.Missions
             return  participantModifier;
         }
 
-    /// <summary>
-    /// Both old and new tech handled
-    /// </summary>
-    public void PayOutMission(double rewardFraction, List<Character> participants, List<Character> onlineGangMembers, Dictionary<string, object> successData)
+        /// <summary>
+        /// Both old and new tech handled
+        /// </summary>
+        public void PayOutMission(double rewardFraction, List<Character> participants, List<Character> onlineGangMembers, Dictionary<string, object> successData)
         {
             var paymentData = new Dictionary<string, object>();
             
