@@ -1355,12 +1355,13 @@ namespace Perpetuum.Services.MissionEngine.Missions
                     //If item is tokens, split amoung participants
                     if (myLocation.GetRaceSpecificCoinDefinition() == reward.ItemInfo.Definition)
                     {
-                        if (GetParticipants().Count > 0 && myLocation.GetRaceSpecificCoinDefinition() == reward.ItemInfo.Definition)
+                        var participants = GetParticipants();
+                        if (participants.Count > 0 && myLocation.GetRaceSpecificCoinDefinition() == reward.ItemInfo.Definition)
                         {
-                            var tokenSplitQuantity = (int)Math.Ceiling((double)reward.ItemInfo.Quantity / (double)GetParticipants().Count);
+                            var tokenSplitQuantity = (int)Math.Ceiling((double)reward.ItemInfo.Quantity / (double)participants.Count);
                             var splitTokens = new MissionReward(new ItemInfo(reward.ItemInfo.Definition, tokenSplitQuantity));
                             Item tokenItem = null;
-                            foreach (var participant in GetParticipants())
+                            foreach (var participant in participants)
                             {
                                 var rewardItem = publicContainer.CreateAndAddItem(splitTokens.ItemInfo, false, item => { item.Owner = participant.Eid; });
 
