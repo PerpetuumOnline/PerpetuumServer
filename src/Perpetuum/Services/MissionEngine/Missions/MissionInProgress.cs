@@ -1477,7 +1477,7 @@ namespace Perpetuum.Services.MissionEngine.Missions
             double participantBonus = 0.05;  //TODO expose parameter in DB
             participantCount = participantCount.Clamp(1, MaxmimalGangParticipants);
             double participantModifier = 1 + participantCount * participantBonus;
-            return  participantModifier;
+            return participantModifier;
         }
 
         /// <summary>
