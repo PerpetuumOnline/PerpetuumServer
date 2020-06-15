@@ -1355,12 +1355,13 @@ namespace Perpetuum.Services.MissionEngine.Missions
                     //If item is tokens, split amoung participants
                     if (myLocation.GetRaceSpecificCoinDefinition() == reward.ItemInfo.Definition)
                     {
-                        if (_participants.Count > 0 && myLocation.GetRaceSpecificCoinDefinition() == reward.ItemInfo.Definition)
+                        var participants = GetParticipants();
+                        if (participants.Count > 0 && myLocation.GetRaceSpecificCoinDefinition() == reward.ItemInfo.Definition)
                         {
-                            var tokenSplitQuantity = (int)Math.Ceiling((double)reward.ItemInfo.Quantity / (double)_participants.Count);
+                            var tokenSplitQuantity = (int)Math.Ceiling((double)reward.ItemInfo.Quantity / (double)participants.Count);
                             var splitTokens = new MissionReward(new ItemInfo(reward.ItemInfo.Definition, tokenSplitQuantity));
                             Item tokenItem = null;
-                            foreach (var participant in _participants)
+                            foreach (var participant in participants)
                             {
                                 var rewardItem = publicContainer.CreateAndAddItem(splitTokens.ItemInfo, false, item => { item.Owner = participant.Eid; });
 
@@ -1461,28 +1462,28 @@ namespace Perpetuum.Services.MissionEngine.Missions
 
         public double GetParticipantBonusModifier()
         {
-            return computeParticipantBonusMultiplier(this._participants.Count);
+            return ComputeParticipantBonusMultiplier(GetParticipants().Count);
         }
 
-        private double computeParticipantBonusMultiplier(int paricipantCount)
+        private double ComputeParticipantBonusMultiplier(int participantCount)
         {
             //Solo or squad of 1 and initial estimate
-            if (paricipantCount < 2)
+            if (participantCount < 2)
             {
                 return 1.0;
             }
             //Modify total reward by participants
             //Clamp participant count to [1,MaxmimalGangParticipants]
             double participantBonus = 0.05;  //TODO expose parameter in DB
-            int participantCount = Math.Min(MaxmimalGangParticipants, Math.Max(1, paricipantCount));
+            participantCount = participantCount.Clamp(1, MaxmimalGangParticipants);
             double participantModifier = 1 + participantCount * participantBonus;
-            return  participantModifier;
+            return participantModifier;
         }
 
-    /// <summary>
-    /// Both old and new tech handled
-    /// </summary>
-    public void PayOutMission(double rewardFraction, List<Character> participants, List<Character> onlineGangMembers, Dictionary<string, object> successData)
+        /// <summary>
+        /// Both old and new tech handled
+        /// </summary>
+        public void PayOutMission(double rewardFraction, List<Character> participants, List<Character> onlineGangMembers, Dictionary<string, object> successData)
         {
             var paymentData = new Dictionary<string, object>();
             
