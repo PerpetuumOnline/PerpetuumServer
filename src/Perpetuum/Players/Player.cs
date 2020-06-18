@@ -721,7 +721,12 @@ namespace Perpetuum.Players
             if (victim is ITaggable taggable)
                 taggable.Tag(this,TimeSpan.Zero);
 
-            if ( victim is MobileTeleport || victim is BlobEmitterUnit || victim is IPBSObject || victim is WallHealer || victim is ProximityProbeBase)
+            if (victim is BlobEmitterUnit b && b.IsPlayerSpawned)
+            {
+                ApplyPvPEffect();
+                return;
+            }
+            else if (victim is MobileTeleport || victim is IPBSObject || victim is WallHealer || victim is ProximityProbeBase)
             {
                 ApplyPvPEffect();
                 return;
