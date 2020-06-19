@@ -2,6 +2,7 @@
 using System.Linq;
 using Perpetuum.EntityFramework;
 using Perpetuum.ExportedTypes;
+using Perpetuum.Players;
 using Perpetuum.Units;
 using Perpetuum.Zones;
 using Perpetuum.Zones.Beams;
@@ -95,6 +96,8 @@ namespace Perpetuum.Modules
             blobEmitter.DespawnTime = TimeSpan.FromMilliseconds(despawnTimeMod.Value);
             blobEmitter.BlobEmission = _blobEmission.Value;
             blobEmitter.BlobEmissionRadius = _blobEmissionRadius.Value;
+            if (ParentRobot is Player player)
+                blobEmitter.Owner = player.Character.Eid;
 
             var finder = new ClosestWalkablePositionFinder(zone, targetPosition);
             var position = finder.FindOrThrow();

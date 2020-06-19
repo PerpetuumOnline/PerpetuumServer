@@ -4,15 +4,17 @@ using Perpetuum.Units;
 
 namespace Perpetuum.Zones.Blobs.BlobEmitters
 {
-    public class BlobEmitterUnit : Unit,IBlobEmitter
+    public class BlobEmitterUnit : Unit, IBlobEmitter
     {
         private double _blobEmission;
         private double _blobEmissionRadius;
         private UnitDespawnHelper _despawnHelper;
 
+        public bool IsPlayerSpawned => Owner != 0;
+
         public TimeSpan DespawnTime
         {
-            set { _despawnHelper = UnitDespawnHelper.Create(this,value); }
+            set { _despawnHelper = UnitDespawnHelper.Create(this, value); }
         }
 
         public override bool IsLockable
