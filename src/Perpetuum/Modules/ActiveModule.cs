@@ -207,25 +207,13 @@ namespace Perpetuum.Modules
         {
         }
 
-        public TimeSpan CycleTime
-        {
-            get { return TimeSpan.FromMilliseconds(cycleTime.Value); }
-        }
+        public TimeSpan CycleTime => TimeSpan.FromMilliseconds(cycleTime.Value);
 
-        public double CoreUsage
-        {
-            get { return coreUsage.Value; }
-        }
+        public double CoreUsage => coreUsage.Value;
 
-        public double OptimalRange
-        {
-            get { return optimalRange.Value; }
-        }
+        public double OptimalRange => optimalRange.Value;
 
-        protected double Falloff
-        {
-            get { return falloff.Value; }
-        }
+        protected double Falloff => falloff.Value;
 
         public Lock Lock
         {
