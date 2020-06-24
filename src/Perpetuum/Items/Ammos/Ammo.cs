@@ -7,26 +7,9 @@ namespace Perpetuum.Items.Ammos
 {
     public class Ammo : Item
     {
-        public double BulletTime
-        {
-            get { return ED.Options.BulletTime; }
-        }
-
-        public ItemPropertyModifier OptimalRangePropertyModifier
-        {
-            get
-            {
-                return GetPropertyModifier(AggregateField.optimal_range);
-            }
-        }
-
-        public ItemPropertyModifier FalloffRangePropertyModifier
-        {
-            get
-            {
-                return GetPropertyModifier(AggregateField.falloff);
-            }
-        }
+        public double BulletTime => ED.Options.BulletTime;
+        public ItemPropertyModifier OptimalRangePropertyModifier => GetPropertyModifier(AggregateField.optimal_range);
+        public ItemPropertyModifier FalloffRangePropertyModifier => GetPropertyModifier(AggregateField.falloff);
 
         public override void AcceptVisitor(IEntityVisitor visitor)
         {
