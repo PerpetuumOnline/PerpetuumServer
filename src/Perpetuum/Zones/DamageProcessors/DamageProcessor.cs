@@ -13,7 +13,7 @@ namespace Perpetuum.Zones.DamageProcessors
     public class DamageProcessor 
     {
         private readonly Unit _unit;
-        private readonly Lazy<ShieldGeneratorModule> _shield;
+        private Lazy<ShieldGeneratorModule> _shield;
         private readonly Queue<DamageInfo> _damageInfos = new Queue<DamageInfo>();
         private bool _processing;
 
@@ -22,9 +22,14 @@ namespace Perpetuum.Zones.DamageProcessors
         public DamageProcessor(Unit unit)
         {
             _unit = unit;
+            OnRequipUnit();
+        }
+
+        public void OnRequipUnit()
+        {
             _shield = new Lazy<ShieldGeneratorModule>(() =>
             {
-                var robot = unit as Robot;
+                var robot = _unit as Robot;
                 return robot?.Modules.OfType<ShieldGeneratorModule>().FirstOrDefault();
             });
         }

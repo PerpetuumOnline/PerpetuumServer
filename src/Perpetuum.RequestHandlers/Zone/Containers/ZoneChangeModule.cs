@@ -1,15 +1,22 @@
 using System.Collections.Generic;
 using System.Transactions;
+using Perpetuum.Containers;
 using Perpetuum.Data;
 using Perpetuum.Host.Requests;
 using Perpetuum.Items;
-using Perpetuum.Robots;
+using Perpetuum.Players;
 using Perpetuum.Zones;
 
 namespace Perpetuum.RequestHandlers.Zone.Containers
 {
-    public class ZoneChangeModule : ZoneContainerRequestHandler
+    public abstract class ZoneChangeModule : ZoneContainerRequestHandler
     {
+        /// <summary>
+        /// Equip or Remove module based on implementing class
+        /// Must be called inside of transaction in HandleRequest
+        /// </summary>
+        public abstract void DoChange(IZoneRequest request, Player player, Container container);
+
         public override void HandleRequest(IZoneRequest request)
         {
             using (var scope = Db.CreateTransaction())
@@ -17,33 +24,53 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
                 var character = request.Session.Character;
                 var player = request.Zone.GetPlayerOrThrow(character);
 
+                //Store ratios before transaction
+                var hpRatio = player.ArmorPercentage;
+                var apRatio = player.CorePercentage;
+
                 CheckPvpState(player).ThrowIfError();
                 CheckCombatState(player).ThrowIfError();
                 CheckActiveModules(player).ThrowIfError();
 
+                var containerEid = request.Data.GetOrDefault<long>(k.containerEID);
+                var container = request.Zone.FindContainerOrThrow(player, containerEid);
+
+                CheckContainerType(container).ThrowIfError();
+                CheckFieldTerminalRange(player, container).ThrowIfError();
+
+
                 player.EnlistTransaction();
+                container.EnlistTransaction();
 
-                var componentType = request.Data.GetOrDefault<string>(k.sourceComponent).ToEnum<RobotComponentType>();
-                var component = player.GetRobotComponentOrThrow(componentType);
-                var sourceSlot = request.Data.GetOrDefault<int>(k.source);
-                var targetSlot = request.Data.GetOrDefault<int>(k.target);
-                component.ChangeModuleOrThrow(sourceSlot, targetSlot);
-
-                player.Initialize(character);
-
-                player.Save();
-
-                Transaction.Current.OnCommited(() =>
+                Transaction.Current.OnCompleted(completed =>
                 {
+                    player.Initialize(character);
+
+                    //Apply original ratios after unequip-action
+                    player.Armor = player.ArmorMax * hpRatio;
+                    player.Core = player.CoreMax * apRatio;
+
                     player.SendRefreshUnitPacket();
 
                     var result = new Dictionary<string, object>
                     {
-                        { k.robot, player.ToDictionary() }
+                        {k.robot, player.ToDictionary()},
+                        {k.container, container.ToDictionary()}
                     };
                     Message.Builder.FromRequest(request).WithData(result).WrapToResult().Send();
                 });
-                
+
+                // Call equip/remove
+                DoChange(request, player, container);
+
+                player.OnEquipChange();
+
+                player.Initialize(character);
+                player.CheckEnergySystemAndThrowIfFailed();
+
+                player.Save();
+                container.Save();
+
                 scope.Complete();
             }
         }

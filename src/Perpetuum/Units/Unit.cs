@@ -642,6 +642,11 @@ namespace Perpetuum.Units
         {
         }
 
+        public void OnEquipChange()
+        {
+            _damageProcessor.OnRequipUnit();
+        }
+
         public double GetKersByDamageType(DamageType damageType)
         {
             switch (damageType)
