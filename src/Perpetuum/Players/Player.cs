@@ -315,6 +315,7 @@ namespace Perpetuum.Players
 
         public void ApplyInvulnerableEffect()
         {
+            RemoveInvulnerableEffect(); // Remove existing effect, set new
             var builder = NewEffectBuilder().SetType(EffectType.effect_invulnerable);
             builder.WithDurationModifier(0.75); //Reduce span of syndicate protection
             ApplyEffect(builder);

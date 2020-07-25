@@ -59,8 +59,7 @@ namespace Perpetuum.Zones.Teleporting.Strategies
                 }
                 if (ApplyInvulnerable)
                 {
-                    player.RemoveInvulnerableEffect(); // remove previous effect.
-                    player.ApplyInvulnerableEffect(); // re-add effect to restart counter.
+                    player.ApplyInvulnerableEffect();
                 }
 
                 // mozoghat, fade out
