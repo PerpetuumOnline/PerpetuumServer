@@ -58,14 +58,14 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
                 player.Armor = player.ArmorMax * hpRatio;
                 player.Core = player.CoreMax * apRatio;
 
+
                 player.Save();
                 container.Save();
 
-                var result = new Dictionary<string, object>
-                    {
-                        {k.robot, player.ToDictionary()},
-                        {k.container, container.ToDictionary()}
-                    };
+                var result = new Dictionary<string, object> {
+                    { k.robot, player.ToDictionary() },
+                    { k.container, container.ToDictionary() }
+                };
                 var message = Message.Builder.FromRequest(request).WithData(result).WrapToResult();
                 Transaction.Current.OnCompleted(completed => OnCompleted(player, message));
 
