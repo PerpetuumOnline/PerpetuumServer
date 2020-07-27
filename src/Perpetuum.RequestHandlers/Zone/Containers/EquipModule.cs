@@ -5,7 +5,6 @@ using Perpetuum.Modules;
 using Perpetuum.Players;
 using Perpetuum.Robots;
 
-
 namespace Perpetuum.RequestHandlers.Zone.Containers
 {
     public class EquipModule : ZoneChangeModule
