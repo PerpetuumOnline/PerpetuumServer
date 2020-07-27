@@ -642,6 +642,15 @@ namespace Perpetuum.Units
         {
         }
 
+        /// <summary>
+        /// Must be called when modules are changed on zone!
+        /// Handles any internal state dependent on modules being equipped.
+        /// </summary>
+        public void OnEquipChange()
+        {
+            _damageProcessor.OnRequipUnit();
+        }
+
         public double GetKersByDamageType(DamageType damageType)
         {
             switch (damageType)
