@@ -33,7 +33,7 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
 
                 EquipChange(request, player, container, character);
 
-                SendClientMessageOncomplete(request, player, container);
+                SendClientMessageOnComplete(request, player, container);
 
                 scope.Complete();
             }
@@ -88,7 +88,7 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
             container.Save();
         }
 
-        private void SendClientMessageOncomplete(IZoneRequest request, Player player, Container container)
+        private void SendClientMessageOnComplete(IZoneRequest request, Player player, Container container)
         {
             var message = BuildMessage(request, player, container);
             Transaction.Current.OnCompleted(completed => OnCompleted(player, message));
