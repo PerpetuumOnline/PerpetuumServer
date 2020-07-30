@@ -9,7 +9,7 @@ using Perpetuum.ExportedTypes;
 
 namespace Perpetuum.EntityFramework
 {
-    public class Entity
+    public class Entity : IEntity
     {
         public static IEntityServices Services { get; set; }
 

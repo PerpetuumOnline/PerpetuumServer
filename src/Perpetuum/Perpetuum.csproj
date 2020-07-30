@@ -78,7 +78,6 @@
       <HintPath>..\..\packages\System.Collections.Immutable.1.4.0\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -93,7 +92,6 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="WindowsBase">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -1159,11 +1157,14 @@
     <Compile Include="Zones\ZoneEntityRepositories\ZoneUnitService.cs" />
     <Compile Include="Zones\ZoneExitType.cs" />
     <Compile Include="Zones\ZoneManager.cs" />
+    <Compile Include="Zones\SessionlessPlayerTimeout.cs" />
     <Compile Include="Zones\ZoneSession.cs" />
     <Compile Include="Zones\ZoneSessionExtensions.cs" />
     <Compile Include="Zones\ZoneStorage.cs" />
     <Compile Include="Zones\ZoneTicket.cs" />
     <Compile Include="Zones\ZoneType.cs" />
+    <Compile Include="Comparers\EntityComparer.cs" />
+    <Compile Include="EntityFramework\IEntity.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -1206,6 +1207,7 @@
     <Folder Include="Properties\" />
     <Folder Include="Services\ProductionEngine\Methods\" />
     <Folder Include="Services\Relay\RequestHandlers\" />
+    <Folder Include="Comparers\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

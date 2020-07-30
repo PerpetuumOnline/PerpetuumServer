@@ -9,7 +9,6 @@ using System.Threading;
 using Perpetuum.Accounting.Characters;
 using Perpetuum.Common.Loggers;
 using Perpetuum.EntityFramework;
-using Perpetuum.ExportedTypes;
 using Perpetuum.Groups.Corporations;
 using Perpetuum.Groups.Gangs;
 using Perpetuum.Log;
@@ -24,7 +23,6 @@ using Perpetuum.Units;
 using Perpetuum.Zones.Beams;
 using Perpetuum.Zones.Blobs;
 using Perpetuum.Zones.Decors;
-using Perpetuum.Zones.Effects;
 using Perpetuum.Zones.Environments;
 using Perpetuum.Zones.NpcSystem.Presences;
 using Perpetuum.Zones.NpcSystem.SafeSpawnPoints;
@@ -80,13 +78,16 @@ namespace Perpetuum.Zones
 
         public TcpListener Listener { get; set; }
 
-        protected Zone(ISessionManager sessionManager,IGangManager gangManager)
+        private readonly SessionlessPlayerTimeout _sessionlessPlayerTimeout;
+
+        protected Zone(ISessionManager sessionManager, IGangManager gangManager)
         {
             sessionManager.CharacterDeselected += OnCharacterDeselected;
             _gangManager = gangManager;
             _gangManager.GangMemberJoined += OnGangMemberJoined;
             _gangManager.GangMemberRemoved += OnGangMemberRemoved;
             _gangManager.GangDisbanded += OnGangDisbanded;
+            _sessionlessPlayerTimeout = new SessionlessPlayerTimeout(this);
         }
 
         private void OnCharacterDeselected(ISession session, Character character)
@@ -155,6 +156,8 @@ namespace Perpetuum.Zones
             {
                 session.Update(time);
             }
+
+            _sessionlessPlayerTimeout.Update(time);
         }
 
         [CanBeNull]
