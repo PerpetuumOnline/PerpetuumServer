@@ -39,14 +39,12 @@ namespace Perpetuum.Services.EventServices
     /// </summary>
     public class NpcChatEcho : EventProcessor<EventMessage>
     {
-        private readonly IChannelManager _channelManager;
         private const string SENDER_CHARACTER_NICKNAME = "[OPP] Announcer"; //TODO "Nian" character
         private Character _announcer;
 
-        public NpcChatEcho(IChannelManager channelManager)
+        public NpcChatEcho()
         {
             _announcer = Character.GetByNick(SENDER_CHARACTER_NICKNAME);
-            _channelManager = channelManager;
         }
 
         public override void OnNext(EventMessage value)

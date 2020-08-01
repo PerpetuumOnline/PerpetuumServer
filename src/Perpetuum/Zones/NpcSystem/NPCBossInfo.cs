@@ -48,29 +48,40 @@ namespace Perpetuum.Zones.NpcSystem
         private readonly int _id;
         private readonly int _flockid;
         private readonly double? _respawnNoiseFactor;
-        private readonly bool _lootSplit;
         private readonly long? _outpostEID;
         private readonly int? _stabilityPts;
-        private readonly bool _overrideRelations;
         private readonly string _deathMsg;
         private readonly string _aggroMsg;
-        private bool _sayOnce;
+        private bool _speak;
+
+        private bool IsOutpostBoss { get { return _outpostEID != null; } }
+        private int StabilityPoints { get { return _stabilityPts ?? 0; } }
+        private bool OverrideRelations { get; }
+
+        public bool IsLootSplit { get; }
 
         public NpcBossInfo(int id, int flockid, double? respawnNoiseFactor, bool lootSplit, long? outpostEID, int? stabilityPts, bool overrideRelations, string customDeathMsg, string customAggroMsg)
         {
             _id = id;
             _flockid = flockid;
             _respawnNoiseFactor = respawnNoiseFactor;
-            _lootSplit = lootSplit;
+            IsLootSplit = lootSplit;
             _outpostEID = outpostEID;
             _stabilityPts = stabilityPts;
-            _overrideRelations = overrideRelations;
+            OverrideRelations = overrideRelations;
             _deathMsg = customDeathMsg;
             _aggroMsg = customAggroMsg;
-            _sayOnce = true;
+            _speak = true;
         }
 
-        // TODO - find good place to call this that will be stable and not noisey (excessive repeat messages)
+        /// <summary>
+        /// Handle any actions when the boss loses aggro
+        /// </summary>
+        public void OnDeAggro()
+        {
+            _speak = true;
+        }
+
         /// <summary>
         /// Handle any actions that this NPC Boss should do upon Aggression, including sending a message
         /// </summary>
@@ -78,15 +89,8 @@ namespace Perpetuum.Zones.NpcSystem
         /// <param name="channel">the npc event channel</param>
         public void OnAggro(Player aggressor, EventListenerService channel)
         {
-            if (_sayOnce)
-            {
-                _sayOnce = false;
-                CommunicateAggression(aggressor, channel);
-            }
-            if (_outpostEID != null)
-            {
-                aggressor.ApplyPvPEffect();
-            }
+            CommunicateAggression(aggressor, channel);
+            HandleBossOutpostAggro(aggressor);
         }
 
         /// <summary>
@@ -99,65 +103,64 @@ namespace Perpetuum.Zones.NpcSystem
         public void OnDeath(Npc npc, Unit killer, EventListenerService channel)
         {
             CommunicateDeath(killer, channel);
-            if (_outpostEID != null)
-            {
-                var zone = npc.Zone;
-                IEnumerable<Unit> outposts = zone.Units.OfType<Outpost>();
-                var outpost = outposts.First(o => o.Eid == _outpostEID);
-                if (outpost is Outpost)
-                {
-                    var participants = npc.ThreatManager.Hostiles.Select(x => zone.ToPlayerOrGetOwnerPlayer(x.unit)).ToList();
-                    var builder = StabilityAffectingEvent.Builder()
-                        .WithOutpost(outpost as Outpost)
-                        .WithOverrideRelations(OverrideRelations())
-                        .WithSapDefinition(npc.Definition)
-                        .WithSapEntityID(npc.Eid)
-                        .WithPoints(StabilityPoints())
-                        .AddParticipants(participants)
-                        .WithWinnerCorp(zone.ToPlayerOrGetOwnerPlayer(killer).CorporationEid);
-                    channel.PublishMessage(builder.Build());
-                }
-            }
+            HandleBossOutpostDeath(npc, killer, channel);
         }
 
         /// <summary>
-        /// Apply any respawn timer modifiers
+        /// Apply any respawn timer modifiers, and reset any internal state on-respawn
         /// </summary>
         /// <param name="respawnTime">normal respawn time of npc</param>
         /// <returns>modified respawn time of npc</returns>
         public TimeSpan OnRespawn(TimeSpan respawnTime)
         {
+            _speak = true;
             var factor = _respawnNoiseFactor ?? 0.0;
             return respawnTime.Multiply(FastRandom.NextDouble(1.0 - factor, 1.0 + factor));
         }
 
-        /// <summary>
-        /// True if this NPC Boss should use auto-loot splitting
-        /// </summary>
-        /// <returns>true - if loot needs splitting</returns>
-        public bool IsLootSplit()
+        private void HandleBossOutpostAggro(Player aggressor)
         {
-            return _lootSplit;
-        }
-
-        private bool OverrideRelations()
-        {
-            return _overrideRelations;
-        }
-
-        private int StabilityPoints()
-        {
-            return _stabilityPts ?? 0;
+            if (IsOutpostBoss)
+            {
+                aggressor.ApplyPvPEffect();
+            }
         }
 
         private void CommunicateAggression(Unit aggressor, EventListenerService channel)
         {
-            SendMessage(aggressor, channel, _aggroMsg);
+            if (_speak)
+            {
+                _speak = false;
+                SendMessage(aggressor, channel, _aggroMsg);
+            }
         }
 
         private void CommunicateDeath(Unit aggressor, EventListenerService channel)
         {
             SendMessage(aggressor, channel, _deathMsg);
+        }
+
+        private void HandleBossOutpostDeath(Npc npc, Unit killer, EventListenerService channel)
+        {
+            if (!IsOutpostBoss)
+                return;
+
+            var zone = npc.Zone;
+            IEnumerable<Unit> outposts = zone.Units.OfType<Outpost>();
+            var outpost = outposts.First(o => o.Eid == _outpostEID);
+            if (outpost is Outpost)
+            {
+                var participants = npc.ThreatManager.Hostiles.Select(x => zone.ToPlayerOrGetOwnerPlayer(x.unit)).ToList();
+                var builder = StabilityAffectingEvent.Builder()
+                    .WithOutpost(outpost as Outpost)
+                    .WithOverrideRelations(OverrideRelations)
+                    .WithSapDefinition(npc.Definition)
+                    .WithSapEntityID(npc.Eid)
+                    .WithPoints(StabilityPoints)
+                    .AddParticipants(participants)
+                    .WithWinnerCorp(zone.ToPlayerOrGetOwnerPlayer(killer).CorporationEid);
+                channel.PublishMessage(builder.Build());
+            }
         }
 
         private static void SendMessage(Unit src, EventListenerService eventChannel, string msg)

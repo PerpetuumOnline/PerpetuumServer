@@ -260,6 +260,11 @@ namespace Perpetuum.Zones.NpcSystem
                 _movement.Start(npc);
             });
 
+            if (npc.IsBoss())
+            {
+                npc.BossInfo.OnDeAggro();
+            }
+
             base.Enter();
         }
 
@@ -811,7 +816,7 @@ namespace Perpetuum.Zones.NpcSystem
             using (var scope = Db.CreateTransaction())
             {
 
-                if (IsBoss() && BossInfo.IsLootSplit())
+                if (IsBoss() && BossInfo.IsLootSplit)
                 {
                     //Boss - Split loot equally to all participants
                     List<Player> participants = new List<Player>();
