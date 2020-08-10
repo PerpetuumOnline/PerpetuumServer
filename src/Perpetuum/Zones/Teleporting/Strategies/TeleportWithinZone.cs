@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Perpetuum.Log;
 using Perpetuum.Players;
 using Perpetuum.Zones.Finders.PositionFinders;
 
@@ -27,7 +28,7 @@ namespace Perpetuum.Zones.Teleporting.Strategies
         public Task DoTeleportAsync(Player player)
         {
             var zone = player.Zone;
-            if (zone == null)
+            if (zone == null || player.States.LocalTeleport)
                 return null;
 
             var finder = new ClosestWalkablePositionFinder(zone, TargetPosition);
@@ -48,23 +49,33 @@ namespace Perpetuum.Zones.Teleporting.Strategies
 
             var task = Task.Delay(TeleportDelay).ContinueWith(t =>
             {
-                player.RemoveFromZone();
-                player.CurrentSpeed = 0.0;
-                player.AddToZone(zone,validPosition,ZoneEnterType.LocalTeleport);
-                player.SendInitSelf();
-
-                if (ApplyTeleportSickness)
+                try
                 {
-                    player.ApplyTeleportSicknessEffect();
+                    player.RemoveFromZone();
+                    player.CurrentSpeed = 0.0;
+                    player.AddToZone(zone, validPosition, ZoneEnterType.LocalTeleport);
+                    player.SendInitSelf();
+
+                    if (ApplyTeleportSickness)
+                    {
+                        player.ApplyTeleportSicknessEffect();
+                    }
+                    if (ApplyInvulnerable)
+                    {
+                        player.ApplyInvulnerableEffect();
+                    }
                 }
-                if (ApplyInvulnerable)
+                catch (Exception ex)
                 {
-                    player.ApplyInvulnerableEffect();
+                    Logger.Exception(ex);
+                }
+                finally
+                {
+                    // mozoghat, fade out
+                    player.States.InMoveable = false;
+                    player.States.LocalTeleport = false;
                 }
 
-                // mozoghat, fade out
-                player.States.InMoveable = false;
-                player.States.LocalTeleport = false;
             });
 
             return task;
