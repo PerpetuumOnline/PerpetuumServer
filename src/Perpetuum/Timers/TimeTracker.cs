@@ -36,6 +36,11 @@ namespace Perpetuum.Timers
             get { return Duration - Elapsed; }
         }
 
+        public void Extend(TimeSpan extraDuration)
+        {
+            Duration += extraDuration;
+        }
+
         public virtual void Reset()
         {
             Elapsed = TimeSpan.Zero;

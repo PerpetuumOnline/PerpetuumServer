@@ -10,6 +10,7 @@ using Perpetuum.Groups.Corporations;
 using Perpetuum.Log;
 using Perpetuum.Players;
 using Perpetuum.Services.EventServices.EventMessages;
+using Perpetuum.Threading;
 using Perpetuum.Timers;
 using Perpetuum.Units;
 using Perpetuum.Zones.Beams;
@@ -51,17 +52,19 @@ namespace Perpetuum.Zones.Intrusion
             }
         }
 
-        private static readonly TimeSpan _sapExpiry = 
+        private static readonly TimeSpan _sapExpiry =
 #if (DEBUG)
         TimeSpan.FromMinutes(5);
 #else
         TimeSpan.FromHours(1);
 #endif
+        private static readonly TimeSpan _timerExtension = TimeSpan.FromMinutes(15);
 
-        private readonly TimeSpan _enterBeamDuration = TimeSpan.FromSeconds(3);
-        private readonly TimeSpan _exitBeamDuration  = TimeSpan.FromSeconds(3);
-        
+        private static readonly TimeSpan _enterBeamDuration = TimeSpan.FromSeconds(3);
+        private static readonly TimeSpan _exitBeamDuration = TimeSpan.FromSeconds(3);
+
         private static readonly TimeSpan _broadcastInfoInterval = TimeSpan.FromSeconds(2);
+
         private const int BROADCAST_INFO_TOP_SCORE_COUNT = 10;
         private const int BROADCAST_INFO_RANGE = 100;
 
@@ -71,13 +74,16 @@ namespace Perpetuum.Zones.Intrusion
         private readonly IntervalTimer _broadcastInfoTimer = new IntervalTimer(_broadcastInfoInterval);
         private readonly TimeTracker _expiryTimer = new TimeTracker(_sapExpiry);
 
+        private static readonly TimeSpan _threadTimeout = TimeSpan.FromSeconds(1);
+        private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
+
         public event Action<SAP> TimeOut;
         public event Action<SAP> TakeOver;
 
         protected SAP(BeamType enterBeamType, BeamType exitBeamType)
         {
             _enterBeamType = enterBeamType;
-            _exitBeamType  = exitBeamType;
+            _exitBeamType = exitBeamType;
         }
 
         public void AddToZone(IZone zone,Position spawnPosition)
@@ -94,16 +100,19 @@ namespace Perpetuum.Zones.Intrusion
 
             _broadcastInfoTimer.Update(time);
 
-            if ( _broadcastInfoTimer.Passed )
+            if (_broadcastInfoTimer.Passed)
             {
                 _broadcastInfoTimer.Reset();
                 BroadcastSAPInfoPacket();
             }
 
-            _expiryTimer.Update(time);
+            using (_lock.Write(_threadTimeout))
+            {
+                _expiryTimer.Update(time);
 
-            if (!_expiryTimer.Expired) 
-                return;
+                if (!_expiryTimer.Expired)
+                    return;
+            }
 
             // lejart
             OnRemove();
@@ -119,8 +128,7 @@ namespace Perpetuum.Zones.Intrusion
 
         private void SendSAPPlayerInfoPacketToPlayer(Character character,int score)
         {
-            Player player;
-            if (Zone.TryGetPlayer(character, out player))
+            if (Zone.TryGetPlayer(character, out Player player))
             {
                 SendSAPPlayerInfoPacketToPlayer(player, score);
             }
@@ -167,7 +175,6 @@ namespace Perpetuum.Zones.Intrusion
             }
         }
 
-
         protected void IncrementPlayerScore(Player player, int score)
         {
             player.ApplyPvPEffect();
@@ -182,7 +189,22 @@ namespace Perpetuum.Zones.Intrusion
                 OnTakeOver();
             }
 
+            ExtendTimerOnce();
+
             Logger.Info($"Intrusion SAP score updated. sap = {Eid} ({ED.Name}) player = {info.character.Id} score = {info.score}");
+        }
+
+        private bool _firstSapAttempt = true;
+        private void ExtendTimerOnce()
+        {
+            if (_firstSapAttempt)
+            {
+                using (_lock.Write(_threadTimeout))
+                {
+                    _expiryTimer.Extend(_timerExtension);
+                }
+                _firstSapAttempt = false;
+            }
         }
 
         public Outpost Site { get; set; }
@@ -237,11 +259,14 @@ namespace Perpetuum.Zones.Intrusion
 
             Site.AppendSiteInfoToPacket(packet);
 
-            packet.AppendInt((int) _expiryTimer.Duration.TotalMilliseconds);
-            packet.AppendInt((int) _expiryTimer.Remaining.TotalMilliseconds);
+            using (_lock.Read(_threadTimeout))
+            {
+                packet.AppendInt((int)_expiryTimer.Duration.TotalMilliseconds);
+                packet.AppendInt((int)_expiryTimer.Remaining.TotalMilliseconds);
+            }
 
             packet.AppendInt(MaxScore); // max score
-            AppendTopScoresToPacket(packet,BROADCAST_INFO_TOP_SCORE_COUNT);
+            AppendTopScoresToPacket(packet, BROADCAST_INFO_TOP_SCORE_COUNT);
             return packet;
         }
 
