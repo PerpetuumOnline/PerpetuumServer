@@ -37,11 +37,12 @@ namespace Perpetuum.Zones
 
         private void DoUpdate()
         {
-            PopulateNewSessionlessPlayers(_zone);
+            PopulateNewSessionlessPlayers(_zone, _orphanPlayers);
+            CleanValidSessions(_orphanPlayers);
             RemoveExpiredOrphansFromZone(_orphanPlayers);
         }
 
-        private void PopulateNewSessionlessPlayers(IZone zone)
+        private void PopulateNewSessionlessPlayers(IZone zone, List<PlayerTimeout> orphans)
         {
             var newOrphans =
                 zone.Players
@@ -51,10 +52,16 @@ namespace Perpetuum.Zones
                     .Cast<Player>()
                     .Select(p => new PlayerTimeout(p));
 
-            _orphanPlayers.AddRange(newOrphans);
+            orphans.AddRange(newOrphans);
         }
 
-        private void RemoveExpiredOrphansFromZone(IEnumerable<PlayerTimeout> orphans)
+
+        private void CleanValidSessions(List<PlayerTimeout> orphans)
+        {
+            orphans.RemoveAll(p => !p.Sessionless);
+        }
+
+        private void RemoveExpiredOrphansFromZone(List<PlayerTimeout> orphans)
         {
             var toRemove = orphans.Where(o => o.Expired);
 
@@ -63,7 +70,7 @@ namespace Perpetuum.Zones
             foreach (var orphan in toRemove)
                 orphan.RemoveFromZone();
 
-            _orphanPlayers.RemoveAll(p => p.Expired);
+            orphans.RemoveAll(p => p.Expired);
         }
 
         private class PlayerTimeout : IEntity
@@ -71,6 +78,7 @@ namespace Perpetuum.Zones
             private readonly TimeKeeper _time;
             private Player Player { get; }
 
+            public bool Sessionless { get { return Player.Session == ZoneSession.None; } }
             public bool Expired { get { return _time.Expired; } }
             public long Eid { get { return Player is null ? 0 : Player.Eid; } }
 
