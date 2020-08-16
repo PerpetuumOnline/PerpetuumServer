@@ -816,6 +816,7 @@
     <Compile Include="Modules\Terraforming\WallBuilderModule.cs" />
     <Compile Include="Modules\Weapons\Damage.cs" />
     <Compile Include="Modules\Weapons\DamageType.cs" />
+    <Compile Include="Modules\Weapons\FirearmWeaponModule.cs" />
     <Compile Include="Modules\Weapons\MissileWeaponModule.cs" />
     <Compile Include="Modules\Weapons\WeaponAmmo.cs" />
     <Compile Include="Modules\Weapons\WeaponModule.cs" />
@@ -1213,6 +1214,7 @@
     <Folder Include="Properties\" />
     <Folder Include="Services\ProductionEngine\Methods\" />
     <Folder Include="Services\Relay\RequestHandlers\" />
+    <Folder Include="Comparers\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
