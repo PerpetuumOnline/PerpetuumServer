@@ -467,8 +467,8 @@ namespace Perpetuum.Services.MissionEngine.MissionTargets
             base.ProcessMyQuantity(missionInProgress);
         }
 
-
-        private readonly int[] _artifactRanges = new[] {15, 20, 30, 50, 80, 130, 200, 300, 400, 500};
+        // TODO: to DB?
+        private readonly int[] _artifactRanges = new[] {25, 50, 75, 100, 150, 225, 350, 525, 750, 1000};
 
         private void ScaleArtifactRange(MissionInProgress missionInProgress)
         {

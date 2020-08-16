@@ -374,7 +374,7 @@ namespace Perpetuum.Services.MissionEngine.MissionTargets
             }).LogExceptions();
         }
 
-        public const int RANDOM_POP_NPC_LIFETIME_MINUTES = 15;
+        public const int RANDOM_POP_NPC_LIFETIME_MINUTES = 25;
 
         private DirectPresence AddDirectPresenceToPosition(IPresenceManager presenceManager,Position successPosition)
         {
