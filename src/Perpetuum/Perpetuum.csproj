@@ -253,6 +253,7 @@
     <Compile Include="MathHelper.cs" />
     <Compile Include="Modules\EffectModules\TargetBlinderModule.cs" />
     <Compile Include="Modules\ModulePropertyModifiersReader.cs" />
+    <Compile Include="Modules\Weapons\FirearmWeaponModule.cs" />
     <Compile Include="Network\ClientConnection.cs" />
     <Compile Include="Network\EncryptedTcpConnection.cs" />
     <Compile Include="Network\Http.cs" />

@@ -30,16 +30,28 @@ namespace Perpetuum.Modules.Weapons
 
         public IList<Damage> GetCleanDamages()
         {
-            return LazyInitializer.EnsureInitialized(ref _cleanDamages,CalculateCleanDamages);
+            return LazyInitializer.EnsureInitialized(ref _cleanDamages, CalculateCleanDamages);
         }
 
         private IList<Damage> CalculateCleanDamages()
         {
             var result = new List<Damage>();
 
-            var weapon = this.GetParentModule() as WeaponModule;
-            if (weapon == null)
+            if (!(GetParentModule() is WeaponModule weapon))
                 return result;
+
+            if (weapon is FirearmWeaponModule firearm)
+            {
+                var plantDmgMod = firearm.PlantDamageModifier.ToPropertyModifier();
+
+                var plantDmgProperty = GetPropertyModifier(AggregateField.damage_toxic);
+
+                if (plantDmgProperty.HasValue)
+                {
+                    plantDmgMod.Modify(ref plantDmgProperty);
+                    result.Add(new Damage(DamageType.Toxic, plantDmgProperty.Value));
+                }
+            }
 
             var damageModifier = weapon.DamageModifier.ToPropertyModifier();
 

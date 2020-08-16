@@ -45,6 +45,7 @@ namespace Perpetuum.Zones.Eggs
                                      .WithDamage(DamageType.Explosive, ED.Config.damage_explosive ?? 0.0)
                                      .WithDamage(DamageType.Kinetic, ED.Config.damage_kinetic ?? 0.0)
                                      .WithDamage(DamageType.Thermal, ED.Config.damage_thermal ?? 0.0)
+                                     .WithDamage(DamageType.Toxic, ED.Config.damage_toxic ?? 0.0)
                                      .WithOptimalRange(2)
                                      .WithFalloff(ED.Config.item_work_range ?? 0.0)
                                      .WithExplosionRadius(ED.Config.explosion_radius ?? 0.0);

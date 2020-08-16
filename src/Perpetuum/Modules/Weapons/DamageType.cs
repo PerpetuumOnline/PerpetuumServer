@@ -5,6 +5,7 @@
         Chemical,
         Kinetic,
         Thermal,
-        Explosive
+        Explosive,
+        Toxic
     }
 }

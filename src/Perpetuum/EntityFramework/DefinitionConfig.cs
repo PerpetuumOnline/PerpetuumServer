@@ -21,6 +21,7 @@ namespace Perpetuum.EntityFramework
         public double? damage_explosive;
         public double? damage_kinetic;
         public double? damage_thermal;
+        public double? damage_toxic;
         public int? lifeTime;
         public int? activationTime;
         public int? waves;
@@ -111,6 +112,7 @@ namespace Perpetuum.EntityFramework
             damage_explosive = record.GetValue<double?>("damage_explosive");
             damage_kinetic = record.GetValue<double?>("damage_kinetic");
             damage_thermal = record.GetValue<double?>("damage_thermal");
+            damage_toxic = record.GetValue<double?>("damage_toxic");
             lifeTime = record.GetValue<int?>("lifetime");
             activationTime = record.GetValue<int?>("activationtime");
             waves = record.GetValue<int?>("waves");
@@ -161,6 +163,7 @@ namespace Perpetuum.EntityFramework
                 {k.damage_explosive, damage_explosive},
                 {k.damage_kinetic, damage_kinetic},
                 {k.damage_thermal, damage_thermal},
+                {k.damage_toxic, damage_toxic},
                 {k.lifeTime, lifeTime},
                 {k.activationTime, activationTime},
                 {k.waves, waves},

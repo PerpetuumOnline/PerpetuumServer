@@ -115,10 +115,10 @@ namespace Perpetuum.Zones.Terrains
             }
         }
 
-        public static void DamageToPlantOnArea(this IZone zone,DamageInfo damageInfo)
+        public static void DamageToPlantOnArea(this IZone zone, DamageInfo damageInfo)
         {
             var area = Area.FromRadius(damageInfo.sourcePosition, (int)damageInfo.Range);
-            var damage = damageInfo.damages.Sum(d => d.value);
+            var damage = damageInfo.CalculatePlantDamages();
             var rangeFar = (int)damageInfo.Range;
 
             double originX = damageInfo.sourcePosition.intX;
@@ -138,12 +138,12 @@ namespace Perpetuum.Zones.Terrains
             }
         }
 
-        public static void DamageToPlantOnArea(this IZone zone,Area area,double damage)
+        public static void DamageToPlantOnArea(this IZone zone, Area area, double damage)
         {
-            var w = area.Width/2;
-            var h = area.Height/2;
+            var w = area.Width / 2;
+            var h = area.Height / 2;
 
-            var maxd = w*w + h*h;
+            var maxd = w * w + h * h;
 
             var cx = area.Center.X;
             var cy = area.Center.Y;
@@ -155,10 +155,10 @@ namespace Perpetuum.Zones.Terrains
                     var dx = cx - x;
                     var dy = cy - y;
 
-                    var d = dx*dx + dy*dy;
-                    var m = 1.0 - ((double)d/maxd);
-                    
-                    var dmg = damage*m;
+                    var d = dx * dx + dy * dy;
+                    var m = 1.0 - ((double)d / maxd);
+
+                    var dmg = damage * m;
                     zone.DamageToPlant(x, y, dmg);
                 }
             }
@@ -181,22 +181,17 @@ namespace Perpetuum.Zones.Terrains
 
             if (FastRandom.NextDouble() < 0.3)
             {
-                damage = damage/3;
+                damage /= 3.0;
             }
 
             var damageInt = (int)(damage * plantRule.DamageScale).Clamp(int.MinValue, int.MaxValue);
             if (damageInt <= 0)
             {
-
-#if DEBUG
-                //Console.WriteLine(plantRule.Type + " low damage");
-#endif
+                Logger.DebugInfo(plantRule.Type + " low damage");
                 return;
             }
 
-#if DEBUG
-            //Console.WriteLine(plantRule.Type + " damage   " + damageInt);
-#endif            
+            Logger.DebugInfo(plantRule.Type + " damage   " + damageInt); 
 
             int currentHealth = currPlant.health;
             currentHealth -= damageInt;

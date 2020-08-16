@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Perpetuum.EntityFramework;
 using Perpetuum.ExportedTypes;
@@ -18,26 +17,16 @@ namespace Perpetuum.Modules.Weapons
     {
         private readonly ModuleAction _action;
 
-        private readonly ModuleProperty _damageModifier;
-        private readonly ModuleProperty _accuracy;
-
-        public ModuleProperty DamageModifier
-        {
-            get { return _damageModifier; }
-        }
-
-        public ModuleProperty Accuracy
-        {
-            get { return _accuracy; }
-        }
+        public ModuleProperty DamageModifier { get; }
+        public ModuleProperty Accuracy { get; }
 
         public WeaponModule(CategoryFlags ammoCategoryFlags) : base(ammoCategoryFlags, true)
         {
             _action = new ModuleAction(this);
-            _damageModifier = new ModuleProperty(this,AggregateField.damage_modifier);
-            AddProperty(_damageModifier);
-            _accuracy = new ModuleProperty(this, AggregateField.accuracy);
-            AddProperty(_accuracy);
+            DamageModifier = new ModuleProperty(this,AggregateField.damage_modifier);
+            AddProperty(DamageModifier);
+            Accuracy = new ModuleProperty(this, AggregateField.accuracy);
+            AddProperty(Accuracy);
 
             cycleTime.AddEffectModifier(AggregateField.effect_weapon_cycle_time_modifier);
         }
@@ -141,12 +130,13 @@ namespace Perpetuum.Modules.Weapons
             {
                 var distance = _weapon.ParentRobot.CurrentPosition.TotalDistance3D(location);
                 var bulletTime = _weapon.GetAmmo().BulletTime;
-                var flyTime = (int) ((distance/bulletTime)*1000);
+                var flyTime = (int)((distance / bulletTime) * 1000);
 
-                var beamTime = (int) Math.Max(flyTime, _weapon.CycleTime.TotalMilliseconds);
+                var beamTime = (int)Math.Max(flyTime, _weapon.CycleTime.TotalMilliseconds);
                 flyTime += _weapon.CreateBeam(location, BeamState.Hit, beamTime, bulletTime);
 
-                var damage = _weapon.GetCleanDamages().Sum(d => d.value);
+                var damage = _weapon.GetDamageBuilder().Build().CalculatePlantDamages();
+
                 if (damage <= 0.0)
                     return;
 
@@ -154,14 +144,14 @@ namespace Perpetuum.Modules.Weapons
                 if (zone == null)
                     return;
 
-                Task.Delay(flyTime).ContinueWith(t => DealDamageToPosition(zone,location,damage));
+                Task.Delay(flyTime).ContinueWith(t => DealDamageToPosition(zone, location, damage));
             }
 
-            private static void DealDamageToPosition(IZone zone,Position location,double damage)
+            private static void DealDamageToPosition(IZone zone, Position location, double damage)
             {
                 using (new TerrainUpdateMonitor(zone))
                 {
-                    zone.DamageToPlantOnArea(Area.FromRadius(location,1),damage/2);
+                    zone.DamageToPlantOnArea(Area.FromRadius(location, 1), damage / 2.0);
                 }
             }
         }
@@ -174,7 +164,7 @@ namespace Perpetuum.Modules.Weapons
         protected virtual bool CheckAccuracy(Unit victim)
         {
             var rnd = FastRandom.NextDouble();
-            var isMiss = rnd * _accuracy.Value > victim.SignatureRadius;
+            var isMiss = rnd * Accuracy.Value > victim.SignatureRadius;
             return isMiss;
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Perpetuum.Builders;
 using Perpetuum.Units;
 
@@ -29,7 +30,7 @@ namespace Perpetuum.Modules.Weapons
 
     public static class DamageBuilderExtensions
     {
-        public static IDamageBuilder WithAllDamageTypes(this IDamageBuilder builder,double damage)
+        public static IDamageBuilder WithAllDamageTypes(this IDamageBuilder builder, double damage)
         {
             return builder.WithDamage(DamageType.Chemical, damage)
                           .WithDamage(DamageType.Explosive, damage)
@@ -37,7 +38,7 @@ namespace Perpetuum.Modules.Weapons
                           .WithDamage(DamageType.Thermal, damage);
         }
 
-        public static IDamageBuilder WithDamages(this IDamageBuilder builder,IEnumerable<Damage> damages)
+        public static IDamageBuilder WithDamages(this IDamageBuilder builder, IEnumerable<Damage> damages)
         {
             foreach (var damage in damages)
                 builder.WithDamage(damage);
@@ -45,7 +46,7 @@ namespace Perpetuum.Modules.Weapons
             return builder;
         }
 
-        public static IDamageBuilder WithDamage(this IDamageBuilder builder,DamageType type, double damage)
+        public static IDamageBuilder WithDamage(this IDamageBuilder builder, DamageType type, double damage)
         {
             Debug.Assert(!double.IsNaN(damage));
             return Math.Abs(damage - 0.0) < double.Epsilon ? builder : builder.WithDamage(new Damage(type, damage));
@@ -60,6 +61,7 @@ namespace Perpetuum.Modules.Weapons
         public Position sourcePosition;
         public bool IsCritical { get; private set; }
         public IList<Damage> damages = new List<Damage>();
+        public IList<Damage> plantDamages = new List<Damage>();
         private double _optimalRange;
         private double _falloff;
         private double _explosionRadius;
@@ -122,18 +124,18 @@ namespace Perpetuum.Modules.Weapons
                         damageModifier *= tmpDamageMod;
                     }
 
-                    foreach (var cleanDamage in damages)
-                    {
-                        var damageValue = cleanDamage.value * damageModifier;
-
-                        Debug.Assert(!double.IsNaN(damageValue));
-
-                        result.Add(new Damage(cleanDamage.type, damageValue));
-                    }
+                    result = damages.Where(d => d.type != DamageType.Toxic)
+                        .Select(d => new Damage(d.type, d.value * damageModifier))
+                        .ToList();
                 }
             }
 
             return result;
+        }
+
+        public double CalculatePlantDamages()
+        {
+            return damages.Sum(d => d.value) + plantDamages.Sum(d => d.value);
         }
 
         public static IDamageBuilder Builder
@@ -146,6 +148,7 @@ namespace Perpetuum.Modules.Weapons
             private Unit _attacker;
             private Position _sourcePosition;
             private readonly IList<Damage> _damages = new List<Damage>();
+            private readonly IList<Damage> _plantDamages = new List<Damage>();
             private double _optimalRange;
             private double _falloff;
             private double _explosionRadius;
@@ -188,7 +191,14 @@ namespace Perpetuum.Modules.Weapons
 
             public IDamageBuilder WithDamage(Damage damage)
             {
-                _damages.Add(damage);
+                if (damage.type == DamageType.Toxic)
+                {
+                    _plantDamages.Add(damage);
+                }
+                else
+                {
+                    _damages.Add(damage);
+                }
                 return this;
             }
 
@@ -199,6 +209,7 @@ namespace Perpetuum.Modules.Weapons
                     attacker = _attacker,
                     sourcePosition = _sourcePosition,
                     damages = _damages,
+                    plantDamages = _plantDamages,
                     _optimalRange = _optimalRange,
                     _falloff = _falloff,
                     _explosionRadius = _explosionRadius
