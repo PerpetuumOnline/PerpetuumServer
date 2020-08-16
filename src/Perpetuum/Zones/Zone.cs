@@ -65,7 +65,7 @@ namespace Perpetuum.Zones
         public ZoneSession.Factory ZoneSessionFactory { get; set; }
 
         [CanBeNull]
-        public RiftManager RiftManager { private get; set; }
+        public IRiftManager RiftManager { private get; set; }
 
         [CanBeNull]
         public IRelicManager RelicManager { get; set; }

@@ -318,6 +318,11 @@
     <Compile Include="Services\Relics\RelicZoneConfig.cs" />
     <Compile Include="Services\Relics\Relics\SAPRelic.cs" />
     <Compile Include="Services\Relics\RelicManagers\ZoneRelicManager.cs" />
+    <Compile Include="Services\RiftSystem\IRiftManager.cs" />
+    <Compile Include="Services\RiftSystem\StrongholdRifts\StrongholdExitLocations.cs" />
+    <Compile Include="Services\RiftSystem\StrongholdRifts\StrongholdRiftManager.cs" />
+    <Compile Include="Services\RiftSystem\StrongholdRifts\StrongholdExitRift.cs" />
+    <Compile Include="Services\RiftSystem\ZoneRiftConfigs.cs" />
     <Compile Include="Services\Sessions\SessionID.cs" />
     <Compile Include="Common\SettingsLoader.cs" />
     <Compile Include="EntityFramework\DefinitionConfig.cs" />
@@ -897,6 +902,7 @@
     <Compile Include="Zones\Environments\ZoneEnvironmentHandler.cs" />
     <Compile Include="Zones\StrongHoldZone.cs" />
     <Compile Include="Zones\Teleporting\MobileStrongholdTeleport.cs" />
+    <Compile Include="Zones\Teleporting\MobileTeleportToZoneMap.cs" />
     <Compile Include="Zones\Teleporting\StrongholdTeleportTargetHelper.cs" />
     <Compile Include="Zones\Teleporting\TeleportDescriptionBuilder.cs" />
     <Compile Include="Zones\Teleporting\TeleportWorldTargetHelper.cs" />
@@ -1207,7 +1213,6 @@
     <Folder Include="Properties\" />
     <Folder Include="Services\ProductionEngine\Methods\" />
     <Folder Include="Services\Relay\RequestHandlers\" />
-    <Folder Include="Comparers\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

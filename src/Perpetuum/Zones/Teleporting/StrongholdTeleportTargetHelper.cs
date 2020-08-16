@@ -7,20 +7,24 @@ namespace Perpetuum.Zones.Teleporting
     {
         private readonly IZoneManager _zoneManager;
         private readonly TeleportDescriptionBuilder.Factory _descriptionBuilderFactory;
+        private readonly IMobileTeleportToZoneMap _mobileTeleportToZoneMap;
 
-        public StrongholdTeleportTargetHelper(IZoneManager zoneManager, TeleportDescriptionBuilder.Factory descriptionBuilderFactory)
+        public StrongholdTeleportTargetHelper(IZoneManager zoneManager, TeleportDescriptionBuilder.Factory descriptionBuilderFactory, IMobileTeleportToZoneMap mobileTeleportToZoneMap)
         {
             _zoneManager = zoneManager;
             _descriptionBuilderFactory = descriptionBuilderFactory;
+            _mobileTeleportToZoneMap = mobileTeleportToZoneMap;
         }
 
-        public IEnumerable<TeleportDescription> GetStrongholdTargets(IZone zone, long sourceTeleportEid, int teleportRange)
+        public IEnumerable<TeleportDescription> GetStrongholdTargets(IZone zone, long sourceTeleportEid, int teleportRange, int mobileDefinition)
         {
             var result = new List<TeleportDescription>();
             var descriptionId = 0;
-            foreach (var teleportColumn in _zoneManager.Zones.OfType<StrongHoldZone>().GetUnits<TeleportColumn>().Where(tc => tc.IsEnabled && tc.Zone != zone))
+            var targetZoneIds = _mobileTeleportToZoneMap.GetDestinationZones(mobileDefinition);
+            var zones = _zoneManager.Zones.OfType<StrongHoldZone>().Where(z => targetZoneIds.Contains(z.Id));
+            var teleportCols = zones.GetUnits<TeleportColumn>().Where(tc => tc.IsEnabled && tc.Zone != zone);
+            foreach (var teleportColumn in teleportCols)
             {
-
                 var builder = _descriptionBuilderFactory();
                 builder.SetId(descriptionId++)
                     .SetType(TeleportDescriptionType.AnotherZone)

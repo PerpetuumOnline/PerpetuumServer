@@ -102,6 +102,7 @@ using Perpetuum.Services.ProductionEngine.ResearchKits;
 using Perpetuum.Services.Relay;
 using Perpetuum.Services.Relics;
 using Perpetuum.Services.RiftSystem;
+using Perpetuum.Services.RiftSystem.StrongholdRifts;
 using Perpetuum.Services.Sessions;
 using Perpetuum.Services.Social;
 using Perpetuum.Services.Sparks;
@@ -858,7 +859,7 @@ namespace Perpetuum.Bootstrapper
             RegisterEntity<CalibrationProgram>();
             RegisterEntity<DynamicCalibrationProgram>();
             RegisterEntity<RandomCalibrationProgram>();
-            RegisterEntity<CalibrationProgramCapsule>();//TODO new CT Capsule!
+            RegisterEntity<CalibrationProgramCapsule>(); // OPP: new CT Capsule item
 
             RegisterProductionFacility<Mill>();
             RegisterProductionFacility<Prototyper>();
@@ -948,7 +949,7 @@ namespace Perpetuum.Bootstrapper
             RegisterEffectModule<SensorDampenerModule>();
             RegisterEffectModule<RemoteSensorBoosterModule>();
             RegisterEffectModule<TargetPainterModule>();
-            RegisterEffectModule<TargetBlinderModule>(); //TODO new module
+            RegisterEffectModule<TargetBlinderModule>(); //OPP: NPC-only module for detection debuff
             RegisterEffectModule<SensorBoosterModule>();
             RegisterEffectModule<ArmorHardenerModule>();
             RegisterEffectModule<StealthModule>();
@@ -967,7 +968,7 @@ namespace Perpetuum.Bootstrapper
             RegisterUnit<SimpleSwitch>();
             RegisterUnit<ItemSupply>();
             RegisterUnit<MobileWorldTeleport>();
-            RegisterUnit<MobileStrongholdTeleport>(); // New Field device
+            RegisterUnit<MobileStrongholdTeleport>(); // OPP: New mobile tele for entry to Strongholds
             RegisterUnit<AreaBomb>();
             RegisterUnit<PBSEgg>();
             RegisterPBSObject<PBSReactor>();
@@ -994,6 +995,7 @@ namespace Perpetuum.Bootstrapper
             RegisterUnit<TrainingKillSwitch>();
             RegisterUnit<Gate>();
             RegisterUnit<RandomRiftPortal>();
+            RegisterUnit<StrongholdExitRift>(); // OPP: Special rift for exiting strongholds
 
             RegisterEntity<Item>();
             RegisterEntity<Item>();
@@ -1014,7 +1016,7 @@ namespace Perpetuum.Bootstrapper
             RegisterEntity<CreditActivator>();
             RegisterEntity<SparkActivator>();
             RegisterEntity<Gift>();
-            RegisterEntity<Paint>();//TODO register new entitydef
+            RegisterEntity<Paint>(); // OPP: Robot paint item
             RegisterEntity<EPBoost>();
             RegisterEntity<Relic>();
             RegisterEntity<SAPRelic>();
@@ -1045,7 +1047,8 @@ namespace Perpetuum.Bootstrapper
                     ByDefinition<T>(ed.Definition, parameters);
                 }
 
-                //TODO: new for paint
+                //TODO: bit of a hack for using the same category for many items grouped by definitionname prefixes
+                //TODO: make separate category for new item groups!
                 void ByNamePatternAndFlag<T>(string substr, CategoryFlags cf, params Parameter[] parameters) where T : Entity
                 {
                     //TODO: this might be expensive -- string matching all defaults
@@ -1218,7 +1221,7 @@ namespace Perpetuum.Bootstrapper
                 ByCategoryFlags<SimpleSwitch>(CategoryFlags.cf_simple_switch);
                 ByCategoryFlags<ItemSupply>(CategoryFlags.cf_item_supply);
                 ByCategoryFlags<MobileWorldTeleport>(CategoryFlags.cf_mobile_world_teleport);
-                ByNamePatternAndFlag<MobileStrongholdTeleport>("def_mobile_teleport_stronghold", CategoryFlags.cf_mobile_world_teleport); // TODO new field dev
+                ByNamePatternAndFlag<MobileStrongholdTeleport>("def_mobile_teleport_stronghold", CategoryFlags.cf_mobile_world_teleport); // OPP: stronghold tele
                 ByCategoryFlags<Item>(CategoryFlags.cf_mission_coin);
                 ByCategoryFlags<AreaBomb>(CategoryFlags.cf_area_bomb);
                 ByCategoryFlags<AreaBombDeployer>(CategoryFlags.cf_plasma_bomb);
@@ -1227,7 +1230,8 @@ namespace Perpetuum.Bootstrapper
                 ByCategoryFlags<LotteryItem>(CategoryFlags.cf_lottery_items);
 
                 //TODO ORDER MATTERS!  Register Paints AFTER lottery will ensure Paint objects are valid subset of lottery category
-                //TODO entitydefaults must contain name "def_paint" and have cf_lottery_items 
+                //TODO entitydefaults must contain name "def_paint" and have cf_lottery_items
+                //TODO make separate category
                 ByNamePatternAndFlag<Paint>("def_paint", CategoryFlags.cf_lottery_items);
 
                 //TODO new CalibrationTemplateItem -- activates like paint! same category!
@@ -1302,6 +1306,7 @@ namespace Perpetuum.Bootstrapper
                 ByName<RandomRiftPortal>(DefinitionNames.RANDOM_RIFT_PORTAL);
                 ByName<ItemShop>(DefinitionNames.BASE_ITEM_SHOP);
                 ByName<Gift>(DefinitionNames.ANNIVERSARY_PACKAGE);
+                ByName<StrongholdExitRift>(DefinitionNames.STRONGHOLD_EXIT_RIFT);
 
                 var c = b.Build();
 
@@ -1673,13 +1678,13 @@ namespace Perpetuum.Bootstrapper
 
             _builder.RegisterType<GoodiePackHandler>();
 
-            //TODO new EPBonusEventService 
+            // OPP: EPBonusEventService singleton
             _builder.RegisterType<EPBonusEventService>().SingleInstance().OnActivated(e =>
             {
                 e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromMinutes(1)));
             });
 
-            //TODO new EventListenerService 
+            // OPP: EventListenerService and consumers
             _builder.RegisterType<ChatEcho>();
             _builder.RegisterType<NpcChatEcho>();
             _builder.RegisterType<AffectOutpostStability>();
@@ -1691,7 +1696,7 @@ namespace Perpetuum.Bootstrapper
                 e.Instance.AttachListener(e.Context.Resolve<NpcChatEcho>());
             });
 
-            //TODO new InterzoneNPCManager
+            // OPP: InterzoneNPCManager
             RegisterAutoActivate<InterzonePresenceManager>(TimeSpan.FromSeconds(10));
 
             _builder.RegisterType<AccountManager>().As<IAccountManager>();
@@ -2387,14 +2392,20 @@ namespace Perpetuum.Bootstrapper
             });
 
             _builder.RegisterType<RiftManager>();
+            _builder.RegisterType<StrongholdRiftManager>();
 
-            _builder.Register<Func<IZone, RiftManager>>(x =>
+            _builder.Register<Func<IZone, IRiftManager>>(x =>
             {
                 var ctx = x.Resolve<IComponentContext>();
                 return zone =>
                 {
                     if (zone is TrainingZone)
                         return null;
+
+                    if (zone is StrongHoldZone)
+                    {
+                       return ctx.Resolve<StrongholdRiftManager>(new TypedParameter(typeof(IZone), zone));
+                    }
 
                     var spawnTime = TimeRange.FromLength(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(5));
                     var finder = ctx.Resolve<Func<IZone, RiftSpawnPositionFinder>>().Invoke(zone);
@@ -2508,7 +2519,7 @@ namespace Perpetuum.Bootstrapper
                     zone.PlantHandler = ctx.Resolve<PlantHandler.Factory>().Invoke(zone);
                     zone.CorporationHandler = ctx.Resolve<CorporationHandler.Factory>().Invoke(zone);
                     zone.MiningLogHandler = ctx.Resolve<MiningLogHandler.Factory>().Invoke(zone);
-                    zone.RiftManager = ctx.Resolve<Func<IZone, RiftManager>>().Invoke(zone);
+                    zone.RiftManager = ctx.Resolve<Func<IZone, IRiftManager>>().Invoke(zone);
                     zone.ChatLogger = ctx.Resolve<ChatLoggerFactory>().Invoke("zone", zone.Configuration.Name);
                     zone.EnterQueueService = ctx.Resolve<ZoneEnterQueueService.Factory>().Invoke(zone);
                     zone.Terrain = ctx.Resolve<TerrainFactory>().Invoke(zone);
@@ -2566,6 +2577,7 @@ namespace Perpetuum.Bootstrapper
 
             _builder.RegisterType<TeleportDescriptionBuilder>();
             _builder.RegisterType<TeleportWorldTargetHelper>();
+            _builder.RegisterType<MobileTeleportZoneMapCache>().As<IMobileTeleportToZoneMap>().SingleInstance();
             _builder.RegisterType<StrongholdTeleportTargetHelper>();
             _builder.RegisterType<TeleportToAnotherZone>();
             _builder.RegisterType<TeleportWithinZone>();

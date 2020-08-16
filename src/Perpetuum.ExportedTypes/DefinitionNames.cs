@@ -4719,6 +4719,7 @@ namespace Perpetuum.ExportedTypes
  		 public const string STERMONIT_RARE_LARGE = "def_stermonit_rare_large";
  		 public const string STERMONIT_RARE_MEDIUM = "def_stermonit_rare_medium";
  		 public const string STERMONIT_RARE_SMALL = "def_stermonit_rare_small";
+        public const string STRONGHOLD_EXIT_RIFT = "def_stronghold_exit_rift";
  		 public const string SYMBIONT_BOT = "def_symbiont_bot";
  		 public const string SYMBIONT_BOT_CPRG = "def_symbiont_bot_cprg";
  		 public const string SYMBIONT_BOT_PR = "def_symbiont_bot_pr";

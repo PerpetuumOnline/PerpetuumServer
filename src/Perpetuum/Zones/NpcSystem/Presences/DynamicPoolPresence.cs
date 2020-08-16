@@ -57,7 +57,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
 
                 first = false;
 
-                var portal = (Portal)Unit.CreateUnitWithRandomEID(DefinitionNames.RANDOM_RIFT_PORTAL);
+                var portal = (DespawningPortal)Unit.CreateUnitWithRandomEID(DefinitionNames.RANDOM_RIFT_PORTAL);
                 portal.SetDespawnTime(TimeSpan.FromMinutes(5));
                 portal.AddToZone(Zone, DynamicPosition);
             });

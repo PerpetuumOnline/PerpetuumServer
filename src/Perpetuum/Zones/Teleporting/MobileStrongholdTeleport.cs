@@ -25,7 +25,7 @@ namespace Perpetuum.Zones.Teleporting
             if (_usedTeleportDescription != null)
                 return new[] { _usedTeleportDescription };
 
-            return _strongholdTeleportTargetHelper.GetStrongholdTargets(Zone, Eid, TeleportRange);
+            return _strongholdTeleportTargetHelper.GetStrongholdTargets(Zone, Eid, TeleportRange, Definition);
         }
 
         public override Dictionary<string, object> ToDictionary()
@@ -52,7 +52,7 @@ namespace Perpetuum.Zones.Teleporting
 
         public override void CheckDeploymentAndThrow(IZone zone, Position spawnPosition)
         {
-            var testlist = _strongholdTeleportTargetHelper.GetStrongholdTargets(Zone, Eid, TeleportRange).ToList();
+            var testlist = _strongholdTeleportTargetHelper.GetStrongholdTargets(Zone, Eid, TeleportRange, Definition).ToList();
 
             (testlist.Count == 0).ThrowIfTrue(ErrorCodes.NoTeleportTargetsWereFound);
 
