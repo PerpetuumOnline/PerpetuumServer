@@ -26,6 +26,11 @@ namespace Perpetuum.Modules.Weapons
             get { return _damageModifier; }
         }
 
+        public ModuleProperty Accuracy
+        {
+            get { return _accuracy; }
+        }
+
         public WeaponModule(CategoryFlags ammoCategoryFlags) : base(ammoCategoryFlags, true)
         {
             _action = new ModuleAction(this);
