@@ -49,6 +49,8 @@ namespace Perpetuum.Zones.PBS.DockingBases
         public IPBSReinforceHandler ReinforceHandler => _pbsReinforceHandler;
         public IPBSConnectionHandler ConnectionHandler => _pbsObjectHelper.ConnectionHandler;
 
+        public int ZoneIdCached { get; private set; }
+
         public ErrorCodes ModifyConstructionLevel(int amount, bool force = false)
         {
             return _pbsObjectHelper.ModifyConstructionLevel(amount, force);
@@ -148,9 +150,9 @@ namespace Perpetuum.Zones.PBS.DockingBases
         public override void OnLoadFromDb()
         {
             base.OnLoadFromDb();
-
-            _pbsObjectHelper.Init();
             
+            _pbsObjectHelper.Init();
+
             _pbsTerritorialVisibilityHelper.Init();
         }
 
@@ -219,7 +221,7 @@ namespace Perpetuum.Zones.PBS.DockingBases
             //NO BASE CLASS CALL -> szandekos
             Logger.DebugInfo($"[{InfoString}] docking base on delete");
             Logger.DebugInfo($"[{InfoString}] zonaid jo, helperes cucc jon");
-            PBSHelper.DeletePBSDockingBase(Zone,this).ThrowIfError();
+            PBSHelper.DeletePBSDockingBase(ZoneIdCached, this).ThrowIfError();
         }
 
         protected override void OnRemovedFromZone(IZone zone)
@@ -231,9 +233,6 @@ namespace Perpetuum.Zones.PBS.DockingBases
             PBSHelper.SendPBSDockingBaseDeleteToProduction(Eid);
 
             base.OnRemovedFromZone(zone);
-
-            //NO delete from db, reparent to trash
-            PBSHelper.DeletePBSDockingBase(zone, this);
         }
 
         protected override void OnDead(Unit killer)
@@ -307,7 +306,6 @@ namespace Perpetuum.Zones.PBS.DockingBases
 
                 var ctd = GenerateTerritoryDictionary();
                 _cacheTerritoryDictionary = ctd;
-                
             }
 
             return _cacheTerritoryDictionary;
@@ -483,7 +481,7 @@ namespace Perpetuum.Zones.PBS.DockingBases
             return 0;
         }
 
-        public ErrorCodes DoCleanUpWork(IZone zone)
+        public ErrorCodes DoCleanUpWork(int zone)
         {
             var ec = ErrorCodes.NoError;
 

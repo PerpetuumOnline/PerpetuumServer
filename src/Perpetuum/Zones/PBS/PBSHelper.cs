@@ -887,7 +887,7 @@ namespace Perpetuum.Zones.PBS
             return ec;
         }
 
-        public const int CONSTRUCTION_AMMO_DEFINITION = 4658;
+        public const int CONSTRUCTION_AMMO_DEFINITION = 4658; //TODO: Fetch this from DB
 
         public static IEnumerable<LootItem> GetConstructionAmmoLootOnDead(IPBSObject pbsObject)
         {
@@ -1216,7 +1216,7 @@ namespace Perpetuum.Zones.PBS
         }
 
 
-        public static ErrorCodes DeletePBSDockingBase(IZone zone, PBSDockingBase dockingBase)
+        public static ErrorCodes DeletePBSDockingBase(int zone, PBSDockingBase dockingBase)
         {
             ErrorCodes ec;
 
@@ -1264,8 +1264,9 @@ namespace Perpetuum.Zones.PBS
         }
 
 
-        public static Dictionary<string, object> GetUpdateDictionary(IZone zone,Unit eventSource,PBSEventType pbsEventType, Dictionary<string, object> data = null)
+        public static Dictionary<string, object> GetUpdateDictionary(int zone,Unit eventSource,PBSEventType pbsEventType, Dictionary<string, object> data = null)
         {
+            Logger.Warning($"Zone {zone} eventSource {eventSource} event type {pbsEventType}");
             var sourceDict = eventSource.ToDictionary();
 
             if (data == null)
@@ -1275,7 +1276,7 @@ namespace Perpetuum.Zones.PBS
 #endif
             data.Add(k.message, (int)pbsEventType);
             data.Add(k.source, sourceDict);
-            data[k.zoneID] = zone.Id; //zoneid legyen mindig.
+            data[k.zoneID] = zone; //OPP: client does not accept null or invalid zoneIDs!
             return data;
         }
         

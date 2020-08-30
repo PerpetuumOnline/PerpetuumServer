@@ -38,6 +38,7 @@ namespace Perpetuum.Zones.PBS.Turrets
             _blobEmitter = new BlobEmitter(this);
             _reinforceHandler = new PBSReinforceHandler<PBSTurret>(this);
             _coreUseHandler = new CoreUseHandler<PBSTurret>(this, new EnergyStateFactory(this));
+
         }
 
         private  double GetCoreMinimumFromModules()
@@ -47,6 +48,8 @@ namespace Perpetuum.Zones.PBS.Turrets
 
             return maxCoreUsage;
         }
+
+        public int ZoneIdCached { get; private set; }
 
         public IBlobHandler BlobHandler => _blobHandler;
 
@@ -107,6 +110,8 @@ namespace Perpetuum.Zones.PBS.Turrets
             _reinforceHandler.Init();
 
             AI.ToInactiveAI();
+
+            ZoneIdCached = zone.Id;
 
             base.OnEnterZone(zone, enterType);
         }

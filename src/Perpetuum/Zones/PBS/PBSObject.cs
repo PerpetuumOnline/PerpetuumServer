@@ -16,6 +16,7 @@ namespace Perpetuum.Zones.PBS
     {
         private PBSObjectHelper<PBSObject> _pbsObjectHelper;
         private PBSReinforceHandler<PBSObject> _reinforceHandler;
+        public int ZoneIdCached { get; private set; }
 
         IPBSReinforceHandler IPBSObject.ReinforceHandler => _reinforceHandler;
 
@@ -87,6 +88,7 @@ namespace Perpetuum.Zones.PBS
         {
             _pbsObjectHelper.Init();
             _reinforceHandler.Init();
+            ZoneIdCached = zone.Id;
             base.OnEnterZone(zone, enterType);
         }
 

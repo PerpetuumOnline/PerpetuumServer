@@ -65,6 +65,8 @@ namespace Perpetuum.Zones.PBS
         void TakeOver(long newOwner);
         bool IsOrphaned { get; set; }
 
+        int ZoneIdCached { get; }
+
         event Action<Unit,bool /*orphanedState*/> OrphanedStateChanged;
 
         void SendNodeUpdate(PBSEventType eventType = PBSEventType.nodeUpdate);

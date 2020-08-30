@@ -917,8 +917,8 @@ namespace Perpetuum.Zones.PBS
       
 
         public const double REINFORCE_THRESHOLD = 0.5;
-        public const int VULNERABLE_LENGTH_MINUTES = 5; //2 hours
-        public const int REINFORCE_LENGTH_MINUTES = 6; //3 days
+        public const int VULNERABLE_LENGTH_MINUTES = 15; //2 hours
+        public const int REINFORCE_LENGTH_MINUTES = 1; //3 days
         public const int REINFORCE_COUNTER_INCREASE_MINUTES = 6; //2 days
        
 

@@ -32,12 +32,19 @@ namespace Perpetuum.Zones.PBS
         {
             _pbsUnit = pbsUnit;
             _pbsUnit.DamageTaken += OnUnitDamageTaken;
+            _pbsUnit.Dead += _pbsUnit_Dead;
 
             ConnectionHandler = new PBSConnectionHandler<T>(pbsUnit);
             _constructionLevelCurrent = new UnitOptionalProperty<int>(_pbsUnit,UnitDataType.ConstructionLevelCurrent,k.constructionLevelCurrent,() => 1);
             _pbsUnit.OptionalProperties.Add(_constructionLevelCurrent);
 
             _saver = new PBSObjectSaver<T>(Entity.Repository, TimeSpan.FromMinutes(15));
+        }
+
+        private void _pbsUnit_Dead(Unit arg1, Unit arg2)
+        {
+            _pbsUnit.DamageTaken -= OnUnitDamageTaken;
+            _pbsUnit.Dead -= _pbsUnit_Dead;
         }
 
         private int _damageTaken;
@@ -49,13 +56,19 @@ namespace Perpetuum.Zones.PBS
             if (Interlocked.CompareExchange(ref _damageTaken, 1, 0) == 1)
                 return;
 
-            Logger.Info($"PBS node attacked ({_pbsUnit.Eid}) attacker: {attacker.InfoString}");
+            Logger.DebugInfo($"PBS node attacked ({_pbsUnit.Eid}) attacker: {attacker.InfoString}");
+
+            if (_pbsUnit.States.Dead)
+                return;
 
             Task.Delay(TimeSpan.FromSeconds(30)).ContinueWith(t =>
             {
                 try
                 {
-                    _pbsUnit.SendNodeUpdate(PBSEventType.nodeAttacked);
+                    if (!_pbsUnit.States.Dead)
+                    {
+                        _pbsUnit.SendNodeUpdate(PBSEventType.nodeAttacked);
+                    }
                 }
                 finally
                 {
@@ -454,7 +467,7 @@ namespace Perpetuum.Zones.PBS
 #endif
             data.Add(k.message,(int)pbsEventType);
             data.Add(k.source,sourceDict);
-            data[k.zoneID] = _pbsUnit.Zone?.Id ?? -1; //zoneid legyen mindig.
+            data[k.zoneID] = _pbsUnit.ZoneIdCached; //OPP: use cached value to avoid accessing null zone on death
             return data;
         }
     }
