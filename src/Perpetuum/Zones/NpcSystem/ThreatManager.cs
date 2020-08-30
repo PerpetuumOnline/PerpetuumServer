@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
+using Perpetuum.Comparers;
 using Perpetuum.Timers;
 using Perpetuum.Units;
 
@@ -16,7 +18,9 @@ namespace Perpetuum.Zones.NpcSystem
         Lock,
         Buff,
         Debuff,
-        Direct
+        Direct,
+        EnWar,
+        Ewar
     }
 
     public struct Threat
@@ -184,6 +188,117 @@ namespace Perpetuum.Zones.NpcSystem
             sb.AppendLine("============================");
 
             return sb.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Manager of PseudoThreats
+    /// Processes and manages an internal collection of players aggressive to an npc
+    /// but not on the npc's ThreatManager.
+    /// For awarding players a portion of the total ep reward.
+    /// </summary>
+    public interface IPseudoThreatManager
+    {
+        void Update(TimeSpan time);
+        void AddOrRefreshExisting(Unit hostile);
+        void Remove(Unit hostile);
+        void AwardPseudoThreats(List<Unit> alreadyAwarded, IZone zone, int ep);
+    }
+
+
+    public class PseudoThreatManager : IPseudoThreatManager
+    {
+        private readonly List<PseudoThreat> _pseudoThreats;
+        private readonly object _lock;
+
+        public PseudoThreatManager()
+        {
+            _pseudoThreats = new List<PseudoThreat>();
+            _lock = new object();
+        }
+
+        public void AwardPseudoThreats(List<Unit> alreadyAwarded, IZone zone, int ep)
+        {
+            var pseudoHostileUnits = new List<Unit>();
+            lock (_lock)
+            {
+                pseudoHostileUnits = _pseudoThreats.Select(p => p.Unit).Except(alreadyAwarded, new EntityComparer()).Cast<Unit>().ToList();
+            }
+            foreach (var unit in pseudoHostileUnits)
+            {
+                var hostilePlayer = zone.ToPlayerOrGetOwnerPlayer(unit);
+                hostilePlayer?.Character.AddExtensionPointsBoostAndLog(EpForActivityType.Npc, ep / 2);
+            }
+        }
+
+        public void AddOrRefreshExisting(Unit hostile)
+        {
+            lock (_lock)
+            {
+                var existing = _pseudoThreats.Where(x => x.Unit == hostile).FirstOrDefault();
+                if (existing != null)
+                {
+                    existing.RefreshThreat();
+                    return;
+                }
+                _pseudoThreats.Add(new PseudoThreat(hostile));
+            }
+        }
+
+        public void Remove(Unit hostile)
+        {
+            lock(_lock)
+                _pseudoThreats.RemoveAll(x => x.Unit == hostile);
+        }
+
+        public void Update(TimeSpan time)
+        {
+            lock (_lock)
+            {
+                foreach (var threat in _pseudoThreats)
+                {
+                    threat.Update(time);
+                }
+                CleanExpiredThreats();
+            }
+        }
+
+        private void CleanExpiredThreats()
+        {
+            _pseudoThreats.RemoveAll(threat => threat.IsExpired);
+        }
+    }
+
+
+    /// <summary>
+    /// An expirable record of a player that is aggressing an npc but the npc is
+    /// not capable of attacking back (removed from the ThreatManager)
+    /// </summary>
+    public class PseudoThreat
+    {
+        private TimeSpan _lastUpdated = TimeSpan.Zero;
+        private TimeSpan Expiration = TimeSpan.FromMinutes(1);
+
+        public PseudoThreat(Unit unit)
+        {
+            Unit = unit;
+        }
+
+        public Unit Unit { get; }
+
+        public bool IsExpired
+        {
+            get { return _lastUpdated > Expiration; }
+        }
+
+        public void RefreshThreat()
+        {
+            _lastUpdated = TimeSpan.Zero;
+        }
+
+        public void Update(TimeSpan time)
+        {
+            _lastUpdated += time;
         }
     }
 }

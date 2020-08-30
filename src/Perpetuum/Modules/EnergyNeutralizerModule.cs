@@ -48,7 +48,8 @@ namespace Perpetuum.Modules
                 coreNeutralizedDone = Math.Abs(core - unitLock.Target.Core);
 
                 unitLock.Target.OnCombatEvent(ParentRobot, new EnergyDispersionEventArgs(coreNeutralizedDone));
-                unitLock.Target.AddThreat(ParentRobot,new Threat(ThreatType.Undefined, coreNeutralizedDone / 2));
+                var threatValue = (coreNeutralizedDone / 2) + 1;
+                unitLock.Target.AddThreat(ParentRobot, new Threat(ThreatType.EnWar, threatValue));
             }
 
             var packet = new CombatLogPacket(CombatLogType.EnergyNeutralize, unitLock.Target, ParentRobot, this);

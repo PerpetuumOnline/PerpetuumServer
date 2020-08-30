@@ -57,7 +57,7 @@ namespace Perpetuum.Modules
                 ParentRobot.Core += coreNeutralized;
                 coreTransfered = Math.Abs(core - ParentRobot.Core);
 
-                unitLock.Target.AddThreat(ParentRobot,new Threat(ThreatType.Undefined,coreTransfered));
+                unitLock.Target.AddThreat(ParentRobot, new Threat(ThreatType.EnWar, coreTransfered + 1));
             }
 
             var packet = new CombatLogPacket(CombatLogType.EnergyVampire, unitLock.Target, ParentRobot, this);

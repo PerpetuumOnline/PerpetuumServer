@@ -26,8 +26,6 @@ namespace Perpetuum.Modules
                 base.AcceptVisitor(visitor);
         }
 
-        private const double THREAT_SENSOR_JAMMER = 75.0;
-
         protected override void OnAction()
         {
             var unitLock = GetLock().ThrowIfNotType<UnitLock>(ErrorCodes.InvalidLockType);
@@ -40,7 +38,7 @@ namespace Perpetuum.Modules
             if (success)
             {
                 robot.ResetLocks();
-                robot.AddThreat(ParentRobot, new Threat(ThreatType.Undefined, THREAT_SENSOR_JAMMER));
+                robot.AddThreat(ParentRobot, new Threat(ThreatType.Ewar, Threat.SENSOR_DAMPENER));
             }
 
             var packet = new CombatLogPacket(CombatLogType.Jammer, robot,ParentRobot,this);

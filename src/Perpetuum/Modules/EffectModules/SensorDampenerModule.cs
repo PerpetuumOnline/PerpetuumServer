@@ -45,7 +45,7 @@ namespace Perpetuum.Modules.EffectModules
 
         protected override void OnApplyingEffect(Unit target)
         {
-            target.AddThreat(ParentRobot, new Threat(ThreatType.Debuff, Threat.SENSOR_DAMPENER));
+            target.AddThreat(ParentRobot, new Threat(ThreatType.Ewar, Threat.SENSOR_DAMPENER));
         }
 
         protected override void SetupEffect(EffectBuilder effectBuilder)
