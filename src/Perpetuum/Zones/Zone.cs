@@ -23,6 +23,7 @@ using Perpetuum.Units;
 using Perpetuum.Zones.Beams;
 using Perpetuum.Zones.Blobs;
 using Perpetuum.Zones.Decors;
+using Perpetuum.Zones.Effects;
 using Perpetuum.Zones.Environments;
 using Perpetuum.Zones.NpcSystem.Presences;
 using Perpetuum.Zones.NpcSystem.SafeSpawnPoints;

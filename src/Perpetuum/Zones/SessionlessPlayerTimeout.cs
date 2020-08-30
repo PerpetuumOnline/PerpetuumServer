@@ -1,5 +1,6 @@
 ﻿using Perpetuum.Comparers;
 using Perpetuum.EntityFramework;
+using Perpetuum.Log;
 using Perpetuum.Players;
 using Perpetuum.Timers;
 using System;
@@ -90,6 +91,7 @@ namespace Perpetuum.Zones
 
             public void RemoveFromZone()
             {
+                Logger.Warning($"Orphan Player removed from zone by timeout! {Player}");
                 Player.RemoveFromZone();
             }
 

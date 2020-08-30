@@ -35,6 +35,7 @@ using Perpetuum.Zones.Blobs.BlobEmitters;
 using Perpetuum.Zones.CombatLogs;
 using Perpetuum.Zones.DamageProcessors;
 using Perpetuum.Zones.Effects;
+using Perpetuum.Zones.Effects.ZoneEffects;
 using Perpetuum.Zones.Finders;
 using Perpetuum.Zones.Finders.PositionFinders;
 using Perpetuum.Zones.Locking;
@@ -136,9 +137,17 @@ namespace Perpetuum.Players
         private readonly IBlobEmitter _blobEmitter;
         private readonly BlobHandler<Player> _blobHandler;
         private readonly PlayerMovement _movement;
+        private readonly IZoneEffectHandler _zoneEffectHandler;
         private CombatLogger _combatLogger;
 
-        public Player(IExtensionReader extensionReader,ICorporationManager corporationManager,MissionHandler.Factory missionHandlerFactory,ITeleportStrategyFactories teleportStrategyFactories,DockingBaseHelper dockingBaseHelper,CombatLogger.Factory combatLoggerFactory)
+        public Player(IExtensionReader extensionReader,
+            ICorporationManager corporationManager,
+            MissionHandler.Factory missionHandlerFactory,
+            ITeleportStrategyFactories teleportStrategyFactories,
+            DockingBaseHelper dockingBaseHelper,
+            CombatLogger.Factory combatLoggerFactory,
+            IZoneEffectHandler zoneEffectHandler
+            )
         {
             _extensionReader = extensionReader;
             _corporationManager = corporationManager;
@@ -146,6 +155,7 @@ namespace Perpetuum.Players
             _teleportStrategyFactories = teleportStrategyFactories;
             _dockingBaseHelper = dockingBaseHelper;
             _combatLoggerFactory = combatLoggerFactory;
+            _zoneEffectHandler = zoneEffectHandler;
             Session = ZoneSession.None;
             _movement = new PlayerMovement(this);
 
@@ -1039,13 +1049,13 @@ namespace Perpetuum.Players
             }
         }
 
-        public void ApplyZoneEffects(IZone zone)
+        /// <summary>
+        /// Apply static zone-level effects to player when they enter zone
+        /// </summary>
+        /// <param name="zone">Izone</param>
+        private void ApplyZoneEffects(IZone zone)
         {
-            if (zone.Configuration.IsBeta)
-            {
-                var builder = NewEffectBuilder().SetType(EffectType.effect_beta_bonus).SetOwnerToSource();
-                ApplyEffect(builder);
-            }
+            _zoneEffectHandler.ApplyZoneEffects(this, zone);
         }
 
         [CanBeNull]

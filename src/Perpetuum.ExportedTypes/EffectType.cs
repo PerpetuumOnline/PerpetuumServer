@@ -102,6 +102,10 @@ namespace Perpetuum.ExportedTypes
 		effect_teleport_self_enabler = 102,
 		effect_teleport_sickness = 42,
 		effect_thermal_resist = 13,
-        effect_beta_bonus = 103 //TODO beta bonus effect -- ID hardcoded from inserted DB id
+        // New effects - OPP
+        effect_beta_bonus = 103,
+        effect_beta2_bonus = 104,
+        effect_alpha_bonus = 105,
+        effect_alpha2_bonus = 106
     }
 }

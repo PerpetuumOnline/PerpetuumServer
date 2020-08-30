@@ -121,6 +121,7 @@ using Perpetuum.Zones.Blobs.BlobEmitters;
 using Perpetuum.Zones.CombatLogs;
 using Perpetuum.Zones.Decors;
 using Perpetuum.Zones.Effects;
+using Perpetuum.Zones.Effects.ZoneEffects;
 using Perpetuum.Zones.Eggs;
 using Perpetuum.Zones.Environments;
 using Perpetuum.Zones.Gates;
@@ -176,7 +177,6 @@ using SetItemName = Perpetuum.RequestHandlers.SetItemName;
 using TrashItems = Perpetuum.RequestHandlers.TrashItems;
 using UnpackItems = Perpetuum.RequestHandlers.UnpackItems;
 using UnstackAmount = Perpetuum.RequestHandlers.UnstackAmount;
-
 
 namespace Perpetuum.Bootstrapper
 {
@@ -648,6 +648,9 @@ namespace Perpetuum.Bootstrapper
         {
             _builder.RegisterType<EffectBuilder>();
 
+            _builder.RegisterType<ZoneEffectRepository>().As<IZoneEffectRepository>().SingleInstance();
+            _builder.RegisterType<ZoneEffectHandler>().As<IZoneEffectHandler>().SingleInstance();
+
             _builder.RegisterType<InvulnerableEffect>().Keyed<Effect>(EffectType.effect_invulnerable);
             _builder.RegisterType<CoTEffect>().Keyed<Effect>(EffectType.effect_eccm);
             _builder.RegisterType<CoTEffect>().Keyed<Effect>(EffectType.effect_stealth);
@@ -718,7 +721,11 @@ namespace Perpetuum.Bootstrapper
             _builder.RegisterType<AuraEffect>().Keyed<Effect>(EffectType.effect_pbs_booster_sensor_lvl2);
             _builder.RegisterType<AuraEffect>().Keyed<Effect>(EffectType.effect_pbs_booster_sensor_lvl3);
 
-            _builder.RegisterType<AuraEffect>().Keyed<Effect>(EffectType.effect_beta_bonus); //TODO beta bonus
+            // New Bonuses - OPP
+            _builder.RegisterType<AuraEffect>().Keyed<Effect>(EffectType.effect_beta_bonus);
+            _builder.RegisterType<AuraEffect>().Keyed<Effect>(EffectType.effect_beta2_bonus);
+            _builder.RegisterType<AuraEffect>().Keyed<Effect>(EffectType.effect_alpha_bonus);
+            _builder.RegisterType<AuraEffect>().Keyed<Effect>(EffectType.effect_alpha2_bonus);
 
             _builder.Register<EffectFactory>(x =>
             {
