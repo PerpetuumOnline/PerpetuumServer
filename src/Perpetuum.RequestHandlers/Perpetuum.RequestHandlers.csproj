@@ -590,6 +590,7 @@
     <Compile Include="Zone\ZoneDrawBlockingByEid.cs" />
     <Compile Include="Zone\ZoneDrawDecorEnvByDef.cs" />
     <Compile Include="Zone\ZoneDrawDecorEnvironment.cs" />
+    <Compile Include="Zone\ZoneDrawRamp.cs" />
     <Compile Include="Zone\ZoneEntityChangeState.cs" />
     <Compile Include="Zone\ZoneEnvironmentDescriptionList.cs" />
     <Compile Include="Zone\ZoneFixPBS.cs" />

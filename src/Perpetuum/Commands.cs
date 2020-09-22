@@ -82,6 +82,22 @@ namespace Perpetuum
             }
         };
 
+        //[22:30:34] ERR [UREQ] NoSuchCommand Data = {command=zoneDrawRamp} ip: 127.0.0.1 account: 9 character: 4 Req: zoneDrawRamp:zone_39:#max=n0#size=n60#range=f0.494141#positionx=n1411#positiony=n916#blend=f0.500000
+        public static readonly Command ZoneDrawRamp = new Command
+        {
+            Text = "zoneDrawRamp",
+            AccessLevel = AccessLevel.admin,
+            Arguments =
+            {
+                new Argument<int>(k.max),
+                new Argument<int>(k.size),
+                new Argument<double>(k.range),
+                new Argument<int>("positionx"),
+                new Argument<int>("positiony"),
+                new Argument<double>("blend")
+            }
+        };
+
         public static readonly Command ZoneDisplayMissionSpots = new Command
         {
             Text = "zoneDisplayMissionSpots",

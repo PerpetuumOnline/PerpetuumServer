@@ -16,6 +16,8 @@ namespace Perpetuum
             if (!data.TryGetValue(_name, out object o))
                 throw new PerpetuumException(ErrorCodes.RequiredArgumentIsNotSpecified);
 
+            var foo = o.GetType();
+
             if (o.GetType() != typeof(T))
                 throw new PerpetuumException(ErrorCodes.RequiredArgumentIsNotSpecified);
         }

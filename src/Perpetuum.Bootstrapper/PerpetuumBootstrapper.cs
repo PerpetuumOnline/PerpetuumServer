@@ -2744,6 +2744,7 @@ namespace Perpetuum.Bootstrapper
             RegisterZoneRequestHandler<PBSSetBaseDeconstruct>(Commands.PBSSetBaseDeconstruct);
             RegisterZoneRequestHandler<PBSSetReinforceOffset>(Commands.PBSSetReinforceOffset);
             RegisterZoneRequestHandler<PBSSetEffect>(Commands.PBSSetEffect);
+            RegisterZoneRequestHandler<ZoneDrawRamp>(Commands.ZoneDrawRamp);
 
         }
 
