@@ -267,6 +267,7 @@
     <Compile Include="PathFinders\PathFinder.cs" />
     <Compile Include="PathFinders\PathFinderNodeType.cs" />
     <Compile Include="PerpetuumException.cs" />
+    <Compile Include="Players\PlayerMoveChecker.cs" />
     <Compile Include="PointExtensions.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="ProducerConsumerCollectionExtensions.cs" />

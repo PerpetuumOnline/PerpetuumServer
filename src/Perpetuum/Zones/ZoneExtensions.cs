@@ -124,6 +124,49 @@ namespace Perpetuum.Zones
             return null;
         }
 
+        /// <summary>
+        /// A 2d raycast check for a line segment in cellular world
+        /// An implementation of Bresenham's line algorithm
+        /// </summary>
+        /// <param name="zone">this</param>
+        /// <param name="start">Start point of line segment</param>
+        /// <param name="end">End point of line segment</param>
+        /// <param name="slope">Slope capability check for slope-based blocking</param>
+        /// <returns>True if tiles checked are walkable</returns>
+        public static bool CheckLinearPath(this IZone zone, Point start, Point end, double slope = 4.0)
+        {
+            var x = start.X;
+            var y = start.Y;
+            var deltaX = Math.Abs(end.X - x);
+            var deltaY = Math.Abs(end.Y - y);
+            var travelDist = deltaX + deltaY;
+            var xIncrement = (end.X > x) ? 1 : -1;
+            var yIncrement = (end.Y > y) ? 1 : -1;
+            var error = deltaX - deltaY;
+            deltaX *= 2;
+            deltaY *= 2;
+            
+            for (var i = 0; i <= travelDist; i++)
+            {
+                if (!zone.IsWalkable(x, y, slope))
+                {
+                    return false;
+                }
+
+                if (error > 0)
+                {
+                    x += xIncrement;
+                    error -= deltaY;
+                }
+                else
+                {
+                    y += yIncrement;
+                    error += deltaX;
+                }
+            }
+            return true;
+        }
+
         public static bool IsTerrainConditionsMatchInRange(this IZone zone, Position centerPosition, int range, double slope)
         {
             var totalTiles = range * range * 4;

@@ -69,7 +69,7 @@ namespace Perpetuum.Players
 
             elapsed = elapsed.Min(_maxElapsedTime);
 
-            var angle = _player.Direction * Math.PI * 2;
+            var angle = _player.Direction * MathHelper.PI2;
             var vx = Math.Sin(angle) * speed;
             var vy = Math.Cos(angle) * speed;
 
@@ -88,26 +88,25 @@ namespace Perpetuum.Players
                 var nx = px + (vx * time.TotalSeconds);
                 var ny = py - (vy * time.TotalSeconds);
 
-                var dx = Math.Abs((int)px - (int)nx);
-                var dy = Math.Abs((int)py - (int)ny);
+                var dx = (int)px - (int)nx;
+                var dy = (int)py - (int)ny;
 
-                if (dx >= 1.0 || dy >= 1.0)
+                if (dx != 0 || dy != 0)
                 {
                     // csak akkor kell ha csempevaltas volt
                     if (!_player.IsWalkable((int)nx, (int)ny))
                     {
-                        //_player.Zone.CreateAlignedDebugBeam(BeamType.red_20sec, new Position(nx, ny));
+                        //_player.Zone.CreateAlignedDebugBeam(BeamType.red_10sec, new Position(nx, ny));
                         break;
                     }
                 }
 
                 px = nx;
                 py = ny;
-                //_player.Zone.CreateAlignedDebugBeam(BeamType.blue_20sec, new Position(px, py));
+                //_player.Zone.CreateAlignedDebugBeam(BeamType.blue_10sec, new Position(px, py));
             }
-
-            _player.CurrentPosition = new Position(px,py);
-            //_player.Zone.CreateAlignedDebugBeam(BeamType.orange_20sec, _player.CurrentPosition);
+            _player.TryMove(new Position(px, py));
+            //_player.Zone.CreateAlignedDebugBeam(BeamType.orange_10sec, new Position(px, py));
         }
     }
 
@@ -139,6 +138,7 @@ namespace Perpetuum.Players
         private readonly PlayerMovement _movement;
         private readonly IZoneEffectHandler _zoneEffectHandler;
         private CombatLogger _combatLogger;
+        private PlayerMoveCheckQueue _check;
 
         public Player(IExtensionReader extensionReader,
             ICorporationManager corporationManager,
@@ -167,6 +167,17 @@ namespace Perpetuum.Players
         public IZoneSession Session { get; private set; }
         public Character Character { get; set; } = Character.None;
         public bool HasGMStealth { get; set; }
+
+        public bool TryMove(Position position)
+        {
+            if (!IsWalkable(position))
+                return false;
+
+            _check.EnqueueMove(position);
+
+            CurrentPosition = position;
+            return true;
+        }
 
         public void SetSession(IZoneSession session)
         {
@@ -237,6 +248,7 @@ namespace Perpetuum.Players
         protected override void OnEnterZone(IZone zone, ZoneEnterType enterType)
         {
             base.OnEnterZone(zone, enterType); //aa
+            _check = PlayerMoveCheckQueue.Create(this, CurrentPosition);
 
             zone.SendPacketToGang(Gang, new GangUpdatePacketBuilder(Visibility.Visible, this));
             
@@ -258,8 +270,15 @@ namespace Perpetuum.Players
             Session.SendPacket(ExitPacketBuilder);
             zone.SendPacketToGang(Gang, new GangUpdatePacketBuilder(Visibility.Invisible, this));
 
-            if (!States.LocalTeleport)
-                Session.Stop();
+            Task.Run(() =>
+            {
+                _check.Stop();
+                _check.Dispose();
+            }).ContinueWith(t =>
+            {
+                if (!States.LocalTeleport)
+                    Session.Stop();
+            });
 
             base.OnRemovedFromZone(zone);
         }
@@ -1039,7 +1058,6 @@ namespace Perpetuum.Players
                     zone.SetGang(player);
 
                     player.AddToZone(zone,validPosition,zoneEnterType);
-                    
                     player.ApplyInvulnerableEffect();
                     player.ApplyZoneEffects(zone);
                 });

@@ -10,7 +10,6 @@ namespace Perpetuum
         private static readonly int[,] _neighbours = { { -1, -1 }, { 0, -1 }, { 1, -1 }, { -1, 0 }, { 1, 0 }, { -1, 1 }, { 0, 1 }, { 1, 1 } };
         private static readonly int[,] _nonDiagonalNeighbours = { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 } };
 
-
         public static Position ToPosition(this Point p)
         {
             return new Position(p.X + 0.5, p.Y + 0.5);
