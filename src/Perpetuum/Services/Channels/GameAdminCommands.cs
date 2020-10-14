@@ -565,6 +565,56 @@ namespace Perpetuum.Services.Channels
                 channel.SendMessageToAll(sessionManager, sender, string.Format("Altered state of control layer on {0} Tiles (PBSTerraformProtected)", lockedtiles.Count));
             }
 
+            if (command[0] == "#zoneislandblock")
+            {
+                bool err = false;
+                var dictionary = new Dictionary<string, object>();
+                if (command.Length != 2)
+                {
+                    channel.SendMessageToAll(sessionManager, sender, "Missing or too many args");
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                }
+
+                err = !int.TryParse(command[1], out int low);
+                if (err)
+                {
+                    channel.SendMessageToAll(sessionManager, sender, "Bad args");
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                }
+                dictionary.Add(k.low, low);
+                var cmd = string.Format("{0}:zone_{1}:{2}", Commands.ZoneCreateIsland.Text, sender.ZoneId, GenxyConverter.Serialize(dictionary));
+                channel.SendMessageToAll(sessionManager, sender, $"Islandblocking command accepted: {dictionary.ToDebugString()} \r\nBlocking... ");
+                request.Session.HandleLocalRequest(request.Session.CreateLocalRequest(cmd));
+                channel.SendMessageToAll(sessionManager, sender, $"Zone water level blocked! ");
+                return;
+            }
+
+            if (command[0] == "#zonecreategarden")
+            {
+                bool err = false;
+                var dictionary = new Dictionary<string, object>();
+                if (command.Length != 3)
+                {
+                    channel.SendMessageToAll(sessionManager, sender, "Missing or too many args");
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                }
+
+                err = !int.TryParse(command[1], out int x);
+                err = !int.TryParse(command[2], out int y);
+                if (err)
+                {
+                    channel.SendMessageToAll(sessionManager, sender, "Bad args");
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                }
+                dictionary.Add(k.x, x);
+                dictionary.Add(k.y, y);
+                var cmd = string.Format("{0}:zone_{1}:{2}", Commands.ZoneCreateGarden.Text, sender.ZoneId, GenxyConverter.Serialize(dictionary));
+                channel.SendMessageToAll(sessionManager, sender, $"Garden command accepted: {dictionary.ToDebugString()} \r\nPlanting... ");
+                request.Session.HandleLocalRequest(request.Session.CreateLocalRequest(cmd));
+                channel.SendMessageToAll(sessionManager, sender, $"Garden Created! ");
+                return;
+            }
+
             //MissionTestResolve - DEBUG ONLY
             if (command[0] == "#testmissions")
             {
