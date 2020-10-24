@@ -78,6 +78,7 @@ using Perpetuum.RequestHandlers.Zone.StatsMapDrawing;
 using Perpetuum.Robots;
 using Perpetuum.Services;
 using Perpetuum.Services.Channels;
+using Perpetuum.Services.Channels.ChatCommands;
 using Perpetuum.Services.EventServices;
 using Perpetuum.Services.EventServices.EventProcessors;
 using Perpetuum.Services.ExtensionService;
@@ -534,6 +535,8 @@ namespace Perpetuum.Bootstrapper
                 configuration.GameRoot = gameRoot;
                 return configuration;
             }).SingleInstance();
+
+            _builder.RegisterType<AdminCommandRouter>().SingleInstance();
 
             _builder.RegisterType<Gang>();
             _builder.RegisterType<GangRepository>().As<IGangRepository>();

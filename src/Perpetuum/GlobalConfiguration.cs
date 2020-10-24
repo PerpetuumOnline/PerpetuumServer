@@ -18,6 +18,8 @@ namespace Perpetuum
 
         public string ResourceServerURL { get; set; }
 
+        public bool EnableDev { get; set; }
+
         public CorporationConfiguration Corporation { get; set; }
     }
 }

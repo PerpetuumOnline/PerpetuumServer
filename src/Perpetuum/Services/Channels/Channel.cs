@@ -9,13 +9,21 @@ namespace Perpetuum.Services.Channels
         private Dictionary<Character, ChannelMember> _members = new Dictionary<Character, ChannelMember>();
 
         public int Id { get; private set; }
-        public ChannelType Type { get; private set; }
         public string Name { get; private set; }
         public string Topic { get; private set; }
         public string Password { get; private set; }
-        public GameAdminCommands AdminCommands = new GameAdminCommands();
-
         public IChannelLogger Logger { get; private set; }
+        private ChannelType _type;
+        private ChannelType _prevType;
+        public ChannelType Type
+        {
+            get => _type;
+            private set
+            {
+                _prevType = _type;
+                _type = value;
+            }
+        }
 
         private Channel()
         {
@@ -119,11 +127,11 @@ namespace Perpetuum.Services.Channels
         {
             if (isadminchannel)
             {
-                this.Type = ChannelType.Admin;
+                Type = ChannelType.Admin;
             }
             else
             {
-                this.Type = ChannelType.Public;
+                Type = _prevType;
             }
         }
 

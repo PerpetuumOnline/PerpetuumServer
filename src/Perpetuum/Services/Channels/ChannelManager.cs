@@ -6,6 +6,7 @@ using System.Threading;
 using Perpetuum.Accounting.Characters;
 using Perpetuum.Common.Loggers;
 using Perpetuum.Host.Requests;
+using Perpetuum.Services.Channels.ChatCommands;
 using Perpetuum.Services.Sessions;
 
 namespace Perpetuum.Services.Channels
@@ -18,8 +19,9 @@ namespace Perpetuum.Services.Channels
         private readonly IChannelBanRepository _banRepository;
         private readonly ChannelLoggerFactory _channelLoggerFactory;
         private readonly ConcurrentDictionary<string, Channel> _channels = new ConcurrentDictionary<string, Channel>();
+        private readonly AdminCommandRouter _adminCommand;
 
-        public ChannelManager(ISessionManager sessionManager,IChannelRepository channelRepository,IChannelMemberRepository memberRepository,IChannelBanRepository banRepository,ChannelLoggerFactory channelLoggerFactory)
+        public ChannelManager(ISessionManager sessionManager,IChannelRepository channelRepository,IChannelMemberRepository memberRepository,IChannelBanRepository banRepository,ChannelLoggerFactory channelLoggerFactory, AdminCommandRouter adminCommand)
         {
             _sessionManager = sessionManager;
             _sessionManager.SessionAdded += OnSessionAdded;
@@ -28,6 +30,7 @@ namespace Perpetuum.Services.Channels
             _memberRepository = memberRepository;
             _banRepository = banRepository;
             _channelLoggerFactory = channelLoggerFactory;
+            _adminCommand = adminCommand;
 
             foreach (var channel in channelRepository.GetAll())
             {
@@ -264,12 +267,8 @@ namespace Perpetuum.Services.Channels
 
             m.CanTalk.ThrowIfFalse(ErrorCodes.CharacterIsMuted);
             channel.SendMessageToAll(_sessionManager, sender, message);
-            // this is an admin or GM command.
-            if (message.Substring(0, 1) == "#" && sender.AccessLevel == AccessLevel.admin)
-            {
-                channel.AdminCommands.ParseAdminCommand(sender, message, request, channel, _sessionManager, this);
-            }
 
+            _adminCommand.TryParseAdminCommand(sender, message, request, channel, this);
         }
 
         public void Announcement(string channelName, Character sender, string message)

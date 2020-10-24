@@ -285,7 +285,9 @@
     <Compile Include="Selectors\ModuloBasedSelector.cs" />
     <Compile Include="Services\Artifacts\ArtifactRefresher.cs" />
     <Compile Include="Services\Channels\ChannelMessageHandler.cs" />
-    <Compile Include="Services\Channels\GameAdminCommands.cs" />
+    <Compile Include="Services\Channels\ChatCommands\AdminCommandData.cs" />
+    <Compile Include="Services\Channels\ChatCommands\AdminCommandHandlers.cs" />
+    <Compile Include="Services\Channels\ChatCommands\GameAdminCommands.cs" />
     <Compile Include="Services\Channels\PreMadeChatMessageNames.cs" />
     <Compile Include="Services\EventServices\EventMessages\EventMessage.cs" />
     <Compile Include="Services\EventServices\EventMessages\EventMessageSimple.cs" />
@@ -1221,7 +1223,6 @@
     <Folder Include="Properties\" />
     <Folder Include="Services\ProductionEngine\Methods\" />
     <Folder Include="Services\Relay\RequestHandlers\" />
-    <Folder Include="Comparers\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

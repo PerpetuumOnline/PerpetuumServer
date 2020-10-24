@@ -94,7 +94,7 @@ namespace Perpetuum.Zones.Terrains
             return ((int)_flags & ((int)flags)) > 0;
         }
 
-        private void SetFlags(TerrainControlFlags f,bool value)
+        public void SetFlags(TerrainControlFlags f,bool value)
         {
             _flags = value ? (TerrainControlFlags)((ushort)_flags | (ushort)f) : (TerrainControlFlags)((ushort)_flags & ~((ushort)f));
         }
