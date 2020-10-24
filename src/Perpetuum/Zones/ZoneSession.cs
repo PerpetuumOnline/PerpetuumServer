@@ -245,7 +245,7 @@ namespace Perpetuum.Zones
         }
 
         private BeamsMonitor _beamsMonitor;
-        private Observer<Packet> _weatherMonitor;
+        private WeatherMonitor _weatherMonitor;
 
         private void HandleAuth(Packet packet)
         {
@@ -271,8 +271,8 @@ namespace Perpetuum.Zones
             _beamsMonitor = new BeamsMonitor(this);
             _beamsMonitor.Subscribe(_zone.Beams);
 
-            _weatherMonitor = Observer<Packet>.Create(OnWeatherUpdated);
-            _zone.Weather.Subscribe(_weatherMonitor);
+            _weatherMonitor = new WeatherMonitor(OnWeatherUpdated);
+            _weatherMonitor.Subscribe(_zone.Weather);
             
             _terrainUpdateNotifier = CreateTerrainNotifier(player);
 
@@ -926,6 +926,26 @@ namespace Perpetuum.Zones
             _beamsMonitor?.Update();
 
             UpdateLogout(time);
+        }
+
+        private class WeatherMonitor: Observer<Packet>
+        {
+            private Action<Packet> _onNext;
+            public WeatherMonitor(Action<Packet> onNext)
+            {
+                _onNext = onNext;
+            }
+
+            public override void OnNext(Packet packet)
+            {
+                _onNext(packet);
+            }
+
+            protected override void OnDispose()
+            {
+                _onNext = null;
+                base.OnDispose();
+            }
         }
 
         private class BeamsMonitor : Observer<Beam>

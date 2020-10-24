@@ -442,6 +442,50 @@ namespace Perpetuum.Services.Channels.ChatCommands
                 SendMessageToAll(data, "This zone does NOT support relics!");
             }
         }
+        [ChatCommand("SetWeather")]
+        public static void SetWeather(AdminCommandData data)
+        {
+            if (data.Command.Args.Length < 2)
+            {
+                SendMessageToAll(data, $"bad or missing args");
+                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+            }
+            var zoneId = data.Sender.ZoneId ?? -1;
+            bool err = false;
+            err = !int.TryParse(data.Command.Args[0], out int weatherInt);
+            err = !int.TryParse(data.Command.Args[1], out int seconds);
+            if (data.Command.Args.Length > 2)
+            {
+                err = !int.TryParse(data.Command.Args[2], out zoneId);
+            }
+            if (!data.Request.Session.ZoneMgr.ContainsZone(zoneId))
+            {
+                SendMessageToAll(data, $"Bad or missing zone id");
+                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+            }
+            var zone = data.Request.Session.ZoneMgr.GetZone(zoneId);
+            var current = zone.Weather.GetCurrentWeather();
+            var weather = new WeatherInfo(current.Next, weatherInt.Min(255), TimeSpan.FromSeconds(seconds));
+            zone.Weather.SetCurrentWeather(weather);
+            SendMessageToAll(data, $"Weather set {zone.Weather.GetCurrentWeather().ToString()}");
+        }
+        [ChatCommand("GetWeather")]
+        public static void GetWeather(AdminCommandData data)
+        {
+            var zoneId = data.Sender.ZoneId ?? -1;
+            bool err = false;
+            if (!data.Command.Args.IsNullOrEmpty())
+            {
+                err = !int.TryParse(data.Command.Args[0], out zoneId);
+            }
+            if (!data.Request.Session.ZoneMgr.ContainsZone(zoneId) || err)
+            {
+                SendMessageToAll(data, $"Bad or missing zone id");
+                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+            }
+            var zone = data.Request.Session.ZoneMgr.GetZone(zoneId);
+            SendMessageToAll(data, $"Weather set {zone.Weather.GetCurrentWeather().ToString()}");
+        }
         #endregion
         #region DevCommands
         [ChatCommand("ZoneCleanObstacleBlocking")]

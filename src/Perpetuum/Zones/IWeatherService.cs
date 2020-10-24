@@ -7,5 +7,6 @@ namespace Perpetuum.Zones
     {
         [NotNull]
         WeatherInfo GetCurrentWeather();
+        void SetCurrentWeather(WeatherInfo weather);
     }
 }

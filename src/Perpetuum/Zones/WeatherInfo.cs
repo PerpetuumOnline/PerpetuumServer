@@ -1,4 +1,5 @@
 using System;
+using System.Text;
 using Perpetuum.Timers;
 
 namespace Perpetuum.Zones
@@ -32,6 +33,14 @@ namespace Perpetuum.Zones
             packet.AppendLong((long)_timer.Elapsed.TotalMilliseconds);
             packet.AppendLong((long)_timer.Duration.TotalMilliseconds);
             return packet;
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            sb.AppendFormat("Command:{0}, current:{1}, next:{2}, elapsed:{3}, duration:{4}",
+                ZoneCommand.Weather, _current, Next, _timer.Elapsed.TotalSeconds, _timer.Duration.TotalSeconds);
+            return sb.ToString();
         }
     }
 }
