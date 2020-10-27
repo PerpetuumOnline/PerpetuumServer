@@ -136,7 +136,6 @@ namespace Perpetuum.Players
         private readonly IBlobEmitter _blobEmitter;
         private readonly BlobHandler<Player> _blobHandler;
         private readonly PlayerMovement _movement;
-        private readonly IZoneEffectHandler _zoneEffectHandler;
         private CombatLogger _combatLogger;
         private PlayerMoveCheckQueue _check;
 
@@ -145,8 +144,7 @@ namespace Perpetuum.Players
             MissionHandler.Factory missionHandlerFactory,
             ITeleportStrategyFactories teleportStrategyFactories,
             DockingBaseHelper dockingBaseHelper,
-            CombatLogger.Factory combatLoggerFactory,
-            IZoneEffectHandler zoneEffectHandler
+            CombatLogger.Factory combatLoggerFactory
             )
         {
             _extensionReader = extensionReader;
@@ -155,7 +153,6 @@ namespace Perpetuum.Players
             _teleportStrategyFactories = teleportStrategyFactories;
             _dockingBaseHelper = dockingBaseHelper;
             _combatLoggerFactory = combatLoggerFactory;
-            _zoneEffectHandler = zoneEffectHandler;
             Session = ZoneSession.None;
             _movement = new PlayerMovement(this);
 
@@ -1059,21 +1056,11 @@ namespace Perpetuum.Players
 
                     player.AddToZone(zone,validPosition,zoneEnterType);
                     player.ApplyInvulnerableEffect();
-                    player.ApplyZoneEffects(zone);
                 });
 
                 scope.Complete();
                 return player;
             }
-        }
-
-        /// <summary>
-        /// Apply static zone-level effects to player when they enter zone
-        /// </summary>
-        /// <param name="zone">Izone</param>
-        private void ApplyZoneEffects(IZone zone)
-        {
-            _zoneEffectHandler.ApplyZoneEffects(this, zone);
         }
 
         [CanBeNull]

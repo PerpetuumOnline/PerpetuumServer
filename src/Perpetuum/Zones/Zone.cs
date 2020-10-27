@@ -18,12 +18,13 @@ using Perpetuum.Services.HighScores;
 using Perpetuum.Services.Relics;
 using Perpetuum.Services.RiftSystem;
 using Perpetuum.Services.Sessions;
+using Perpetuum.Services.Weather;
 using Perpetuum.Timers;
 using Perpetuum.Units;
 using Perpetuum.Zones.Beams;
 using Perpetuum.Zones.Blobs;
 using Perpetuum.Zones.Decors;
-using Perpetuum.Zones.Effects;
+using Perpetuum.Zones.Effects.ZoneEffects;
 using Perpetuum.Zones.Environments;
 using Perpetuum.Zones.NpcSystem.Presences;
 using Perpetuum.Zones.NpcSystem.SafeSpawnPoints;
@@ -38,7 +39,7 @@ using Perpetuum.Zones.ZoneEntityRepositories;
 
 namespace Perpetuum.Zones
 {
-    public abstract class Zone : Threading.Process.Process,IZone
+    public abstract class Zone : Threading.Process.Process, IZone
     {
         private ImmutableHashSet<ZoneSession> _sessions = ImmutableHashSet<ZoneSession>.Empty;
         private ImmutableDictionary<long, Unit> _units = ImmutableDictionary<long, Unit>.Empty;
@@ -64,6 +65,7 @@ namespace Perpetuum.Zones
         public IZoneUnitService UnitService { get; set; }
         public MiningLogHandler MiningLogHandler { get; set; }
         public ZoneSession.Factory ZoneSessionFactory { get; set; }
+        public IZoneEffectHandler ZoneEffectHandler { get; set; }
 
         [CanBeNull]
         public IRiftManager RiftManager { private get; set; }
@@ -201,6 +203,8 @@ namespace Perpetuum.Zones
 
             unit.Updated += OnUnitUpdated;
             unit.Dead += OnUnitDead;
+
+            ZoneEffectHandler.OnEnterZone(unit);
             Logger.Info($"Unit entered to zone. zone:{Id} eid = {unit.InfoString} ({unit.CurrentPosition})");
         }
 

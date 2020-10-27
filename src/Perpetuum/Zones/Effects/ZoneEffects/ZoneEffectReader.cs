@@ -11,22 +11,16 @@ namespace Perpetuum.Zones.Effects.ZoneEffects
     /// <summary>
     /// DB querying object for ZoneEffects
     /// </summary>
-    public class ZoneEffectReader
+    public static class ZoneEffectReader
     {
-        private readonly IZone _zone;
-
-        public ZoneEffectReader(IZone zone)
-        {
-            _zone = zone;
-        }
-
-        private ZoneEffect CreateZoneEffectFromRecord(IDataRecord record)
+        private static ZoneEffect CreateZoneEffectFromRecord(IDataRecord record)
         {
             try
             {
-                var value = record.GetValue<int>("effectid");
-                var effectType = EnumHelper.GetEnum<EffectType>(value);
-                var config = new ZoneEffect(_zone, effectType);
+                var zoneId = record.GetValue<int>("zoneid");
+                var effectId = record.GetValue<int>("effectid");
+                var effectType = EnumHelper.GetEnum<EffectType>(effectId);
+                var config = new ZoneEffect(zoneId, effectType, true); // TODO new bool col for isPlayerOnly
                 return config;
             }
             catch (Exception ex)
@@ -36,10 +30,10 @@ namespace Perpetuum.Zones.Effects.ZoneEffects
             return null;
         }
 
-        public IEnumerable<ZoneEffect> GetZoneEffects()
+        public static IEnumerable<ZoneEffect> GetStaticZoneEffects(IZone zone)
         {
-            var zoneEffects = Db.Query().CommandText("SELECT zoneid, effectid FROM zoneeffects WHERE zoneid = @zoneId")
-                .SetParameter("@zoneId", _zone.Id)
+            var zoneEffects = Db.Query().CommandText("SELECT zoneid, effectid FROM zoneeffects WHERE zoneid=@zoneId")
+                .SetParameter("@zoneId", zone.Id)
                 .Execute()
                 .Select(CreateZoneEffectFromRecord);
 

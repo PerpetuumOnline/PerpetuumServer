@@ -106,6 +106,10 @@ namespace Perpetuum.ExportedTypes
         effect_beta_bonus = 103,
         effect_beta2_bonus = 104,
         effect_alpha_bonus = 105,
-        effect_alpha2_bonus = 106
+        effect_alpha2_bonus = 106,
+        effect_weather_good = 107,
+        effect_weather_bad = 108,
+        effect_daytime_day = 109,
+        effect_daytime_night = 110
     }
 }

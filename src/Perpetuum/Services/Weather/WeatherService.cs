@@ -2,14 +2,14 @@
 using Perpetuum.Reactive;
 using Perpetuum.Threading.Process;
 
-namespace Perpetuum.Zones
+namespace Perpetuum.Services.Weather
 {
     public class WeatherService : Process, IWeatherService
     {
         private static readonly byte[] _weatherLookUp = new byte[320];
 
         private readonly TimeRange _updateInterval;
-        private readonly Observable<Packet> _observable;
+        private readonly Observable<WeatherInfo> _observable;
 
         private WeatherInfo _current;
 
@@ -26,19 +26,19 @@ namespace Perpetuum.Zones
         {
             _updateInterval = updateInterval;
             _current = GetNextWeather();
-            _observable = AnonymousObservable<Packet>.Create(OnSubscribe);
+            _observable = new AnonymousObservable<WeatherInfo>(OnSubscribe);
         }
 
-        private void OnSubscribe(IObserver<Packet> observer)
+        private void OnSubscribe(IObserver<WeatherInfo> observer)
         {
-            observer.OnNext(_current.CreateUpdatePacket());
+            observer.OnNext(_current);
         }
 
         private WeatherInfo GetNextWeather()
         {
             var duration = FastRandom.NextTimeSpan(_updateInterval);
 
-            return _current == null ? new WeatherInfo(GetRandomWeather(),GetRandomWeather(), duration) : 
+            return _current == null ? new WeatherInfo(GetRandomWeather(), GetRandomWeather(), duration) :
                 new WeatherInfo(_current.Next, GetRandomWeather(), duration);
         }
 
@@ -56,7 +56,7 @@ namespace Perpetuum.Zones
             SendWeatherUpdate(_current);
         }
 
-        public IDisposable Subscribe(IObserver<Packet> observer)
+        public IDisposable Subscribe(IObserver<WeatherInfo> observer)
         {
             return _observable.Subscribe(observer);
         }
@@ -68,7 +68,7 @@ namespace Perpetuum.Zones
 
         private void SendWeatherUpdate(WeatherInfo info)
         {
-            _observable.OnNext(info.CreateUpdatePacket());
+            _observable.OnNext(info);
         }
 
         public void SetCurrentWeather(WeatherInfo weather)

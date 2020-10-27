@@ -24,6 +24,7 @@ using Perpetuum.Reactive;
 using Perpetuum.Robots;
 using Perpetuum.Services.Looting;
 using Perpetuum.Services.Sessions;
+using Perpetuum.Services.Weather;
 using Perpetuum.Timers;
 using Perpetuum.Units;
 using Perpetuum.Zones.Beams;
@@ -284,9 +285,9 @@ namespace Perpetuum.Zones
             _player = player;
         }
 
-        private void OnWeatherUpdated(Packet weatherUpdatePacket)
+        private void OnWeatherUpdated(WeatherInfo weather)
         {
-            SendPacket(weatherUpdatePacket);
+            SendPacket(weather.CreateUpdatePacket());
         }
 
         private TerrainUpdateNotifier CreateTerrainNotifier(Player player)
@@ -926,26 +927,6 @@ namespace Perpetuum.Zones
             _beamsMonitor?.Update();
 
             UpdateLogout(time);
-        }
-
-        private class WeatherMonitor: Observer<Packet>
-        {
-            private Action<Packet> _onNext;
-            public WeatherMonitor(Action<Packet> onNext)
-            {
-                _onNext = onNext;
-            }
-
-            public override void OnNext(Packet packet)
-            {
-                _onNext(packet);
-            }
-
-            protected override void OnDispose()
-            {
-                _onNext = null;
-                base.OnDispose();
-            }
         }
 
         private class BeamsMonitor : Observer<Beam>

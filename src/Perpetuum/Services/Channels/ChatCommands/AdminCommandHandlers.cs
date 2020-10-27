@@ -2,6 +2,7 @@
 using Perpetuum.GenXY;
 using Perpetuum.Groups.Corporations;
 using Perpetuum.Services.RiftSystem;
+using Perpetuum.Services.Weather;
 using Perpetuum.Zones;
 using Perpetuum.Zones.Locking.Locks;
 using Perpetuum.Zones.Teleporting.Strategies;
