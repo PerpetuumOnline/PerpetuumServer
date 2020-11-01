@@ -1711,14 +1711,13 @@ namespace Perpetuum.Bootstrapper
                 e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromSeconds(0.75)));
                 e.Instance.AttachListener(e.Context.Resolve<ChatEcho>());
                 e.Instance.AttachListener(e.Context.Resolve<NpcChatEcho>());
-                e.Context.Resolve<IGameTimeService>();
+                var obs = new GameTimeObserver(e.Instance);
+                obs.Subscribe(e.Context.Resolve<IGameTimeService>());
             });
 
             _builder.RegisterType<GameTimeService>().As<IGameTimeService>().SingleInstance().OnActivated(e =>
             {
-                e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromMinutes(5)));
-                var obs = new GameTimeObserver(e.Context.Resolve<EventListenerService>());
-                e.Instance.Subscribe(obs);
+                e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromMinutes(15)));
             });
 
             // OPP: InterzoneNPCManager
