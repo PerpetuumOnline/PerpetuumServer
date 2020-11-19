@@ -970,6 +970,7 @@ namespace Perpetuum.ExportedTypes
  		 public const string FIELD_CONTAINER = "def_field_container";
  		 public const string FIELD_TERMINAL_NUIMQOL = "def_field_terminal_nuimqol";
  		 public const string FIELD_TERMINAL_PELISTAL = "def_field_terminal_pelistal";
+         public const string FIELD_TERMINAL_RALLY = "def_field_terminal_rally";
  		 public const string FIELD_TERMINAL_THELODICA = "def_field_terminal_thelodica";
  		 public const string GALATROY_BOT = "def_galatroy_bot";
  		 public const string GALATROY_CHASSIS = "def_galatroy_chassis";
