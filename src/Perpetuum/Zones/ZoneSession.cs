@@ -235,11 +235,12 @@ namespace Perpetuum.Zones
         [Conditional("DEBUG")]
         private void LogGenxyException(Packet packet, PerpetuumException gex)
         {
+            var playerInfo = _player != null ? _player.InfoString : null;
             var e = new LogEvent
             {
                 LogType = LogType.Error,
                 Tag = "ZPACKET",
-                Message = $"command:{packet.Command} zone:{_zone.Id} player:{_player.InfoString} ex:{gex}"
+                Message = $"command:{packet.Command} zone:{_zone.Id} player:{playerInfo} ex:{gex}"
             };
 
             Logger.Log(e);
@@ -256,6 +257,14 @@ namespace Perpetuum.Zones
 
             var character = ZoneTicket.GetCharacterFromEncryptedTicket(encrypted);
             character.ThrowIfEqual(null, ErrorCodes.WTFErrorMedicalAttentionSuggested);
+
+            var characterSession = _sessionManager.GetByCharacter(character);
+
+            if (characterSession == null || !characterSession.IsAuthenticated ||
+                !characterSession.RemoteEndPoint.Address.Equals(_connection.RemoteEndPoint.Address)) {
+                throw new PerpetuumException(ErrorCodes.WTFErrorMedicalAttentionSuggested);
+            }
+
             Logger.Info($"Socket authentication successful. zone: {_zone.Id} character: {character.Id}");
             Character = character;
             AccessLevel = character.AccessLevel;
