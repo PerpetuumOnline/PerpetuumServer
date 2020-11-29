@@ -10,6 +10,7 @@ using Perpetuum.Log;
 using Perpetuum.Players;
 using Perpetuum.Services.Standing;
 using Perpetuum.Units;
+using Perpetuum.Zones.DamageProcessors;
 using Perpetuum.Zones.PBS;
 using Perpetuum.Zones.Terrains;
 
@@ -193,7 +194,7 @@ namespace Perpetuum.Zones.Gates
             else
             {
                 bi.Obstacle = true;
-                bi.Height = 14;
+                // bi.Height = 14; // original blocking behaviour
             }
 
             using (new TerrainUpdateMonitor(zone))
@@ -245,6 +246,15 @@ namespace Perpetuum.Zones.Gates
         protected override bool IsHostileFor(Unit unit)
         {
             return unit.IsHostile(this);
+        }
+
+        protected override void OnDamageTaken(Unit source, DamageTakenEventArgs e)
+        {
+            base.OnDamageTaken(source, e);
+            if(source is Player)
+            {
+                source.ApplyPvPEffect();
+            }
         }
     }
 }
