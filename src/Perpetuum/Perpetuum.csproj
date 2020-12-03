@@ -289,6 +289,7 @@
     <Compile Include="Services\Channels\ChatCommands\AdminCommandHandlers.cs" />
     <Compile Include="Services\Channels\ChatCommands\GameAdminCommands.cs" />
     <Compile Include="Services\Channels\PreMadeChatMessageNames.cs" />
+    <Compile Include="Services\EventServices\EventProcessors\EnvironmentalEffectHandler.cs" />
     <Compile Include="Services\GameTime\GameTimeObserver.cs" />
     <Compile Include="Services\GameTime\GameTimeInfo.cs" />
     <Compile Include="Services\GameTime\GameTimeService.cs" />
@@ -304,10 +305,8 @@
     <Compile Include="Services\EventServices\EventProcessors\ChatEcho.cs" />
     <Compile Include="Services\EventServices\EPBonusEventService.cs" />
     <Compile Include="Services\EventServices\EventListenerService.cs" />
-    <Compile Include="Services\EventServices\EventProcessors\GameTimeEventProcessor.cs" />
     <Compile Include="Services\EventServices\EventProcessors\EventProcessor.cs" />
     <Compile Include="Services\EventServices\EventProcessors\OreNPCSpawner.cs" />
-    <Compile Include="Services\EventServices\EventProcessors\WeatherWatcher.cs" />
     <Compile Include="Services\Mail\PreMadeMailNames.cs" />
     <Compile Include="Services\MissionEngine\DisplayMissionSpotsProcess.cs" />
     <Compile Include="Services\MissionEngine\MissionResolveTester.cs" />

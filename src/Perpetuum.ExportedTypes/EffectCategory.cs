@@ -53,7 +53,6 @@ namespace Perpetuum.ExportedTypes
 		effcat_terrain_object_effects = 0x0000080000000000,
 		effcat_zero_core_drop = 0x0000000400000000,
         effcat_zone_effects = 0x0000100000000000, // OPP: New Zone effects
-        effcat_weather_effects = 0x0000200000000000, // OPP: New Zone effects
-        effcat_daytime_effects = 0x0000400000000000 // OPP: New Zone effects
+        effcat_environmental_effects = 0x0000200000000000 // OPP: New Zone effects
     }
 }
