@@ -245,7 +245,7 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals
 
         public bool Equals(MineralNode other)
         {
-            return other.Type == Type && other.Area == _area;
+            return other != null && ReferenceEquals(this, other) || other.Type == Type && other.Area == _area;
         }
 
         public override int GetHashCode()

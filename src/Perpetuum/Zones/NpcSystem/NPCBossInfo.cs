@@ -2,6 +2,7 @@
 using Perpetuum.Players;
 using Perpetuum.Services.EventServices;
 using Perpetuum.Services.EventServices.EventMessages;
+using Perpetuum.Timers;
 using Perpetuum.Units;
 using Perpetuum.Zones.Intrusion;
 using System;
@@ -46,7 +47,6 @@ namespace Perpetuum.Zones.NpcSystem
         }
 
         private readonly int _id;
-        private readonly int _flockid;
         private readonly double? _respawnNoiseFactor;
         private readonly long? _outpostEID;
         private readonly int? _stabilityPts;
@@ -54,16 +54,19 @@ namespace Perpetuum.Zones.NpcSystem
         private readonly string _aggroMsg;
         private bool _speak;
 
+        public int FlockId { get; }
+
         private bool IsOutpostBoss { get { return _outpostEID != null; } }
         private int StabilityPoints { get { return _stabilityPts ?? 0; } }
         private bool OverrideRelations { get; }
 
         public bool IsLootSplit { get; }
+        public bool IsDead { get; private set; }
 
         public NpcBossInfo(int id, int flockid, double? respawnNoiseFactor, bool lootSplit, long? outpostEID, int? stabilityPts, bool overrideRelations, string customDeathMsg, string customAggroMsg)
         {
             _id = id;
-            _flockid = flockid;
+            FlockId = flockid;
             _respawnNoiseFactor = respawnNoiseFactor;
             IsLootSplit = lootSplit;
             _outpostEID = outpostEID;
@@ -72,6 +75,7 @@ namespace Perpetuum.Zones.NpcSystem
             _deathMsg = customDeathMsg;
             _aggroMsg = customAggroMsg;
             _speak = true;
+            IsDead = false;
         }
 
         /// <summary>
@@ -93,6 +97,23 @@ namespace Perpetuum.Zones.NpcSystem
             HandleBossOutpostAggro(aggressor);
         }
 
+        // Timer to buffer excessive decrease frequency of messages from OnDamageTaken
+        private readonly TimeKeeper _time = new TimeKeeper(TimeSpan.FromSeconds(5));
+        /// <summary>
+        /// Handle events to dispatch when the npc boss takes damage
+        /// </summary>
+        /// <param name="npc">The npc Boss killed</param>
+        /// <param name="killer">Player damager</param>
+        /// <param name="channel">npc-event listener channel</param>
+        public void OnDamageTaken(Npc npc, Player aggressor, EventListenerService channel)
+        {
+            if (_time.Expired)
+            {
+                channel.PublishMessage(new NpcReinforcementsMessage(npc, npc.Zone.Id));
+                _time.Reset();
+            }
+        }
+
         /// <summary>
         /// Handle any death behavior for this Boss NPC
         /// Includes sending a message, and affecting outpost's stability if set
@@ -104,16 +125,26 @@ namespace Perpetuum.Zones.NpcSystem
         {
             CommunicateDeath(killer, channel);
             HandleBossOutpostDeath(npc, killer, channel);
+            IsDead = true;
+            channel.PublishMessage(new NpcReinforcementsMessage(npc, npc.Zone.Id));
         }
 
         /// <summary>
-        /// Apply any respawn timer modifiers, and reset any internal state on-respawn
+        /// The boss lives again
+        /// </summary>
+        public void OnRespawn()
+        {
+            _speak = true;
+            IsDead = false;
+        }
+
+        /// <summary>
+        /// Apply any respawn timer modifiers
         /// </summary>
         /// <param name="respawnTime">normal respawn time of npc</param>
         /// <returns>modified respawn time of npc</returns>
-        public TimeSpan OnRespawn(TimeSpan respawnTime)
+        public TimeSpan GetNextSpawnTime(TimeSpan respawnTime)
         {
-            _speak = true;
             var factor = _respawnNoiseFactor ?? 0.0;
             return respawnTime.Multiply(FastRandom.NextDouble(1.0 - factor, 1.0 + factor));
         }
@@ -169,6 +200,27 @@ namespace Perpetuum.Zones.NpcSystem
             {
                 EventMessage eventMessage = new NpcMessage(msg, src);
                 Task.Run(() => eventChannel.PublishMessage(eventMessage));
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as NpcBossInfo);
+        }
+
+        public bool Equals(NpcBossInfo other)
+        {
+            return other != null && ReferenceEquals(this, other) || other._id == _id && other.FlockId == FlockId;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 23;
+                hash = hash * 31 + _id.GetHashCode();
+                hash = hash * 31 + FlockId.GetHashCode();
+                return hash;
             }
         }
     }

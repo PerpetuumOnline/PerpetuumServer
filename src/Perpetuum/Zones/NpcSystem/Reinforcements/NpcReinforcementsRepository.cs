@@ -30,7 +30,13 @@ namespace Perpetuum.Zones.NpcSystem.Reinforcements
 
         public INpcReinforcements CreateNpcBossAddSpawn(NpcBossInfo npcBossInfo, int zoneId)
         {
-            throw new System.NotImplementedException(); //TODO new feature =)
+            var records = Db.Query().CommandText(queryStr)
+                .SetParameter("@target", npcBossInfo.FlockId)
+                .SetParameter("@type", ReinforcementType.Boss)
+                .SetParameter("@zone", zoneId)
+                .Execute()
+                .Select(CreateFromRecord).ToArray();
+            return new NpcReinforcements(records);
         }
     }
 }

@@ -289,6 +289,9 @@
     <Compile Include="Services\Channels\ChatCommands\AdminCommandHandlers.cs" />
     <Compile Include="Services\Channels\ChatCommands\GameAdminCommands.cs" />
     <Compile Include="Services\Channels\PreMadeChatMessageNames.cs" />
+    <Compile Include="Services\EventServices\EventMessages\NpcReinforcementsMessage.cs" />
+    <Compile Include="Services\EventServices\EventProcessors\NpcSpawnEventHandlers\NpcSpawnEventHandler.cs" />
+    <Compile Include="Services\EventServices\EventProcessors\NpcSpawnEventHandlers\NpcReinforcementSpawner.cs" />
     <Compile Include="Services\EventServices\EventProcessors\EnvironmentalEffectHandler.cs" />
     <Compile Include="Services\GameTime\GameTimeObserver.cs" />
     <Compile Include="Services\GameTime\GameTimeInfo.cs" />
@@ -306,7 +309,7 @@
     <Compile Include="Services\EventServices\EPBonusEventService.cs" />
     <Compile Include="Services\EventServices\EventListenerService.cs" />
     <Compile Include="Services\EventServices\EventProcessors\EventProcessor.cs" />
-    <Compile Include="Services\EventServices\EventProcessors\OreNPCSpawner.cs" />
+    <Compile Include="Services\EventServices\EventProcessors\NpcSpawnEventHandlers\OreNPCSpawner.cs" />
     <Compile Include="Services\Mail\PreMadeMailNames.cs" />
     <Compile Include="Services\MissionEngine\DisplayMissionSpotsProcess.cs" />
     <Compile Include="Services\MissionEngine\MissionResolveTester.cs" />
@@ -630,6 +633,8 @@
     <Compile Include="Zones\Effects\ZoneEffects\ZoneEffect.cs" />
     <Compile Include="Zones\Effects\ZoneEffects\ZoneEffectHandler.cs" />
     <Compile Include="Zones\Effects\ZoneEffects\ZoneEffectReader.cs" />
+    <Compile Include="Zones\Finders\PositionFinders\RandomWalkableAroundPositionFinder.cs" />
+    <Compile Include="Zones\Finders\PositionFinders\RandomWalkableOnCircle.cs" />
     <Compile Include="Zones\Intrusion\OutpostDecay.cs" />
     <Compile Include="Zones\IUsableItem.cs" />
     <Compile Include="Services\Channels\Channel.cs" />

@@ -6,7 +6,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
     /// <summary>
     /// Processes StabilityAffectingEvent messages for the provided Outpost
     /// </summary>
-    public class AffectOutpostStability : EventProcessor<EventMessage>
+    public class AffectOutpostStability : EventProcessor
     {
         private Outpost _outpost;
         public AffectOutpostStability(Outpost outpost)
@@ -14,7 +14,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             _outpost = outpost;
         }
 
-        public override void OnNext(EventMessage value)
+        public override void HandleMessage(EventMessage value)
         {
             if (value is StabilityAffectingEvent msg)
             {

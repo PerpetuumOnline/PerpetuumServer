@@ -1,6 +1,6 @@
-﻿using Perpetuum.Zones.NpcSystem.Flocks;
+﻿using Perpetuum.Zones.Finders.PositionFinders;
+using Perpetuum.Zones.NpcSystem.Flocks;
 using Perpetuum.Zones.NpcSystem.Presences;
-using Perpetuum.Zones.NpcSystem.Presences.InterzonePresences;
 using System;
 
 namespace Perpetuum.Zones

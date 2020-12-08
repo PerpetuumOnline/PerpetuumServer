@@ -16,6 +16,7 @@ using Perpetuum.Modules.Weapons;
 using Perpetuum.PathFinders;
 using Perpetuum.Players;
 using Perpetuum.Services.EventServices;
+using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Services.Looting;
 using Perpetuum.Services.MissionEngine;
 using Perpetuum.Services.MissionEngine.MissionTargets;
@@ -748,6 +749,11 @@ namespace Perpetuum.Zones.NpcSystem
             if (player == null)
                 return;
 
+            if (IsBoss())
+            {
+                BossInfo.OnDamageTaken(this, player, _eventChannel);
+            }
+
             AddThreat(player, new Threat(ThreatType.Damage, e.TotalDamage * 0.9), true);
         }
 
@@ -756,13 +762,12 @@ namespace Perpetuum.Zones.NpcSystem
             var zone = Zone;
             var tagger = GetTagger();
             Debug.Assert(zone != null, "zone != null");
-           
-            HandleNpcDeadAsync(zone, killer, tagger).ContinueWith((t) => base.OnDead(killer)).LogExceptions();
 
             if (IsBoss())
             {
                 BossInfo.OnDeath(this, killer, _eventChannel);
             }
+            HandleNpcDeadAsync(zone, killer, tagger).ContinueWith((t) => base.OnDead(killer)).LogExceptions();
         }
 
         private Task HandleNpcDeadAsync(IZone zone, Unit killer, Player tagger)

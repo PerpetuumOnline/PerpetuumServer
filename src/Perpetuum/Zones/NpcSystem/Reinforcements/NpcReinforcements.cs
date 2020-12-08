@@ -18,13 +18,13 @@ namespace Perpetuum.Zones.NpcSystem.Reinforcements
         /// <summary>
         /// Get the next unspawned presence in the list with the next greatest threshold
         /// </summary>
-        /// <param name="percentageOfFieldConsumed">percentage expressed as [0.0-1.0]</param>
+        /// <param name="threshold">percentage expressed as [0.0-1.0]</param>
         /// <returns>INpcReinforcementWave or null</returns>
-        public INpcReinforcementWave GetNextPresence(double percentageOfFieldConsumed)
+        public INpcReinforcementWave GetNextPresence(double threshold)
         {
-            for (var i = 0; i < _presences.Length; i++)
+            for (var i = _presences.Length - 1; i >= 0; i--)
             {
-                if (_presences[i].Threshold > percentageOfFieldConsumed)
+                if (_presences[i].Threshold < threshold)
                 {
                     return _presences[i].Spawned ? null : _presences[i];
                 }
@@ -50,7 +50,7 @@ namespace Perpetuum.Zones.NpcSystem.Reinforcements
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("OreNPCSpawn {");
+            sb.AppendLine("ReinforceSpawn {");
             for (var i = 0; i < _presences.Length; i++)
             {
                 sb.AppendLine(_presences[i].ToString());

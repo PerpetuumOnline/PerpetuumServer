@@ -81,7 +81,9 @@ using Perpetuum.Services.Channels;
 using Perpetuum.Services.Channels.ChatCommands;
 using Perpetuum.Services.Daytime;
 using Perpetuum.Services.EventServices;
+using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Services.EventServices.EventProcessors;
+using Perpetuum.Services.EventServices.EventProcessors.NpcSpawnEventHandlers;
 using Perpetuum.Services.ExtensionService;
 using Perpetuum.Services.HighScores;
 using Perpetuum.Services.Insurance;
@@ -1705,7 +1707,8 @@ namespace Perpetuum.Bootstrapper
             _builder.RegisterType<ChatEcho>();
             _builder.RegisterType<NpcChatEcho>();
             _builder.RegisterType<AffectOutpostStability>();
-            _builder.RegisterType<OreNpcSpawner>();
+            _builder.RegisterType<OreNpcSpawner>().As<NpcSpawnEventHandler<OreNpcSpawnMessage>>();
+            _builder.RegisterType<NpcReinforcementSpawner>().As<NpcSpawnEventHandler<NpcReinforcementsMessage>>();
             _builder.RegisterType<EventListenerService>().SingleInstance().OnActivated(e =>
             {
                 e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromSeconds(0.75)));
@@ -2582,6 +2585,7 @@ namespace Perpetuum.Bootstrapper
                         zone.TerraformHandler = ctx.Resolve<TerraformHandler.Factory>().Invoke(zone);
                     }
 
+                    ctx.Resolve<EventListenerService>().AttachListener(new NpcReinforcementSpawner(zone, ctx.Resolve<INpcReinforcementsRepository>()));
                     var listener = ctx.Resolve<Func<IZone, WeatherEventListener>>().Invoke(zone);
                     listener.Subscribe(zone.Weather);
 

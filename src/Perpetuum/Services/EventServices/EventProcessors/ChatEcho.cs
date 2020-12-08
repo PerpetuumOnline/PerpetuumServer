@@ -10,7 +10,7 @@ namespace Perpetuum.Services.EventServices
     /// <summary>
     /// Simple EventProcessor example for demonstrating the EventListener system
     /// </summary>
-    public class ChatEcho : EventProcessor<EventMessage>
+    public class ChatEcho : EventProcessor
     {
         private readonly IChannelManager _channelManager;
         private const string SENDER_CHARACTER_NICKNAME = "[OPP] Announcer";
@@ -22,7 +22,7 @@ namespace Perpetuum.Services.EventServices
             _channelManager = channelManager;
         }
 
-        public override void OnNext(EventMessage value)
+        public override void HandleMessage(EventMessage value)
         {
             if (value is EventMessageSimple msg)
             {
@@ -37,7 +37,7 @@ namespace Perpetuum.Services.EventServices
     /// NPC vicinity Chat Echo event handler
     /// Emits a message from an NPC on the Vicinity chat channel
     /// </summary>
-    public class NpcChatEcho : EventProcessor<EventMessage>
+    public class NpcChatEcho : EventProcessor
     {
         private const string SENDER_CHARACTER_NICKNAME = "[OPP] Announcer"; //TODO "Nian" character
         private Character _announcer;
@@ -47,7 +47,7 @@ namespace Perpetuum.Services.EventServices
             _announcer = Character.GetByNick(SENDER_CHARACTER_NICKNAME);
         }
 
-        public override void OnNext(EventMessage value)
+        public override void HandleMessage(EventMessage value)
         {
             if (value is NpcMessage msg)
             {

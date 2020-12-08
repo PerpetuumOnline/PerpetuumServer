@@ -13,12 +13,13 @@ namespace Perpetuum.Services.EventServices
     /// </summary>
     public class EventListenerService : Process
     {
-        private readonly IList<EventProcessor<EventMessage>> _observers;
+        private readonly object _lock = new object();
+        private readonly IList<IEventProcessor> _observers;
         private readonly ConcurrentQueue<EventMessage> _queue;
 
         public EventListenerService()
         {
-            _observers = new List<EventProcessor<EventMessage>>();
+            _observers = new List<IEventProcessor>();
             _queue = new ConcurrentQueue<EventMessage>();
         }
 
@@ -33,9 +34,12 @@ namespace Perpetuum.Services.EventServices
 
         public void NotifyListeners(EventMessage message)
         {
-            foreach (var obs in _observers)
+            lock (_lock)
             {
-                obs.OnNext(message);
+                foreach (var obs in _observers)
+                {
+                    obs.OnNext(message);
+                }
             }
         }
 
@@ -43,9 +47,10 @@ namespace Perpetuum.Services.EventServices
         /// Listeners are subscribed and instantiated in the Bootstrapper
         /// </summary>
         /// <param name="observer">Listener</param>
-        public void AttachListener(EventProcessor<EventMessage> observer)
+        public void AttachListener(IEventProcessor observer)
         {
-            _observers.Add(observer);
+            lock (_lock)
+                _observers.Add(observer);
         }
 
         public override void Update(TimeSpan time)

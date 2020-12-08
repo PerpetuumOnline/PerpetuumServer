@@ -4,7 +4,6 @@ using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Services.Weather;
 using Perpetuum.Zones;
 using Perpetuum.Zones.Effects.ZoneEffects;
-using System;
 using System.Collections.Generic;
 
 namespace Perpetuum.Services.EventServices.EventProcessors
@@ -12,7 +11,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
     /// <summary>
     /// Environment Event processor to modify ZoneEffects on a zone based on weather and time of day
     /// </summary>
-    public class EnvironmentalEffectHandler : EventProcessor<EventMessage>
+    public class EnvironmentalEffectHandler : EventProcessor
     {
         private readonly IZone _zone;
         private WeatherInfo _weatherState;
@@ -138,7 +137,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             return isValidMsg;
         }
 
-        public override void OnNext(EventMessage value)
+        public override void HandleMessage(EventMessage value)
         {
             var stateChange = TryGetWeatherMessage(value) || TryGetGameTimeMessage(value);
             if (stateChange)

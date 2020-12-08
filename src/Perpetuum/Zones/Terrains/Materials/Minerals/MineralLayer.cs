@@ -169,7 +169,7 @@ namespace Perpetuum.Zones.Terrains.Materials.Minerals
         }
 
         // Timer to buffer excessive decrease messages on ore mining
-        private readonly TimeKeeper _time = new TimeKeeper(TimeSpan.FromSeconds(1));
+        private readonly TimeKeeper _time = new TimeKeeper(TimeSpan.FromSeconds(5));
         private void OnNodeDecrease(MineralNode node)
         {
             if (_time.Expired)

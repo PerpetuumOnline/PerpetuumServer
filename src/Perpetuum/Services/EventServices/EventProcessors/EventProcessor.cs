@@ -1,21 +1,28 @@
-﻿using System;
+﻿using Perpetuum.Services.EventServices.EventMessages;
+using System;
 
 namespace Perpetuum.Services.EventServices.EventProcessors
 {
-    /// <summary>
-    /// Base class for all EventProcessors
-    /// </summary>
-    /// <typeparam name="EventMessage"></typeparam>
-    public abstract class EventProcessor<EventMessage> : IObserver<EventMessage>
+    public interface IEventProcessor : IObserver<EventMessage>
     {
-        public abstract void OnNext(EventMessage value);
+        void HandleMessage(EventMessage value);
+    }
 
-        void IObserver<EventMessage>.OnCompleted()
+    public abstract class EventProcessor : IEventProcessor
+    {
+        public abstract void HandleMessage(EventMessage value);
+
+        public void OnNext(EventMessage value)
+        {
+            HandleMessage(value);
+        }
+
+        public void OnCompleted()
         {
             throw new NotImplementedException();
         }
 
-        void IObserver<EventMessage>.OnError(Exception error)
+        public void OnError(Exception error)
         {
             throw new NotImplementedException();
         }
