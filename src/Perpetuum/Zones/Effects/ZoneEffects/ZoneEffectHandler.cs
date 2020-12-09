@@ -30,12 +30,16 @@ namespace Perpetuum.Zones.Effects.ZoneEffects
 
         public void AddEffect(ZoneEffect zoneEffect)
         {
+            if (zoneEffect == null) return;
+
             _effects.TryAdd(zoneEffect, byte.MinValue);
             OnZoneEffectAdded(zoneEffect);
         }
 
         public void RemoveEffect(ZoneEffect zoneEffect)
         {
+            if (zoneEffect == null) return;
+
             _effects.TryRemove(zoneEffect, out byte b);
             OnZoneEffectRemoved(zoneEffect);
         }

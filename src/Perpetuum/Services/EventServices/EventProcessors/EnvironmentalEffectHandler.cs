@@ -106,10 +106,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
 
             if (!isSameEffect)
             {
-                if (_currentEffect != null)
-                {
-                    _zone.ZoneEffectHandler.RemoveEffect(_currentEffect);
-                }
+                _zone.ZoneEffectHandler.RemoveEffect(_currentEffect);
                 _zone.ZoneEffectHandler.AddEffect(nextEffect);
                 _currentEffect = nextEffect;
             }
