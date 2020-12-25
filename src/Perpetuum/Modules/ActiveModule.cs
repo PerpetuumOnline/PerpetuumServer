@@ -213,7 +213,7 @@ namespace Perpetuum.Modules
 
         public double OptimalRange => optimalRange.Value;
 
-        protected double Falloff => falloff.Value;
+        public double Falloff => falloff.Value;
 
         public Lock Lock
         {

@@ -26,6 +26,12 @@ namespace Perpetuum.Modules.EffectModules
 
         protected override bool CanApplyEffect(Unit target)
         {
+            if (FastRandom.NextDouble() > ModifyValueByOptimalRange(target, 1.0))
+            {
+                OnError(ErrorCodes.AccuracyCheckFailed);
+                return false;
+            }
+
             if (!IsCategory(CategoryFlags.cf_longrange_webber))
                 return true;
 
@@ -51,8 +57,8 @@ namespace Perpetuum.Modules.EffectModules
                 effectProperty.ResetToDefaultValue();
 
             effectBuilder.SetType(EffectType.effect_demobilizer)
-                                            .SetSource(ParentRobot)
-                                            .WithPropertyModifier(effectProperty);
+                .SetSource(ParentRobot)
+                .WithPropertyModifier(effectProperty);
         }
     }
 

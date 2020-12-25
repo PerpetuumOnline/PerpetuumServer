@@ -73,12 +73,13 @@ namespace Perpetuum.Zones.NpcSystem
         [CanBeNull]
         public UnitLock SelectOptimalLockTargetFor(ActiveModule module)
         {
+            var range = module.OptimalRange + module.Falloff;
             var locks = GetLocks().OfType<UnitLock>().Where(l =>
             {
                 if (l.State != LockState.Locked)
                     return false;
 
-                var isInOptimalRange = IsInRangeOf3D(l.Target, module.OptimalRange);
+                var isInOptimalRange = IsInRangeOf3D(l.Target, range);
                 return isInOptimalRange;
 
             }).ToArray();
