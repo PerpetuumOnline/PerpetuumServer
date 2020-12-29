@@ -28,7 +28,8 @@ namespace Perpetuum.Zones.NpcSystem
                                    IEntityVisitor<SensorBoosterModule>,
                                    IEntityVisitor<ArmorHardenerModule>,
                                    IEntityVisitor<BlobEmissionModulatorModule>,
-                                   IEntityVisitor<TargetBlinderModule>
+                                   IEntityVisitor<TargetBlinderModule>,
+                                   IEntityVisitor<CoreBoosterModule>
     {
         private readonly IntervalTimer _timer;
         private readonly ActiveModule _module;
@@ -100,16 +101,20 @@ namespace Perpetuum.Zones.NpcSystem
         }
 
         private const double ARMOR_REPAIR_THRESHOLD = 0.8;
+        private const double ARMOR_REPAIR_CORE_THRESHOLD = 0.35;
 
         public void Visit(ArmorRepairModule module)
         {
             if (module.ParentRobot.ArmorPercentage >= ARMOR_REPAIR_THRESHOLD)
                 return;
 
+            if (module.ParentRobot.CorePercentage < ARMOR_REPAIR_CORE_THRESHOLD)
+                return;
+
             module.State.SwitchTo(ModuleStateType.Oneshot);
         }
 
-        private const double SHIELD_ARMOR_THRESHOLD = 0.3;
+        private const double SHIELD_ARMOR_THRESHOLD = 0.35;
 
         public void Visit(ShieldGeneratorModule module)
         {
@@ -119,7 +124,7 @@ namespace Perpetuum.Zones.NpcSystem
             module.State.SwitchTo(ModuleStateType.Oneshot);
         }
 
-        private const double SENSOR_JAMMER_CORE_THRESHOLD = 0.5;
+        private const double SENSOR_JAMMER_CORE_THRESHOLD = 0.55;
         
         public void Visit(SensorJammerModule module)
         {
@@ -134,7 +139,7 @@ namespace Perpetuum.Zones.NpcSystem
             module.State.SwitchTo(ModuleStateType.Oneshot);
         }
 
-        private const double SENSOR_DAMPENER_CORE_THRESHOLD = 0.5;
+        private const double SENSOR_DAMPENER_CORE_THRESHOLD = 0.55;
         
         public void Visit(SensorDampenerModule module)
         {
@@ -149,7 +154,7 @@ namespace Perpetuum.Zones.NpcSystem
             module.State.SwitchTo(ModuleStateType.Oneshot);
         }
 
-        private const double WEBBER_CORE_THRESHOLD = 0.5;
+        private const double WEBBER_CORE_THRESHOLD = 0.55;
 
         public void Visit(WebberModule module)
         {
@@ -164,10 +169,13 @@ namespace Perpetuum.Zones.NpcSystem
             module.State.SwitchTo(ModuleStateType.Oneshot);
         }
 
-        private const double BLOBBER_CORE_THRESHOLD = 0.5;
+        private const double BLOBBER_CORE_THRESHOLD = 0.55;
 
         public void Visit(BlobEmissionModulatorModule module)
         {
+            if (module.ParentRobot.Zone.Configuration.Protected)
+                return;
+
             if (module.ParentRobot.CorePercentage < BLOBBER_CORE_THRESHOLD)
                 return;
 
@@ -180,7 +188,7 @@ namespace Perpetuum.Zones.NpcSystem
         }
 
 
-        private const double BLINDER_CORE_THRESHOLD = 0.5;
+        private const double BLINDER_CORE_THRESHOLD = 0.55;
 
         public void Visit(TargetBlinderModule module)
         {
@@ -196,7 +204,7 @@ namespace Perpetuum.Zones.NpcSystem
         }
 
 
-        private const double ENERGY_NEUTRALIZER_CORE_THRESHOLD = 0.5;
+        private const double ENERGY_NEUTRALIZER_CORE_THRESHOLD = 0.55;
 
         public void Visit(EnergyNeutralizerModule module)
         {
@@ -264,6 +272,15 @@ namespace Perpetuum.Zones.NpcSystem
             }
         }
 
+        private const double ENERGY_INJECTOR_THRESHOLD = 0.65;
+
+        public void Visit(CoreBoosterModule module)
+        {
+            if (module.ParentRobot.CorePercentage > ENERGY_INJECTOR_THRESHOLD)
+                return;
+
+            module.State.SwitchTo(ModuleStateType.Oneshot);
+        }
     }
 
 
