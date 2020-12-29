@@ -233,8 +233,9 @@ namespace Perpetuum.Robots
         public override ItemPropertyModifier GetPropertyModifier(AggregateField field)
         {
             var modifier = base.GetPropertyModifier(field);
+            var modifyingModules = Modules.Where(m => !m.Properties.Any(p => p.Field == field));
 
-            foreach (var module in Modules.Where(m => m.IsPassive))
+            foreach (var module in modifyingModules)
             {
                 var m = module.GetBasePropertyModifier(field);
                 m.Modify(ref modifier);
