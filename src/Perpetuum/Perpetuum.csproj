@@ -153,6 +153,7 @@
     <Compile Include="Collections\Spatial\QuadTree.cs" />
     <Compile Include="Collections\Spatial\QuadTreeItem.cs" />
     <Compile Include="Collections\Spatial\QuadTreeNode.cs" />
+    <Compile Include="Collections\WeightedCollection.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Common\CentralBank.cs" />

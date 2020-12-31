@@ -20,7 +20,7 @@ namespace Perpetuum.Units
     {
         private ImmutableDictionary<long,UnitVisibility> _visibleUnits = ImmutableDictionary<long, UnitVisibility>.Empty;
 
-        protected IReadOnlyCollection<IUnitVisibility> GetVisibleUnits()
+        public IReadOnlyCollection<IUnitVisibility> GetVisibleUnits()
         {
             return _visibleUnits.Values.ToArray();
         }

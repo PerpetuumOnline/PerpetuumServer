@@ -37,7 +37,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
 
         protected override void OnUpdate(TimeSpan time)
         {
-            var x = Flocks.GetMembers().Any(m => m.AI.Current is AggressorAI);
+            var x = Flocks.GetMembers().Any(m => m.AI.Current is CombatAI);
             if (x)
                 ResetDynamicDespawnTimer();
 

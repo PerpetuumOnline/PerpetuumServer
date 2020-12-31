@@ -66,6 +66,5 @@ namespace Perpetuum
                 return (T)(bf.Deserialize(ms));
             }
         }
-
     }
 }

@@ -14,8 +14,8 @@ namespace Perpetuum.Services.EventServices.EventProcessors.NpcSpawnEventHandlers
 {
     public class NpcReinforcementSpawner : NpcSpawnEventHandler<NpcReinforcementsMessage>
     {
-        protected override TimeSpan SPAWN_DELAY { get { return TimeSpan.FromSeconds(10); } }
-        protected override TimeSpan SPAWN_LIFETIME { get { return TimeSpan.FromMinutes(15); } }
+        protected override TimeSpan SPAWN_DELAY { get { return TimeSpan.FromSeconds(5); } }
+        protected override TimeSpan SPAWN_LIFETIME { get { return TimeSpan.FromMinutes(30); } }
         protected override int MAX_SPAWN_DIST { get { return 10; } }
 
         private readonly IDictionary<NpcBossInfo, INpcReinforcements> _reinforcementsByNpc = new Dictionary<NpcBossInfo, INpcReinforcements>();

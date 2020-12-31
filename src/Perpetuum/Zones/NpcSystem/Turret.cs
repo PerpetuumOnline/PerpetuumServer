@@ -100,7 +100,7 @@ namespace Perpetuum.Zones.NpcSystem
             TryActiveModule(result,primaryLock);
         }
 
-        private const double ARMOR_REPAIR_THRESHOLD = 0.8;
+        private const double ARMOR_REPAIR_THRESHOLD = 0.95;
         private const double ARMOR_REPAIR_CORE_THRESHOLD = 0.35;
 
         public void Visit(ArmorRepairModule module)

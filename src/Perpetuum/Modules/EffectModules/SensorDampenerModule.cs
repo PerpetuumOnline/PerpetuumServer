@@ -33,13 +33,11 @@ namespace Perpetuum.Modules.EffectModules
 
         protected override bool CanApplyEffect(Unit target)
         {
-            if (FastRandom.NextDouble() <= ModifyValueByOptimalRange(target, 1.0))
+            var targetSensorStrength = target.SensorStrength * FastRandom.NextDouble();
+            var rangedEcmStrength = ModifyValueByOptimalRange(target, _ecmStrength.Value);
+            if (targetSensorStrength < rangedEcmStrength)
             {
-                var targetSensorStrength = target.SensorStrength * FastRandom.NextDouble();
-                if (targetSensorStrength < _ecmStrength.Value)
-                {
-                    return true;
-                }
+                return true;
             }
             OnError(ErrorCodes.AccuracyCheckFailed);
             return false;
