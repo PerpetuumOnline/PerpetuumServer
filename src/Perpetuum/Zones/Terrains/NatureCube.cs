@@ -456,6 +456,8 @@ namespace Perpetuum.Zones.Terrains
                 var currentAmount = kvp.Value;
 
                 var rule = _zone.Configuration.PlantRules.GetPlantRule(currentPlantType);
+                if (rule == null)
+                    continue;
 
                 if (rule.HasBlockingState)
                 {
