@@ -50,6 +50,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
             var character = data.Request.Session.Character;
             var zone = data.Request.Session.ZoneMgr.GetZone((int)character.ZoneId);
             var player = zone.GetPlayer(character.ActiveRobotEid);
+            zone.IsLayerEditLocked.ThrowIfTrue(ErrorCodes.TileTerraformProtected);
 
             var lockedtiles = player.GetLocks();
 
@@ -68,6 +69,40 @@ namespace Perpetuum.Services.Channels.ChatCommands
                 }
             }
             SendMessageToAll(data, string.Format("Altered state of control layer on {0} Tiles ({1}: set to {2})", lockedtiles.Count, flag, adddelete));
+        }
+        private static void LockOrUnlockZoneLayers(AdminCommandData data, bool toLock)
+        {
+            if (!IsDevModeEnabled(data))
+                return;
+
+            bool err = false;
+            var zoneId = -1;
+            if (data.Command.Args.IsNullOrEmpty())
+            {
+                var character = data.Request.Session.Character;
+                zoneId = character.ZoneId ?? -1;
+            }
+            else if (data.Command.Args.Length >= 1)
+            {
+                err = !int.TryParse(data.Command.Args[0], out int id);
+                zoneId = id;
+            }
+
+            if (err)
+            {
+                SendMessageToAll(data, "Error parsing args");
+                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+            }
+            err = !data.Request.Session.ZoneMgr.ContainsZone(zoneId);
+            if (err)
+            {
+                SendMessageToAll(data, "Zone not found");
+                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+            }
+
+            var zone = data.Request.Session.ZoneMgr.GetZone(zoneId);
+            zone.IsLayerEditLocked = toLock;
+            SendMessageToAll(data, $"All layers on zone {zoneId} {(toLock ? "LOCKED" : "UNLOCKED")}!");
         }
         public static void Unknown(AdminCommandData data)
         {
@@ -761,7 +796,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
             var character = data.Request.Session.Character;
             var zone = data.Request.Session.ZoneMgr.GetZone((int)character.ZoneId);
             var player = zone.GetPlayer(character.ActiveRobotEid);
-
+            zone.IsLayerEditLocked.ThrowIfTrue(ErrorCodes.TileTerraformProtected);
             var lockedtiles = player.GetLocks();
 
             using (new TerrainUpdateMonitor(zone))
@@ -785,7 +820,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
             var character = data.Request.Session.Character;
             var zone = data.Request.Session.ZoneMgr.GetZone((int)character.ZoneId);
             var player = zone.GetPlayer(character.ActiveRobotEid);
-
+            zone.IsLayerEditLocked.ThrowIfTrue(ErrorCodes.TileTerraformProtected);
             var lockedtiles = player.GetLocks();
 
             using (new TerrainUpdateMonitor(zone))
@@ -950,6 +985,16 @@ namespace Perpetuum.Services.Channels.ChatCommands
             SendMessageToAll(data, $"Garden command accepted: {dictionary.ToDebugString()} \r\nPlanting... ");
             HandleLocalRequest(data, cmd);
             SendMessageToAll(data, $"Garden Created! ");
+        }
+        [ChatCommand("ZoneLockLayers")]
+        public static void ZoneLockLayers(AdminCommandData data)
+        {
+            LockOrUnlockZoneLayers(data, true);
+        }
+        [ChatCommand("ZoneUnlockLayers")]
+        public static void ZoneUnlockLayers(AdminCommandData data)
+        {
+            LockOrUnlockZoneLayers(data, false);
         }
         [ChatCommand("TestMissions")]
         public static void TestMissions(AdminCommandData data)

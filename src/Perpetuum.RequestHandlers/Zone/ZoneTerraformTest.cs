@@ -23,6 +23,7 @@ namespace Perpetuum.RequestHandlers.Zone
 
         public void HandleRequest(IZoneRequest request)
         {
+            request.Zone.IsLayerEditLocked.ThrowIfTrue(ErrorCodes.TileTerraformProtected);
             var character = request.Session.Character;
 
             var player = request.Zone.GetPlayer(character);

@@ -8,6 +8,7 @@ namespace Perpetuum.RequestHandlers.Zone
     {
         public void HandleRequest(IZoneRequest request)
         {
+            request.Zone.IsLayerEditLocked.ThrowIfTrue(ErrorCodes.TileTerraformProtected);
             var low = request.Data.GetOrDefault<int>(k.low);
             var waterLevel = ZoneConfiguration.WaterLevel;
 

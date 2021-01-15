@@ -28,6 +28,7 @@ namespace Perpetuum.RequestHandlers.Zone
 
             fullBlend = fullBlend.Clamp();
             var zone = request.Zone;
+            zone.IsLayerEditLocked.ThrowIfTrue(ErrorCodes.TileTerraformProtected);
 
             Player player;
             if (zone.TryGetPlayer(request.Session.Character, out player))

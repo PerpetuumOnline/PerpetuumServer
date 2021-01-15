@@ -7,6 +7,7 @@ namespace Perpetuum.RequestHandlers.Zone
     {
         public void HandleRequest(IZoneRequest request)
         {
+            request.Zone.IsLayerEditLocked.ThrowIfTrue(ErrorCodes.TileTerraformProtected);
             var layerName = request.Data.GetOrDefault<string>(k.layerName);
 
             switch (layerName)

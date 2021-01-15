@@ -82,9 +82,11 @@ namespace Perpetuum.Zones
         public TcpListener Listener { get; set; }
 
         private readonly SessionlessPlayerTimeout _sessionlessPlayerTimeout;
+        public bool IsLayerEditLocked { get; set; }
 
         protected Zone(ISessionManager sessionManager, IGangManager gangManager)
         {
+            IsLayerEditLocked = true;
             sessionManager.CharacterDeselected += OnCharacterDeselected;
             _gangManager = gangManager;
             _gangManager.GangMemberJoined += OnGangMemberJoined;

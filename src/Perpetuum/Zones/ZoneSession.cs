@@ -695,6 +695,7 @@ namespace Perpetuum.Zones
         private void HandleSetLayer(Packet packet)
         {
             _player.Session.AccessLevel.IsAdminOrGm().ThrowIfFalse(ErrorCodes.AccessDenied);
+            _zone.IsLayerEditLocked.ThrowIfTrue(ErrorCodes.TileTerraformProtected);
 
             using (new TerrainUpdateMonitor(_zone))
             {

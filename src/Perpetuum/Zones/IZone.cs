@@ -25,6 +25,7 @@ namespace Perpetuum.Zones
     public interface IZone 
     {
         [NotNull] ZoneConfiguration Configuration { get; }
+        bool IsLayerEditLocked { get; set; }
 
         int Id { get; }
         Size Size { get; }
