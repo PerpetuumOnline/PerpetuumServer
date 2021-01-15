@@ -11,6 +11,7 @@ namespace Perpetuum.Players
 {
     public class PlayerMoveCheckQueue : Disposable
     {
+        private readonly TimeSpan MAX_TIMEOUT = TimeSpan.FromSeconds(2);
         private readonly Task _task;
         private readonly CancellationTokenSource _tokenSrc;
         private CancellationToken _ct;
@@ -48,7 +49,24 @@ namespace Perpetuum.Players
                 _task.Start();
         }
 
-        public void Stop()
+        public void StopAndDispose()
+        {
+            try
+            {
+                if (!Stop())
+                {
+                    Logger.Warning("PMCQ failed to join Task under timeout");
+                }
+                Dispose();
+            }
+            catch (Exception ex)
+            {
+                Logger.Warning("PMCQ errored on cleanup");
+                Logger.Exception(ex);
+            }
+        }
+
+        private bool Stop()
         {
             if (!IsCanceled)
                 _tokenSrc.Cancel();
@@ -56,7 +74,8 @@ namespace Perpetuum.Players
             if (!IsCompleted)
                 _movesToReview.CompleteAdding();
 
-            _task.Wait();
+            _movesToReview.Clear();
+            return _task.Wait(MAX_TIMEOUT);
         }
 
         public void EnqueueMove(Position target)

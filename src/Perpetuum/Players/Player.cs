@@ -35,7 +35,6 @@ using Perpetuum.Zones.Blobs.BlobEmitters;
 using Perpetuum.Zones.CombatLogs;
 using Perpetuum.Zones.DamageProcessors;
 using Perpetuum.Zones.Effects;
-using Perpetuum.Zones.Effects.ZoneEffects;
 using Perpetuum.Zones.Finders;
 using Perpetuum.Zones.Finders.PositionFinders;
 using Perpetuum.Zones.Locking;
@@ -267,15 +266,10 @@ namespace Perpetuum.Players
             Session.SendPacket(ExitPacketBuilder);
             zone.SendPacketToGang(Gang, new GangUpdatePacketBuilder(Visibility.Invisible, this));
 
-            Task.Run(() =>
-            {
-                _check.Stop();
-                _check.Dispose();
-            }).ContinueWith(t =>
-            {
-                if (!States.LocalTeleport)
-                    Session.Stop();
-            });
+            _check.StopAndDispose();
+
+            if (!States.LocalTeleport)
+                Session.Stop();
 
             base.OnRemovedFromZone(zone);
         }
