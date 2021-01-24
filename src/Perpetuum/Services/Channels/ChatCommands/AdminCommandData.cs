@@ -14,7 +14,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
             public CommandArgs(string[] commandArray)
             {
                 Name = commandArray[0].Substring(1).ToLower().Trim();
-                Args = commandArray.Skip(1).ToArray();
+                Args = commandArray.Skip(1).Select(s => s.Trim()).ToArray();
             }
         }
 

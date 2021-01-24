@@ -12,6 +12,13 @@ namespace Perpetuum.RequestHandlers.Zone
 
             switch (layerName)
             {
+                case k.groundType:
+                    request.Zone.Terrain.Plants.UpdateAll((x, y, pi) =>
+                    {
+                        pi.ClearGroundType();
+                        return pi;
+                    });
+                    break;
                 case k.plants:
                     request.Zone.Terrain.Plants.UpdateAll((x, y, pi) =>
                     {

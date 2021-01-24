@@ -23,6 +23,11 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
             material = 0;
         }
 
+        public void ClearGroundType()
+        {
+            groundType = GroundType.undefined;
+        }
+
         public void SetPlant(byte newState, PlantType newPlantType)
         {
             state = newState;

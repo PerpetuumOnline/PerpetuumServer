@@ -429,6 +429,7 @@ namespace Perpetuum
         public const string group = "group";
         public const string groupEID = "groupEID";
         public const string ground = "ground";
+        public const string groundType = "groundType";
         public const string growRate = "growRate";
         public const string guid = "guid";
         public const string hangar = "hangar";

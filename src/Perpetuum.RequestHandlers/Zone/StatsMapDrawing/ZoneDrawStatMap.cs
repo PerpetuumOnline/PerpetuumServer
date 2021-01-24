@@ -64,6 +64,7 @@ namespace Perpetuum.RequestHandlers.Zone.StatsMapDrawing
             RegisterCreator("displayspots", DisplaySpots);
             RegisterCreator("worstspots",DrawWorstSpotsMap);
             RegisterCreator("alltargets", DrawAllTargetsOnZone);
+            RegisterCreator(k.groundType, CreateGroundTypeMap);
         }
 
         private void RegisterCreator(string type,Func<IRequest,Bitmap> bitmapFactory)
@@ -638,6 +639,23 @@ namespace Perpetuum.RequestHandlers.Zone.StatsMapDrawing
                 var control = _zone.Terrain.Controls.GetValue(x, y);
                 var c = (int)control.Flags;
                 bmp.SetPixel(x, y, Color.FromArgb(c,c,c));
+            });
+        }
+
+        private Bitmap CreateGroundTypeMap()
+        {
+            var numGroundTypes = Enum.GetNames(typeof(GroundType)).Length;
+            var colors = new Color[numGroundTypes];
+            var random = new Random(numGroundTypes);
+            for (var i = 0; i < colors.Length; i++)
+            {
+                colors[i] = Color.FromArgb(random.Next(255), random.Next(255), random.Next(255));
+            }
+            return _zone.CreateBitmap().ForEach((bmp, x, y) =>
+            {
+                var groundType = _zone.Terrain.Plants.GetValue(x, y).groundType;
+                var c = colors[((int)groundType).Clamp(0, numGroundTypes - 1)];
+                bmp.SetPixel(x, y, c);
             });
         }
 

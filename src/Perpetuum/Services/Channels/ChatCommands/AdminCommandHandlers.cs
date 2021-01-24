@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace Perpetuum.Services.Channels.ChatCommands
 {
-    public class ChatCommand: Attribute
+    public class ChatCommand : Attribute
     {
         public string Command { get; private set; }
         public ChatCommand(string command)
@@ -93,16 +93,18 @@ namespace Perpetuum.Services.Channels.ChatCommands
                 SendMessageToAll(data, "Error parsing args");
                 throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
             }
-            err = !data.Request.Session.ZoneMgr.ContainsZone(zoneId);
-            if (err)
-            {
-                SendMessageToAll(data, "Zone not found");
-                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
-            }
-
+            CheckZoneId(data, zoneId);
             var zone = data.Request.Session.ZoneMgr.GetZone(zoneId);
             zone.IsLayerEditLocked = toLock;
             SendMessageToAll(data, $"All layers on zone {zoneId} {(toLock ? "LOCKED" : "UNLOCKED")}!");
+        }
+        public static void CheckZoneId(AdminCommandData data, int zoneId)
+        {
+            if (!data.Request.Session.ZoneMgr.ContainsZone(zoneId))
+            {
+                SendMessageToAll(data, $"Bad 'zoneId' arg");
+                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+            }
         }
         public static void Unknown(AdminCommandData data)
         {
@@ -301,13 +303,24 @@ namespace Perpetuum.Services.Channels.ChatCommands
         [ChatCommand("ZoneDrawStatMap")]
         public static void ZoneDrawStatMap(AdminCommandData data)
         {
-            //TODO check args, maybe allow zone id, fallback to sender zone
-            Dictionary<string, object> dictionary = new Dictionary<string, object>()
+            var zoneId = data.Sender.ZoneId ?? -1;
+            if (data.Command.Args.Length < 1)
+            {
+                SendMessageToAll(data, $"Missing 'type' arg");
+                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+            }
+            var type = data.Command.Args[0];
+            if (data.Command.Args.Length > 1)
+            {
+                if (!int.TryParse(data.Command.Args[1], out zoneId))
                 {
-                    { "type", data.Command.Args[0] }
-                };
-
-            string cmd = string.Format("zoneDrawStatMap:zone_{0}:{1}", data.Sender.ZoneId, GenxyConverter.Serialize(dictionary));
+                    SendMessageToAll(data, $"Bad 'zoneId' arg");
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                }
+            }
+            CheckZoneId(data, zoneId);
+            var dictionary = new Dictionary<string, object>() { { k.type, type } };
+            string cmd = string.Format("zoneDrawStatMap:zone_{0}:{1}", zoneId, GenxyConverter.Serialize(dictionary));
             HandleLocalRequest(data, cmd);
         }
         [ChatCommand("ListAllPlayersInZone")]
@@ -494,11 +507,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
             {
                 err = !int.TryParse(data.Command.Args[2], out zoneId);
             }
-            if (!data.Request.Session.ZoneMgr.ContainsZone(zoneId))
-            {
-                SendMessageToAll(data, $"Bad or missing zone id");
-                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
-            }
+            CheckZoneId(data, zoneId);
             var zone = data.Request.Session.ZoneMgr.GetZone(zoneId);
             var current = zone.Weather.GetCurrentWeather();
             var weather = new WeatherInfo(current.Next, weatherInt.Min(255), TimeSpan.FromSeconds(seconds));
@@ -514,11 +523,12 @@ namespace Perpetuum.Services.Channels.ChatCommands
             {
                 err = !int.TryParse(data.Command.Args[0], out zoneId);
             }
-            if (!data.Request.Session.ZoneMgr.ContainsZone(zoneId) || err)
+            if (err)
             {
                 SendMessageToAll(data, $"Bad or missing zone id");
                 throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
             }
+            CheckZoneId(data, zoneId);
             var zone = data.Request.Session.ZoneMgr.GetZone(zoneId);
             SendMessageToAll(data, $"Weather set {zone.Weather.GetCurrentWeather().ToString()}");
         }
@@ -985,6 +995,31 @@ namespace Perpetuum.Services.Channels.ChatCommands
             SendMessageToAll(data, $"Garden command accepted: {dictionary.ToDebugString()} \r\nPlanting... ");
             HandleLocalRequest(data, cmd);
             SendMessageToAll(data, $"Garden Created! ");
+        }
+        [ChatCommand("ZoneClearGroundType")]
+        public static void ZoneClearGroundType(AdminCommandData data)
+        {
+            if (!IsDevModeEnabled(data))
+                return;
+
+            bool err = false;
+
+            var zoneId = data.Sender.ZoneId ?? -1;
+            if (data.Command.Args.Length > 0)
+            {
+                err = !int.TryParse(data.Command.Args[0], out zoneId);
+            }
+            if (err)
+            {
+                SendMessageToAll(data, "Bad args");
+                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+            }
+            CheckZoneId(data, zoneId);
+            var dictionary = new Dictionary<string, object>() { { k.layerName, k.groundType } };
+            var cmd = string.Format("{0}:zone_{1}:{2}", Commands.ZoneClearLayer.Text, zoneId, GenxyConverter.Serialize(dictionary));
+            SendMessageToAll(data, $"Sending: {cmd}");
+            HandleLocalRequest(data, cmd);
+            SendMessageToAll(data, $"Command completed");
         }
         [ChatCommand("ZoneLockLayers")]
         public static void ZoneLockLayers(AdminCommandData data)
