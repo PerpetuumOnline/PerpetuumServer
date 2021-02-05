@@ -226,9 +226,8 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
         //Overload method for price/sec
         public virtual double GetPricePerSecond(int targetDefinition)
         {
-            var mod = Math.Max(1, ProductionDataAccess.GetProductionPriceModifier(targetDefinition));
-            mod = Math.Min(10, mod);
-            return GetPricePerSecond() * mod;
+            var mod = ProductionDataAccess.GetProductionPriceModifier(targetDefinition);
+            return GetPricePerSecond() * mod.Clamp(1, 10);
         }
 
         public virtual double GetPricePerSecond()

@@ -1641,6 +1641,7 @@ namespace Perpetuum.Bootstrapper
             _builder.RegisterType<ReprocessSessionMember>();
             _builder.RegisterType<ReprocessSession>();
 
+            _builder.RegisterType<ProductionCostReader>().As<IProductionCostReader>();
             _builder.RegisterType<ProductionDataAccess>().OnActivated(e =>
             {
                 e.Instance.Init();

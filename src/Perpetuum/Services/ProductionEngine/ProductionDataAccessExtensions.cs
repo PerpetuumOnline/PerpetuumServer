@@ -71,25 +71,25 @@ namespace Perpetuum.Services.ProductionEngine
             return 1.0;
         }
 
+        /// <summary>
+        /// Applies EntityDefault specific cost modifiers based on tech level/type and category
+        /// </summary>
+        /// <param name="dataAccess"></param>
+        /// <param name="targetDefinition"></param>
+        /// <returns>factor to multiply cost</returns>
         public static double GetProductionPriceModifier(this IProductionDataAccess dataAccess, int targetDefinition)
         {
+            var modifier = 1.0;
             if (!EntityDefault.TryGet(targetDefinition, out EntityDefault ed))
             {
                 Logger.Error("definition was not found: " + targetDefinition);
-                return 1.0;
+                return modifier;
             }
 
-            var modifier = 1.0;
-
-            if (dataAccess.ProductionCostByCategory.TryGetValue(ed.CategoryFlags, out ProductionCost costByCat))
+            if (dataAccess.ProductionCost.TryGetValue(ed.Definition, out double value))
             {
-                modifier = costByCat.costModifier;
+                modifier = value;
             }
-            else if (dataAccess.ProductionCostByTechLevel.TryGetValue(ed.Tier.level, out ProductionCost costByLevel))
-            {
-                modifier = costByLevel.costModifier;
-            }
-
             return modifier;
         }
 
