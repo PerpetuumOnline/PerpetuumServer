@@ -1247,24 +1247,12 @@ namespace Perpetuum.Bootstrapper
                 ByCategoryFlags<VisibilityBasedProximityProbe>(CategoryFlags.cf_visibility_based_probe);
                 ByCategoryFlags<RandomResearchKit>(CategoryFlags.cf_random_research_kits);
                 ByCategoryFlags<LotteryItem>(CategoryFlags.cf_lottery_items);
+                ByCategoryFlags<Paint>(CategoryFlags.cf_paints); // OPP Robot paint!
+                ByCategoryFlags<CalibrationProgramCapsule>(CategoryFlags.cf_ct_capsules); // OPP CT capsules
+                ByCategoryFlags<EPBoost>(CategoryFlags.cf_ep_boosters); // OPP EP Boosters
 
-                //TODO ORDER MATTERS!  Register Paints AFTER lottery will ensure Paint objects are valid subset of lottery category
-                //TODO entitydefaults must contain name "def_paint" and have cf_lottery_items
-                //TODO make separate category
-                ByNamePatternAndFlag<Paint>("def_paint", CategoryFlags.cf_lottery_items);
-
-                //TODO new CalibrationTemplateItem -- activates like paint! same category!
-                ByNamePatternAndFlag<CalibrationProgramCapsule>("_CT_capsule", CategoryFlags.cf_lottery_items);
-
-                // TODO new ep boost item -- activates like paint
-                ByNamePatternAndFlag<EPBoost>("def_boost_ep", CategoryFlags.cf_lottery_items);
-
-                // TODO new Blinder module
-                ByNamePatternAndFlag<TargetBlinderModule>(DefinitionNames.STANDARD_BLINDER_MODUL, CategoryFlags.cf_target_painter);
-
-                //New Relic Definition for Units
-                ByNamePatternAndFlag<Relic>(DefinitionNames.RELIC, CategoryFlags.undefined);
-                ByNamePatternAndFlag<SAPRelic>(DefinitionNames.RELIC_SAP, CategoryFlags.undefined);
+                // OPP new Blinder module
+                ByNamePatternAndFlag<TargetBlinderModule>(DefinitionNames.STANDARD_BLINDER_MODULE, CategoryFlags.cf_target_painter);
 
                 ByCategoryFlags<VisibilityBasedProbeDeployer>(CategoryFlags.cf_proximity_probe_deployer);
                 ByCategoryFlags<Item>(CategoryFlags.cf_gift_packages);
@@ -1325,7 +1313,9 @@ namespace Perpetuum.Bootstrapper
                 ByName<RandomRiftPortal>(DefinitionNames.RANDOM_RIFT_PORTAL);
                 ByName<ItemShop>(DefinitionNames.BASE_ITEM_SHOP);
                 ByName<Gift>(DefinitionNames.ANNIVERSARY_PACKAGE);
-                ByName<StrongholdExitRift>(DefinitionNames.STRONGHOLD_EXIT_RIFT);
+                ByName<StrongholdExitRift>(DefinitionNames.STRONGHOLD_EXIT_RIFT); //OPP stronghold exit rift
+                ByName<Relic>(DefinitionNames.RELIC); //OPP Relic
+                ByName<SAPRelic>(DefinitionNames.RELIC_SAP); //OPP outpost Relic
 
                 var c = b.Build();
 
