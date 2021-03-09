@@ -78,47 +78,34 @@ namespace Perpetuum.Services.EventServices.EventProcessors
                 return;
 
             ZoneEffect nextEffect = null;
-            if (_gameTime.IsDay)
+            string timeOfDay = "neutral";
+            string weatherType = "neutral";
+
+            if(_gameTime.IsDay)
             {
-                if (_weatherState.IsGoodWeather)
-                {
-                    nextEffect = GetEffect(EffectType.effect_day_clear);
-                }
-                else if (_weatherState.IsBadWeather)
-                {
-                    nextEffect = GetEffect(EffectType.effect_day_overcast);
-                }
-                else
-                {
-                    nextEffect = GetEffect(EffectType.effect_day);
-                }
+                timeOfDay = "day";
             }
-            else if (_gameTime.IsNight)
+            else if(_gameTime.IsNight)
             {
-                if (_weatherState.IsGoodWeather)
-                {
-                    nextEffect = GetEffect(EffectType.effect_night_clear);
-                }
-                else if (_weatherState.IsBadWeather)
-                {
-                    nextEffect = GetEffect(EffectType.effect_night_overcast);
-                }
-                else
-                {
-                    nextEffect = GetEffect(EffectType.effect_night);
-                }
+                timeOfDay = "night";
             }
-            else
+
+            if(_weatherState.IsGoodWeather)
             {
-                if (_weatherState.IsGoodWeather)
-                {
-                    nextEffect = GetEffect(EffectType.effect_weather_good);
-                }
-                else if (_weatherState.IsBadWeather)
-                {
-                    nextEffect = GetEffect(EffectType.effect_weather_bad);
-                }
+                weatherType = "good";
             }
+            else if(_weatherState.IsBadWeather)
+            {
+                weatherType = "bad";
+            }
+
+            //In cases where timeOfDay is supposed to stay "neutral", weatherType cannot also be "neutral" if we are to follow the logic this change is replacing.
+            if (String.Equals(timeOfDay, weatherType))
+            {
+                return;
+            }
+            var weatherResult = Tuple.Create(timeOfDay, weatherType);
+            nextEffect = GetEffect(_weatherDict[weatherResult]);
 
             var isSameEffect = ReferenceEquals(_currentEffect, nextEffect) ||
                 (_currentEffect != null && _currentEffect.Equals(nextEffect));
