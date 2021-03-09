@@ -4,6 +4,7 @@ using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Services.Weather;
 using Perpetuum.Zones;
 using Perpetuum.Zones.Effects.ZoneEffects;
+using System;
 using System.Collections.Generic;
 
 namespace Perpetuum.Services.EventServices.EventProcessors
@@ -28,10 +29,28 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             EffectType.effect_weather_bad
         };
         private readonly IDictionary<EffectType, ZoneEffect> _effects = new Dictionary<EffectType, ZoneEffect>();
+        private readonly IDictionary<Tuple<string, string>, EffectType> _weatherDict = new Dictionary<Tuple<string, string>, EffectType>();
         public EnvironmentalEffectHandler(IZone zone)
         {
             _zone = zone;
             _effects = InitEffectCollection(_effectTypes);
+            _weatherDict = InitWeatherCollection();
+        }
+
+        private IDictionary<Tuple<string, string>, EffectType> InitWeatherCollection()
+        {
+            var dict = new Dictionary<Tuple<string, string>, EffectType>
+            {
+                { Tuple.Create("day", "neutral"), EffectType.effect_day },
+                { Tuple.Create("day", "good"), EffectType.effect_day_clear },
+                { Tuple.Create("day", "bad"), EffectType.effect_day_overcast },
+                { Tuple.Create("night", "neutral"), EffectType.effect_night },
+                { Tuple.Create("night", "good"), EffectType.effect_night_clear },
+                { Tuple.Create("night", "bad"), EffectType.effect_night_overcast },
+                { Tuple.Create("neutral", "good"), EffectType.effect_weather_good },
+                { Tuple.Create("neutral", "bad"), EffectType.effect_weather_bad }
+            };
+            return dict;
         }
 
         private IDictionary<EffectType, ZoneEffect> InitEffectCollection(EffectType[] effectTypes)
