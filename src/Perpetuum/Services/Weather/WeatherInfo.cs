@@ -47,6 +47,29 @@ namespace Perpetuum.Services.Weather
             return sb.ToString();
         }
 
+        public enum WeatherState
+        {
+            GOOD_WEATHER,
+            NEUTRAL_WEATHER,
+            BAD_WEATHER
+        }
+
+        public WeatherState getWeatherState()
+        {
+            if(Current > BAD_WEATHER && Next > BAD_WEATHER)
+            {
+                return WeatherState.BAD_WEATHER;
+            } 
+            else if (Current < GOOD_WEATHER && Next < GOOD_WEATHER)
+            {
+                return WeatherState.GOOD_WEATHER;
+            }
+            else
+            {
+                return WeatherState.NEUTRAL_WEATHER;
+            }
+        }
+
         public bool IsBadWeather
         {
             get
