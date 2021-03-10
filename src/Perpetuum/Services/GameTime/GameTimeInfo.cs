@@ -55,21 +55,5 @@ namespace Perpetuum.Services.Daytime
                 return DayState.NEUTRAL;
             }
         }
-
-        public bool IsDay
-        {
-            get
-            {
-                return GameTimeStamp > DAY_START && GameTimeStamp < DAY_END;
-            }
-        }
-
-        public bool IsNight
-        {
-            get
-            {
-                return GameTimeStamp > NIGHT_START || GameTimeStamp < NIGHT_END;
-            }
-        }
     }
 }

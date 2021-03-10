@@ -69,21 +69,5 @@ namespace Perpetuum.Services.Weather
                 return WeatherState.NEUTRAL_WEATHER;
             }
         }
-
-        public bool IsBadWeather
-        {
-            get
-            {
-                return Current > BAD_WEATHER && Next > BAD_WEATHER;
-            }
-        }
-
-        public bool IsGoodWeather
-        {
-            get
-            {
-                return Current < GOOD_WEATHER && Next < GOOD_WEATHER;
-            }
-        }
     }
 }
