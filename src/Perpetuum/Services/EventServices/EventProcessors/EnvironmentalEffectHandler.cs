@@ -79,13 +79,11 @@ namespace Perpetuum.Services.EventServices.EventProcessors
 
             ZoneEffect nextEffect = null;
 
-            //In cases where DayState is supposed to stay "neutral", WeatherState cannot also be "neutral" if we are to follow the logic this change is replacing.
-            if (_gameTime.GetDayState() == GameTimeInfo.DayState.NEUTRAL && _weatherState.getWeatherState() == WeatherInfo.WeatherState.NEUTRAL_WEATHER)
+            if (_gameTime.GetDayState() != GameTimeInfo.DayState.NEUTRAL && _weatherState.getWeatherState() != WeatherInfo.WeatherState.NEUTRAL_WEATHER)
             {
-                return;
-            }
-            var weatherResult = Tuple.Create(_gameTime.GetDayState(), _weatherState.getWeatherState());
-            nextEffect = GetEffect(_weatherDict[weatherResult]);
+                var weatherResult = Tuple.Create(_gameTime.GetDayState(), _weatherState.getWeatherState());
+                nextEffect = GetEffect(_weatherDict[weatherResult]);
+            }            
 
             var isSameEffect = ReferenceEquals(_currentEffect, nextEffect) ||
                 (_currentEffect != null && _currentEffect.Equals(nextEffect));
