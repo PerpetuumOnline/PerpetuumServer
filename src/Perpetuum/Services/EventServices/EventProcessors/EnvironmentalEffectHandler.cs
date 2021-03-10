@@ -29,7 +29,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             EffectType.effect_weather_bad
         };
         private readonly IDictionary<EffectType, ZoneEffect> _effects = new Dictionary<EffectType, ZoneEffect>();
-        private readonly IDictionary<Tuple<string, string>, EffectType> _weatherDict = new Dictionary<Tuple<string, string>, EffectType>();
+        private readonly IDictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, EffectType> _weatherDict = new Dictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, EffectType>();
         public EnvironmentalEffectHandler(IZone zone)
         {
             _zone = zone;
@@ -37,18 +37,18 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             _weatherDict = InitWeatherCollection();
         }
 
-        private IDictionary<Tuple<string, string>, EffectType> InitWeatherCollection()
+        private IDictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, EffectType> InitWeatherCollection()
         {
-            var dict = new Dictionary<Tuple<string, string>, EffectType>
+            var dict = new Dictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, EffectType>
             {
-                { Tuple.Create("day", "neutral"), EffectType.effect_day },
-                { Tuple.Create("day", "good"), EffectType.effect_day_clear },
-                { Tuple.Create("day", "bad"), EffectType.effect_day_overcast },
-                { Tuple.Create("night", "neutral"), EffectType.effect_night },
-                { Tuple.Create("night", "good"), EffectType.effect_night_clear },
-                { Tuple.Create("night", "bad"), EffectType.effect_night_overcast },
-                { Tuple.Create("neutral", "good"), EffectType.effect_weather_good },
-                { Tuple.Create("neutral", "bad"), EffectType.effect_weather_bad }
+                { Tuple.Create(GameTimeInfo.DayState.DAY, WeatherInfo.WeatherState.NEUTRAL_WEATHER), EffectType.effect_day },
+                { Tuple.Create(GameTimeInfo.DayState.DAY, WeatherInfo.WeatherState.GOOD_WEATHER), EffectType.effect_day_clear },
+                { Tuple.Create(GameTimeInfo.DayState.DAY, WeatherInfo.WeatherState.BAD_WEATHER), EffectType.effect_day_overcast },
+                { Tuple.Create(GameTimeInfo.DayState.NIGHT, WeatherInfo.WeatherState.NEUTRAL_WEATHER), EffectType.effect_night },
+                { Tuple.Create(GameTimeInfo.DayState.NIGHT, WeatherInfo.WeatherState.GOOD_WEATHER), EffectType.effect_night_clear },
+                { Tuple.Create(GameTimeInfo.DayState.NIGHT, WeatherInfo.WeatherState.BAD_WEATHER), EffectType.effect_night_overcast },
+                { Tuple.Create(GameTimeInfo.DayState.NEUTRAL, WeatherInfo.WeatherState.GOOD_WEATHER), EffectType.effect_weather_good },
+                { Tuple.Create(GameTimeInfo.DayState.NEUTRAL, WeatherInfo.WeatherState.BAD_WEATHER), EffectType.effect_weather_bad }
             };
             return dict;
         }
@@ -78,33 +78,13 @@ namespace Perpetuum.Services.EventServices.EventProcessors
                 return;
 
             ZoneEffect nextEffect = null;
-            string timeOfDay = "neutral";
-            string weatherType = "neutral";
 
-            if(_gameTime.IsDay)
-            {
-                timeOfDay = "day";
-            }
-            else if(_gameTime.IsNight)
-            {
-                timeOfDay = "night";
-            }
-
-            if(_weatherState.IsGoodWeather)
-            {
-                weatherType = "good";
-            }
-            else if(_weatherState.IsBadWeather)
-            {
-                weatherType = "bad";
-            }
-
-            //In cases where timeOfDay is supposed to stay "neutral", weatherType cannot also be "neutral" if we are to follow the logic this change is replacing.
-            if (String.Equals(timeOfDay, weatherType))
+            //In cases where DayState is supposed to stay "neutral", WeatherState cannot also be "neutral" if we are to follow the logic this change is replacing.
+            if (_gameTime.GetDayState() == GameTimeInfo.DayState.NEUTRAL && _weatherState.getWeatherState() == WeatherInfo.WeatherState.NEUTRAL_WEATHER)
             {
                 return;
             }
-            var weatherResult = Tuple.Create(timeOfDay, weatherType);
+            var weatherResult = Tuple.Create(_gameTime.GetDayState(), _weatherState.getWeatherState());
             nextEffect = GetEffect(_weatherDict[weatherResult]);
 
             var isSameEffect = ReferenceEquals(_currentEffect, nextEffect) ||
