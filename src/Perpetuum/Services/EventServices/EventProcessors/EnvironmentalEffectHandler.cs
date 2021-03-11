@@ -29,7 +29,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             EffectType.effect_weather_bad
         };
         private readonly IDictionary<EffectType, ZoneEffect> _effects = new Dictionary<EffectType, ZoneEffect>();
-        private readonly IDictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, EffectType> _weatherDict = new Dictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, EffectType>();
+        private readonly IDictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, dynamic> _weatherDict = new Dictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, dynamic>();
         public EnvironmentalEffectHandler(IZone zone)
         {
             _zone = zone;
@@ -37,9 +37,9 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             _weatherDict = InitWeatherCollection();
         }
 
-        private IDictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, EffectType> InitWeatherCollection()
+        private IDictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, dynamic> InitWeatherCollection()
         {
-            var dict = new Dictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, EffectType>
+            var dict = new Dictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, dynamic>
             {
                 { Tuple.Create(GameTimeInfo.DayState.DAY, WeatherInfo.WeatherState.NEUTRAL_WEATHER), EffectType.effect_day },
                 { Tuple.Create(GameTimeInfo.DayState.DAY, WeatherInfo.WeatherState.GOOD_WEATHER), EffectType.effect_day_clear },
@@ -48,7 +48,8 @@ namespace Perpetuum.Services.EventServices.EventProcessors
                 { Tuple.Create(GameTimeInfo.DayState.NIGHT, WeatherInfo.WeatherState.GOOD_WEATHER), EffectType.effect_night_clear },
                 { Tuple.Create(GameTimeInfo.DayState.NIGHT, WeatherInfo.WeatherState.BAD_WEATHER), EffectType.effect_night_overcast },
                 { Tuple.Create(GameTimeInfo.DayState.NEUTRAL, WeatherInfo.WeatherState.GOOD_WEATHER), EffectType.effect_weather_good },
-                { Tuple.Create(GameTimeInfo.DayState.NEUTRAL, WeatherInfo.WeatherState.BAD_WEATHER), EffectType.effect_weather_bad }
+                { Tuple.Create(GameTimeInfo.DayState.NEUTRAL, WeatherInfo.WeatherState.BAD_WEATHER), EffectType.effect_weather_bad },
+                { Tuple.Create(GameTimeInfo.DayState.NEUTRAL, WeatherInfo.WeatherState.NEUTRAL_WEATHER), null }
             };
             return dict;
         }
@@ -79,11 +80,8 @@ namespace Perpetuum.Services.EventServices.EventProcessors
 
             ZoneEffect nextEffect = null;
 
-            if (_gameTime.GetDayState() != GameTimeInfo.DayState.NEUTRAL && _weatherState.getWeatherState() != WeatherInfo.WeatherState.NEUTRAL_WEATHER)
-            {
-                var weatherResult = Tuple.Create(_gameTime.GetDayState(), _weatherState.getWeatherState());
-                nextEffect = GetEffect(_weatherDict[weatherResult]);
-            }            
+            var weatherResult = Tuple.Create(_gameTime.GetDayState(), _weatherState.getWeatherState());
+            nextEffect = GetEffect(_weatherDict[weatherResult]);          
 
             var isSameEffect = ReferenceEquals(_currentEffect, nextEffect) ||
                 (_currentEffect != null && _currentEffect.Equals(nextEffect));
