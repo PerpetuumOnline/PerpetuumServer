@@ -18,8 +18,8 @@ namespace Perpetuum.Services.EventServices.EventProcessors
         private WeatherInfo _weatherState;
         private GameTimeInfo _gameTime;
         private ZoneEffect _currentEffect;
-        private readonly IDictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, ZoneEffect> _effects = new Dictionary< Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, ZoneEffect>();
-       
+        private readonly IDictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, ZoneEffect> _effects = new Dictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, ZoneEffect>();
+
         public EnvironmentalEffectHandler(IZone zone)
         {
             _zone = zone;
@@ -58,9 +58,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             if (_gameTime == null || _weatherState == null)
                 return;
 
-            ZoneEffect nextEffect = null;
-
-            nextEffect = GetEffect(_gameTime.GetDayState(), _weatherState.getWeatherState());          
+            var nextEffect = GetEffect(_gameTime.GetDayState(), _weatherState.getWeatherState());
 
             var isSameEffect = ReferenceEquals(_currentEffect, nextEffect) ||
                 (_currentEffect != null && _currentEffect.Equals(nextEffect));
