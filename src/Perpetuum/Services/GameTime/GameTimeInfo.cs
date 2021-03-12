@@ -33,19 +33,26 @@ namespace Perpetuum.Services.Daytime
             GameTimeStamp = gameTime;
         }
 
-        public bool IsDay
+        public enum DayState
         {
-            get
-            {
-                return GameTimeStamp > DAY_START && GameTimeStamp < DAY_END;
-            }
+            DAY,
+            NEUTRAL,
+            NIGHT
         }
 
-        public bool IsNight
+        public DayState GetDayState()
         {
-            get
+            if (GameTimeStamp > DAY_START && GameTimeStamp < DAY_END)
             {
-                return GameTimeStamp > NIGHT_START || GameTimeStamp < NIGHT_END;
+                return DayState.DAY;
+            } 
+            else if (GameTimeStamp > NIGHT_START || GameTimeStamp < NIGHT_END)
+            {
+                return DayState.NIGHT;
+            } 
+            else
+            {
+                return DayState.NEUTRAL;
             }
         }
     }

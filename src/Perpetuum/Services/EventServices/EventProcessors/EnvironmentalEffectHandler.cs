@@ -4,6 +4,7 @@ using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Services.Weather;
 using Perpetuum.Zones;
 using Perpetuum.Zones.Effects.ZoneEffects;
+using System;
 using System.Collections.Generic;
 
 namespace Perpetuum.Services.EventServices.EventProcessors
@@ -17,36 +18,35 @@ namespace Perpetuum.Services.EventServices.EventProcessors
         private WeatherInfo _weatherState;
         private GameTimeInfo _gameTime;
         private ZoneEffect _currentEffect;
-        private readonly EffectType[] _effectTypes = new EffectType[] {
-            EffectType.effect_day,
-            EffectType.effect_day_clear,
-            EffectType.effect_day_overcast,
-            EffectType.effect_night,
-            EffectType.effect_night_clear,
-            EffectType.effect_night_overcast,
-            EffectType.effect_weather_good,
-            EffectType.effect_weather_bad
-        };
-        private readonly IDictionary<EffectType, ZoneEffect> _effects = new Dictionary<EffectType, ZoneEffect>();
+        private readonly IDictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, ZoneEffect> _effects = new Dictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, ZoneEffect>();
+
         public EnvironmentalEffectHandler(IZone zone)
         {
             _zone = zone;
-            _effects = InitEffectCollection(_effectTypes);
+            _effects = InitEffectCollection();
         }
 
-        private IDictionary<EffectType, ZoneEffect> InitEffectCollection(EffectType[] effectTypes)
+        private IDictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, ZoneEffect> InitEffectCollection()
         {
-            var dict = new Dictionary<EffectType, ZoneEffect>();
-            foreach (var effType in effectTypes)
+            var dict = new Dictionary<Tuple<GameTimeInfo.DayState, WeatherInfo.WeatherState>, ZoneEffect>()
             {
-                dict.Add(effType, new ZoneEffect(_zone.Id, effType, true));
-            }
+                { Tuple.Create(GameTimeInfo.DayState.DAY, WeatherInfo.WeatherState.NEUTRAL_WEATHER), new ZoneEffect(_zone.Id, EffectType.effect_day, true) },
+                { Tuple.Create(GameTimeInfo.DayState.DAY, WeatherInfo.WeatherState.GOOD_WEATHER), new ZoneEffect(_zone.Id, EffectType.effect_day_clear, true) },
+                { Tuple.Create(GameTimeInfo.DayState.DAY, WeatherInfo.WeatherState.BAD_WEATHER), new ZoneEffect(_zone.Id, EffectType.effect_day_overcast, true) },
+                { Tuple.Create(GameTimeInfo.DayState.NIGHT, WeatherInfo.WeatherState.NEUTRAL_WEATHER), new ZoneEffect(_zone.Id, EffectType.effect_night, true) },
+                { Tuple.Create(GameTimeInfo.DayState.NIGHT, WeatherInfo.WeatherState.GOOD_WEATHER), new ZoneEffect(_zone.Id, EffectType.effect_night_clear, true) },
+                { Tuple.Create(GameTimeInfo.DayState.NIGHT, WeatherInfo.WeatherState.BAD_WEATHER), new ZoneEffect(_zone.Id, EffectType.effect_night_overcast, true) },
+                { Tuple.Create(GameTimeInfo.DayState.NEUTRAL, WeatherInfo.WeatherState.GOOD_WEATHER), new ZoneEffect(_zone.Id, EffectType.effect_weather_good, true) },
+                { Tuple.Create(GameTimeInfo.DayState.NEUTRAL, WeatherInfo.WeatherState.BAD_WEATHER), new ZoneEffect(_zone.Id, EffectType.effect_weather_bad, true) },
+                { Tuple.Create(GameTimeInfo.DayState.NEUTRAL, WeatherInfo.WeatherState.NEUTRAL_WEATHER), null }
+            };
             return dict;
         }
 
-        private ZoneEffect GetEffect(EffectType type)
+        private ZoneEffect GetEffect(GameTimeInfo.DayState dayState, WeatherInfo.WeatherState weatherState)
         {
-            if (_effects.TryGetValue(type, out ZoneEffect effect))
+            var lookupEffect = Tuple.Create(dayState, weatherState);
+            if (_effects.TryGetValue(lookupEffect, out ZoneEffect effect))
             {
                 return effect;
             }
@@ -58,48 +58,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             if (_gameTime == null || _weatherState == null)
                 return;
 
-            ZoneEffect nextEffect = null;
-            if (_gameTime.IsDay)
-            {
-                if (_weatherState.IsGoodWeather)
-                {
-                    nextEffect = GetEffect(EffectType.effect_day_clear);
-                }
-                else if (_weatherState.IsBadWeather)
-                {
-                    nextEffect = GetEffect(EffectType.effect_day_overcast);
-                }
-                else
-                {
-                    nextEffect = GetEffect(EffectType.effect_day);
-                }
-            }
-            else if (_gameTime.IsNight)
-            {
-                if (_weatherState.IsGoodWeather)
-                {
-                    nextEffect = GetEffect(EffectType.effect_night_clear);
-                }
-                else if (_weatherState.IsBadWeather)
-                {
-                    nextEffect = GetEffect(EffectType.effect_night_overcast);
-                }
-                else
-                {
-                    nextEffect = GetEffect(EffectType.effect_night);
-                }
-            }
-            else
-            {
-                if (_weatherState.IsGoodWeather)
-                {
-                    nextEffect = GetEffect(EffectType.effect_weather_good);
-                }
-                else if (_weatherState.IsBadWeather)
-                {
-                    nextEffect = GetEffect(EffectType.effect_weather_bad);
-                }
-            }
+            var nextEffect = GetEffect(_gameTime.GetDayState(), _weatherState.getWeatherState());
 
             var isSameEffect = ReferenceEquals(_currentEffect, nextEffect) ||
                 (_currentEffect != null && _currentEffect.Equals(nextEffect));
