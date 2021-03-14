@@ -13,6 +13,10 @@ namespace Perpetuum.Services.Looting
 
         public LootGenerator(IEnumerable<LootGeneratorItemInfo> lootInfos)
         {
+            if (lootInfos == null)
+            {
+                lootInfos = new List<LootGeneratorItemInfo>();
+            }
             _lootInfos = lootInfos;
         }
 
