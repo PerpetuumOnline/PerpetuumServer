@@ -14,7 +14,8 @@ namespace Perpetuum.Services.Looting
         {
             if (lootInfos == null)
             {
-                lootInfos = new List<LootGeneratorItemInfo>();
+                _lootInfos = new List<LootGeneratorItemInfo>();
+                return;
             }
             _lootInfos = lootInfos;
         }
