@@ -1,5 +1,6 @@
 using System.Linq;
 using Perpetuum.Containers;
+using Perpetuum.EntityFramework;
 using Perpetuum.Host.Requests;
 using Perpetuum.Modules;
 using Perpetuum.Players;
@@ -46,15 +47,36 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
 
         protected static ErrorCodes CheckFieldTerminalRange(Player player, Container container)
         {
-            var fieldTerminal = container.ParentEntity as FieldTerminal;
+            var fieldTerminal = GetFieldTerminal(container);
             if (fieldTerminal == null)
                 return ErrorCodes.NoError;
 
-            var inRange = player.IsInRangeOf3D(fieldTerminal, DistanceConstants.FIELD_TERMINAL_USE);
-            if (!inRange)
+            if (!InRange(player, fieldTerminal))
                 return ErrorCodes.ItemOutOfRange;
 
             return ErrorCodes.NoError;
+        }
+
+        private static FieldTerminal GetFieldTerminal(Entity container)
+        {
+            if (container == null)
+                return null;
+
+            var fieldTerminal = container.ParentEntity as FieldTerminal;
+            while (fieldTerminal == null)
+            {
+                container = container.ParentEntity;
+                if(container == null)
+                    break;
+
+                fieldTerminal = container.ParentEntity as FieldTerminal;
+            }
+            return fieldTerminal;
+        }
+
+        private static bool InRange(Player player, FieldTerminal fieldTerminal)
+        {
+            return player.IsInRangeOf3D(fieldTerminal, DistanceConstants.FIELD_TERMINAL_USE);
         }
 
         protected static ErrorCodes CheckActiveModules(Player player)
