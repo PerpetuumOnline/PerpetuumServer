@@ -1,5 +1,4 @@
 using Perpetuum.Items;
-using Perpetuum.Log;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +8,15 @@ namespace Perpetuum.Services.Looting
 
     public class LootGenerator : ILootGenerator
     {
-        private readonly IEnumerable<LootGeneratorItemInfo> _lootInfos;
+        private readonly IEnumerable<LootGeneratorItemInfo> _lootInfos = new List<LootGeneratorItemInfo>();
 
         public LootGenerator(IEnumerable<LootGeneratorItemInfo> lootInfos)
         {
+            if (lootInfos == null)
+            {
+                _lootInfos = new List<LootGeneratorItemInfo>();
+                return;
+            }
             _lootInfos = lootInfos;
         }
 
@@ -38,7 +42,7 @@ namespace Perpetuum.Services.Looting
 
     public class SplittableLootGenerator : ISplittableLootGenerator
     {
-        private readonly IReadOnlyCollection<LootGeneratorItemInfo> _lootInfos;
+        private readonly IReadOnlyCollection<LootGeneratorItemInfo> _lootInfos = new List<LootGeneratorItemInfo>();
         private readonly Random _random;
 
         public SplittableLootGenerator(ILootGenerator lootGenerator)
