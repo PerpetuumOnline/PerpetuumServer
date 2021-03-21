@@ -81,7 +81,8 @@ namespace Perpetuum.Services.Sessions
 #endif
                 {"version",GenxyVersion.REVISION},
                 {k.OSTime,DateTime.Now},
-                {"steamLoginEnabled",_steamManager.SteamAppID > 0}
+                {"steamLoginEnabled",_steamManager.SteamAppID > 0},
+                {"username_is_email", 1 }
             };
 
             if (!string.IsNullOrEmpty(_globalConfiguration.ResourceServerURL))
