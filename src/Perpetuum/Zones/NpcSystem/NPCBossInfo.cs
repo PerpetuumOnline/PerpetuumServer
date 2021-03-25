@@ -2,6 +2,7 @@
 using Perpetuum.Players;
 using Perpetuum.Services.EventServices;
 using Perpetuum.Services.EventServices.EventMessages;
+using Perpetuum.Services.RiftSystem;
 using Perpetuum.Timers;
 using Perpetuum.Units;
 using Perpetuum.Zones.Intrusion;
@@ -13,12 +14,15 @@ using System.Threading.Tasks;
 
 namespace Perpetuum.Zones.NpcSystem
 {
-    /// <summary>
-    /// Specifies the behavior of a Boss-type NPC with various settings
-    /// </summary>
-    public class NpcBossInfo
+    public class NpcBossInfoBuilder
     {
-        public static NpcBossInfo CreateBossInfoFromDB(IDataRecord record)
+        private readonly ICustomRiftConfigReader _customRiftConfigReader;
+        public NpcBossInfoBuilder(ICustomRiftConfigReader customRiftConfigReader)
+        {
+            _customRiftConfigReader = customRiftConfigReader;
+        }
+
+        public NpcBossInfo CreateBossInfoFromDB(IDataRecord record)
         {
             var id = record.GetValue<int>("id");
             var flockid = record.GetValue<int>("flockid");
@@ -29,15 +33,28 @@ namespace Perpetuum.Zones.NpcSystem
             var overrideRelations = record.GetValue<bool>("overrideRelations");
             var deathMessage = record.GetValue<string>("customDeathMessage");
             var aggressMessage = record.GetValue<string>("customAggressMessage");
-            var info = new NpcBossInfo(id, flockid, respawnFactor, lootSplit, outpostEID, stabilityPts, overrideRelations, deathMessage, aggressMessage);
+            var riftConfigId = record.GetValue<int?>("riftConfigId");
+            var riftConfig = _customRiftConfigReader.GetById(riftConfigId ?? -1);
 
+            var info = new NpcBossInfo(id,
+                flockid,
+                respawnFactor,
+                lootSplit,
+                outpostEID,
+                stabilityPts,
+                overrideRelations,
+                deathMessage,
+                aggressMessage,
+                riftConfig
+             );
             return info;
         }
 
-        public static NpcBossInfo GetBossInfoByFlockID(int flockid)
+        public NpcBossInfo GetBossInfoByFlockID(int flockid)
         {
             var bossInfos = Db.Query()
-                .CommandText(@"SELECT TOP 1 id, flockid, respawnNoiseFactor, lootSplitFlag, outpostEID, stabilityPts, overrideRelations, customDeathMessage, customAggressMessage
+                .CommandText(@"SELECT TOP 1 id, flockid, respawnNoiseFactor, lootSplitFlag, outpostEID,
+                    stabilityPts, overrideRelations, customDeathMessage, customAggressMessage, riftConfigId
                     FROM dbo.npcbossinfo WHERE flockid=@flockid;")
                 .SetParameter("@flockid", flockid)
                 .Execute()
@@ -45,13 +62,21 @@ namespace Perpetuum.Zones.NpcSystem
 
             return bossInfos.SingleOrDefault();
         }
+    }
 
+
+    /// <summary>
+    /// Specifies the behavior of a Boss-type NPC with various settings
+    /// </summary>
+    public class NpcBossInfo
+    {
         private readonly int _id;
         private readonly double? _respawnNoiseFactor;
         private readonly long? _outpostEID;
         private readonly int? _stabilityPts;
         private readonly string _deathMsg;
         private readonly string _aggroMsg;
+        private readonly CustomRiftConfig _riftConfig;
         private bool _speak;
 
         public int FlockId { get; }
@@ -59,11 +84,12 @@ namespace Perpetuum.Zones.NpcSystem
         private bool IsOutpostBoss { get { return _outpostEID != null; } }
         private int StabilityPoints { get { return _stabilityPts ?? 0; } }
         private bool OverrideRelations { get; }
+        private bool HasRiftToSpawn { get { return _riftConfig != null; } }
 
         public bool IsLootSplit { get; }
         public bool IsDead { get; private set; }
 
-        public NpcBossInfo(int id, int flockid, double? respawnNoiseFactor, bool lootSplit, long? outpostEID, int? stabilityPts, bool overrideRelations, string customDeathMsg, string customAggroMsg)
+        public NpcBossInfo(int id, int flockid, double? respawnNoiseFactor, bool lootSplit, long? outpostEID, int? stabilityPts, bool overrideRelations, string customDeathMsg, string customAggroMsg, CustomRiftConfig riftConfig)
         {
             _id = id;
             FlockId = flockid;
@@ -74,6 +100,7 @@ namespace Perpetuum.Zones.NpcSystem
             OverrideRelations = overrideRelations;
             _deathMsg = customDeathMsg;
             _aggroMsg = customAggroMsg;
+            _riftConfig = riftConfig;
             _speak = true;
             IsDead = false;
         }
@@ -125,6 +152,7 @@ namespace Perpetuum.Zones.NpcSystem
         {
             CommunicateDeath(killer, channel);
             HandleBossOutpostDeath(npc, killer, channel);
+            SpawnPortal(npc, killer, channel);
             IsDead = true;
             channel.PublishMessage(new NpcReinforcementsMessage(npc, npc.Zone.Id));
         }
@@ -192,6 +220,14 @@ namespace Perpetuum.Zones.NpcSystem
                     .WithWinnerCorp(zone.ToPlayerOrGetOwnerPlayer(killer).CorporationEid);
                 channel.PublishMessage(builder.Build());
             }
+        }
+
+        private void SpawnPortal(Npc npc, Unit killer, EventListenerService channel)
+        {
+            if (!HasRiftToSpawn)
+                return;
+
+            channel.PublishMessage(new SpawnPortalMessage(npc.Zone.Id, npc.CurrentPosition, _riftConfig));
         }
 
         private static void SendMessage(Unit src, EventListenerService eventChannel, string msg)

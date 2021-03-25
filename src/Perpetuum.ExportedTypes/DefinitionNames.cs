@@ -4748,6 +4748,7 @@ namespace Perpetuum.ExportedTypes
  		 public const string SYNDICATE_POLICE_HEAD = "def_syndicate_police_head";
  		 public const string SYNDICATE_POLICE_LEG = "def_syndicate_police_leg";
  		 public const string SYSTEM_CONTAINER = "def_system_container";
+        public const string TARGETTED_RIFT = "def_rift_targetted_portal";
  		 public const string TELEPORT_BACK_HOME = "def_teleport_back_home";
  		 public const string TELEPORT_COLUMN_STORAGE = "def_teleport_column_storage";
  		 public const string TELEPORT_ENABLER = "def_teleport_enabler";

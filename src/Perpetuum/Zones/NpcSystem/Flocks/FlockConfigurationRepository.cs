@@ -8,12 +8,14 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
 {
     public class FlockConfigurationRepository : IFlockConfigurationRepository
     {
+        private readonly NpcBossInfoBuilder _bossBuilder;
         private readonly FlockConfigurationBuilder.Factory _flockConfigurationBuilderFactory;
         private readonly Dictionary<int,IFlockConfiguration> _flockConfigurations = new Dictionary<int, IFlockConfiguration>();
 
-        public FlockConfigurationRepository(FlockConfigurationBuilder.Factory flockConfigurationBuilderFactory)
+        public FlockConfigurationRepository(FlockConfigurationBuilder.Factory flockConfigurationBuilderFactory, NpcBossInfoBuilder bossBuilder)
         {
             _flockConfigurationBuilderFactory = flockConfigurationBuilderFactory;
+            _bossBuilder = bossBuilder;
         }
 
         public void LoadAllConfig()
@@ -40,7 +42,7 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
                     c.Enabled = r.GetValue<bool>("enabled");
                     c.BehaviorType = (NpcBehaviorType) r.GetValue<int>("behaviorType");
                     c.SpecialType = (NpcSpecialType) r.GetValue<int>("npcSpecialType");
-                    c.BossInfo = NpcBossInfo.GetBossInfoByFlockID(c.ID);
+                    c.BossInfo = _bossBuilder.GetBossInfoByFlockID(c.ID);
                 });
                 var config = builder.Build();
                 _flockConfigurations[config.ID] = config;

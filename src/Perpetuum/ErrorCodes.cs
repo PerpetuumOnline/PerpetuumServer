@@ -701,6 +701,7 @@ namespace Perpetuum
         MissionNoItemsFoundToDeliver,
         InviteOnlyServer,
         SteamLoginDisabled,
-        AccountAlreadyExists
+        AccountAlreadyExists,
+        RobotWrongType
     }
 }

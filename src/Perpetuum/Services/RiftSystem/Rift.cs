@@ -48,6 +48,69 @@ namespace Perpetuum.Services.RiftSystem
         }
     }
 
+    public class TargettedPortal : DespawningPortal
+    {
+        public IZone TargetZone { get; private set; }
+        public Position TargetPosition { get; private set; }
+        public CustomRiftConfig RiftConfig { get; private set; }
+        private readonly ITeleportStrategyFactories _teleportStrategyFactories;
+        private int uses = 0;
+
+        public TargettedPortal(ITeleportStrategyFactories teleportStrategyFactories)
+        {
+            _teleportStrategyFactories = teleportStrategyFactories;
+        }
+
+        public void SetConfig(CustomRiftConfig riftConfig)
+        {
+            RiftConfig = riftConfig;
+            if (RiftConfig.IsDespawning)
+            {
+                SetDespawnTime(RiftConfig.Lifespan);
+            }
+        }
+
+        public void SetTarget(IZone zone, Position position)
+        {
+            TargetZone = zone;
+            TargetPosition = position;
+        }
+
+        private bool IsUsageExceeded()
+        {
+            return !RiftConfig.InfiniteUses && RiftConfig.MaxUses < uses;
+        }
+
+        private void IncrementUsage()
+        {
+            if (!RiftConfig.InfiniteUses)
+                uses++;
+        }
+
+        private bool IsExcluded(Player player)
+        {
+            return RiftConfig.IsExcluded(player.ED.CategoryFlags);
+        }
+
+        public override void UseItem(Player player)
+        {
+            base.UseItem(player);
+
+            IsUsageExceeded().ThrowIfTrue(ErrorCodes.MaximumAllowedRegistrationExceeded);
+
+            IsExcluded(player).ThrowIfTrue(ErrorCodes.RobotWrongType);
+
+            var teleport = _teleportStrategyFactories.TeleportToAnotherZoneFactory(TargetZone);
+            teleport.TargetPosition = TargetPosition;
+            teleport.DoTeleportAsync(player);
+
+            IncrementUsage();
+
+            if (IsUsageExceeded())
+                Kill();
+        }
+    }
+
     /// <summary>
     /// RandomRift (used as the Rift Echo after a TAP)
     /// </summary>
