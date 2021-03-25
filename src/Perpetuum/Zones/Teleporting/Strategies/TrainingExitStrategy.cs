@@ -17,6 +17,7 @@ namespace Perpetuum.Zones.Teleporting.Strategies
     public class TrainingExitStrategy : ITeleportStrategy
     {
         private const double CHARACTER_START_CREDIT = 500000; //TODO: move to DB
+        private const double NIC_REWARD_PER_LEVEL = 125000; //TODO: move to DB
         private const int MAX_REWARD_LEVEL = 4;
         private TimeSpan WAIT_TIME_BEFORE_SENDING_MAIL = TimeSpan.FromSeconds(10);
         private TimeSpan WAIT_TIME_BEFORE_SENDING_WELCOME_MESSAGE = TimeSpan.FromSeconds(10);
@@ -68,7 +69,7 @@ namespace Perpetuum.Zones.Teleporting.Strategies
             character.RaceId = info.raceId;
             character.SchoolId = info.schoolId;
             character.SparkId = info.sparkId;
-            character.Credit = CHARACTER_START_CREDIT;
+            character.Credit = CHARACTER_START_CREDIT + (NIC_REWARD_PER_LEVEL * TrainingRewardLevel);
             character.DefaultCorporationEid = newCorporation.Eid;
 
             //add default extensions
