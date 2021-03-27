@@ -144,6 +144,23 @@ namespace Perpetuum.Services.Channels.ChatCommands
             string cmd = string.Format("serverShutDown:relay:{0}", GenxyConverter.Serialize(dictionary));
             HandleLocalRequest(data, cmd);
         }
+
+        [ChatCommand("RelayClose")]
+        public static void RelayClosed(AdminCommandData data)
+        {
+            string cmd = string.Format("relayClose:relay:null");
+            HandleLocalRequest(data, cmd);
+            data.Channel.SendMessageToAll(data.SessionManager, data.Sender, string.Format("Relay is Closed >> Only Admins can Login"));
+        }
+
+        [ChatCommand("RelayOpen")]
+        public static void RelayOpen(AdminCommandData data)
+        {
+            string cmd = string.Format("relayOpen:relay:null");
+            HandleLocalRequest(data, cmd);
+            data.Channel.SendMessageToAll(data.SessionManager, data.Sender, string.Format("Relay is Open >> All Players can Login"));
+        }
+
         [ChatCommand("ShutdownCancel")]
         public static void ShutdownCancel(AdminCommandData data)
         {
