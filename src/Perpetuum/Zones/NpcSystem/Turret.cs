@@ -230,11 +230,11 @@ namespace Perpetuum.Zones.NpcSystem
             module.State.SwitchTo(ModuleStateType.Oneshot);
         }
 
-        private const double ENERGY_VAMPIRE_CORE_THRESHOLD = 0.8;
+        private const double ENERGY_VAMPIRE_CORE_THRESHOLD = 0.05;
 
         public void Visit(EnergyVampireModule module)
         {
-            if ( module.ParentRobot.CorePercentage >= ENERGY_VAMPIRE_CORE_THRESHOLD )
+            if ( module.ParentRobot.CorePercentage < ENERGY_VAMPIRE_CORE_THRESHOLD )
                 return;
 
             var lockTarget = ((Creature)module.ParentRobot).SelectOptimalLockTargetFor(module);
