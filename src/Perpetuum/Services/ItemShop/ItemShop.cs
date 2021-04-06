@@ -40,7 +40,9 @@ namespace Perpetuum.Services.ItemShop
         {
             const string qryStr = @"SELECT * FROM dbo.itemshop AS its
                                     JOIN itemshoplocations sl ON its.presetid = sl.presetid
-                                    WHERE sl.locationeid = @eid AND its.id = @id";
+                                    JOIN entitydefaults d on its.targetdefinition = d.definition
+                                    WHERE d.enabled=1 AND d.hidden=0 AND
+                                    sl.locationeid = @eid AND its.id = @id";
 
             var record = Db.Query().CommandText(qryStr).SetParameter("@eid", Eid).SetParameter("@id", entryID).ExecuteSingleRow();
             if (record == null)
@@ -54,7 +56,9 @@ namespace Perpetuum.Services.ItemShop
         {
             const string qryStr = @"SELECT * FROM dbo.itemshop AS its
                                     JOIN itemshoplocations sl ON its.presetid = sl.presetid
-                                    WHERE sl.locationeid = @eid";
+                                    JOIN entitydefaults d on its.targetdefinition = d.definition
+                                    WHERE d.enabled=1 AND d.hidden=0 AND 
+                                    sl.locationeid = @eid";
 
             var records = Db.Query().CommandText(qryStr).SetParameter("@eid", Eid).Execute();
 
