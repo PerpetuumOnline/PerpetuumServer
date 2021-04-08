@@ -14,7 +14,9 @@ namespace Perpetuum.RequestHandlers
 
         public void HandleRequest(IRequest request)
         {
+            _relayStateService.ConfigOnlyAllowAdmins(true);
             _relayStateService.State = RelayState.OpenForAdminsOnly;
+            
             Message.Builder.FromRequest(request).WithOk().Send();
         }
     }

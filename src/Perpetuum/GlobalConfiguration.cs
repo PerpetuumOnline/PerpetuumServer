@@ -21,5 +21,7 @@ namespace Perpetuum
         public bool EnableDev { get; set; }
 
         public CorporationConfiguration Corporation { get; set; }
+
+        public bool StartServerInAdminOnlyMode { get; set; }
     }
 }

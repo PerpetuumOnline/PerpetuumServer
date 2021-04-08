@@ -8,5 +8,6 @@ namespace Perpetuum.Services.Relay
         RelayState State { get; set; }
         event Action<RelayState> StateChanged;
         void SendStateToClient(ISession session);
+        void ConfigOnlyAllowAdmins(bool enabled);
     }
 }

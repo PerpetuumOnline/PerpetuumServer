@@ -51,5 +51,11 @@ namespace Perpetuum.Services.Relay
             var info = builder.Build();
             return Message.Builder.SetCommand(Commands.State).WithData(info.ToDictionary());
         }
+
+        public void ConfigOnlyAllowAdmins(bool enabled)
+        {
+            var factory = _relayInfoBuilderFactory();
+            factory.ConfigOnlyAllowAdmins(enabled);
+        }
     }
 }

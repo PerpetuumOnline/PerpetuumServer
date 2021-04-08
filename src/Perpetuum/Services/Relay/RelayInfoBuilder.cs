@@ -41,6 +41,11 @@ namespace Perpetuum.Services.Relay
 
         public RelayInfo Build()
         {
+            if (_globalConfiguration.StartServerInAdminOnlyMode)
+            {
+                _relayStateService.State = RelayState.OpenForAdminsOnly;
+            }
+
             var info = new RelayInfo
             {
                 state = _relayStateService.State,
@@ -48,7 +53,13 @@ namespace Perpetuum.Services.Relay
                 usersCount = _sessionManager.Sessions.Count(),
                 maxUsers = _sessionManager.MaxSessions
             };
+
             return info;
+        }
+
+        public void ConfigOnlyAllowAdmins(bool enabled)
+        {
+            _globalConfiguration.StartServerInAdminOnlyMode = enabled;
         }
     }
 }

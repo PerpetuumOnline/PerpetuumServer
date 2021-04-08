@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -17,6 +18,8 @@ namespace Perpetuum.AdminTool
         private bool _stopProbing;
         private LogHandler _log;
         private LocalServerState _localServerState;
+
+        private Dictionary<string, dynamic> _loadedConfig;
         public LocalServerState State
         {
             get => _localServerState;
@@ -93,11 +96,23 @@ namespace Perpetuum.AdminTool
                 // save localserverinfo file
                 SaveLocalServerInfo(gameRoot, pathToExecutable);
 
-                var listeningPort = GetPortFromIni(gameRoot);
+                _loadedConfig = ReadConfigFromDisk(gameRoot);
+
+                var listeningPort = _loadedConfig["listenerPort"];
                 if (listeningPort <= 0)
                 {
                     _log.StatusError($"Wasn't able to get listening port from {PERPETUUMINIFILE}. No port probe is started.");
                     return;
+                }
+
+                var adminOnlyMode = _loadedConfig["adminOnlyMode"];
+                if (!adminOnlyMode)
+                {
+                    _log.Log("AdminOnlyMode: Disabled (Default)");
+                }
+                else
+                {
+                    _log.Log("AdminOnlyMode: Enabled");
                 }
 
                 //RunNetStatProbe(listeningPort);
@@ -335,26 +350,29 @@ namespace Perpetuum.AdminTool
             return _indicatorPhases[_indicatorTextIndex];
         }
 
-        private int GetPortFromIni(string gameRoot)
+        private Dictionary<string, dynamic> ReadConfigFromDisk(string gameRoot)
         {
             var perpetuumIni = Path.Combine(gameRoot, PERPETUUMINIFILE);
             if (!File.Exists(perpetuumIni))
             {
-                _log.StatusError($"{PERPETUUMINIFILE} was not found in game root {gameRoot} folder. Check your settings!" );
-                return -1;
+                _log.StatusError($"{PERPETUUMINIFILE} was not found in game root {gameRoot} folder. Check your settings!");
             }
 
             var json = File.ReadAllText(perpetuumIni);
-            var portData = JsonConvert.DeserializeAnonymousType(json,new
+            var listenerPort = JsonConvert.DeserializeAnonymousType(json, new
             {
                 ListenerPort = -1,
             });
+            var adminOnlyMode = JsonConvert.DeserializeAnonymousType(json, new
+            {
+                StartServerInAdminOnlyMode = false,
+            });
 
-            _log.Log($"Relay port loaded from {PERPETUUMINIFILE}: {portData.ListenerPort}");
+            Dictionary<string, dynamic> result = new Dictionary<string, dynamic>();
+            result.Add("listenerPort", listenerPort.ListenerPort);
+            result.Add("adminOnlyMode", adminOnlyMode.StartServerInAdminOnlyMode);
 
-            return portData.ListenerPort;
+            return result;
         }
-
-
     }
 }
