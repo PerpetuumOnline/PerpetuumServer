@@ -106,6 +106,15 @@ namespace Perpetuum.Services.Channels.ChatCommands
                 throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
             }
         }
+
+        public static void CheckRequiredArgLength(AdminCommandData data, int expectedLength)
+        {
+            if(data.Command.Args.Length != expectedLength)
+            {
+                SendMessageToAll(data, $"Error - Command expects " + expectedLength.ToString() + " args, but was given " +data.Command.Args.Length.ToString()+ " args");
+                throw PerpetuumException.Create(ErrorCodes.TooManyOrTooFewArguments);
+            }
+        }
         public static void Unknown(AdminCommandData data)
         {
             SendMessageToAll(data, $"Unknown command: {data.Command.Name}");
@@ -170,18 +179,29 @@ namespace Perpetuum.Services.Channels.ChatCommands
         [ChatCommand("JumpTo")]
         public static void JumpTo(AdminCommandData data)
         {
-            bool err = false; //TODO this only throws on bad last-arg!
-            err = !int.TryParse(data.Command.Args[0], out int zone);
-            err = !int.TryParse(data.Command.Args[1], out int x);
-            err = !int.TryParse(data.Command.Args[2], out int y);
-            if (err)
+            int zoneId;
+            int x;
+            int y;
+            CheckRequiredArgLength(data, 3);
+
+            try
             {
-                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                zoneId = int.Parse(data.Command.Args[0]);
+                x = int.Parse(data.Command.Args[1]);
+                y = int.Parse(data.Command.Args[2]);
             }
+            catch (Exception ex)
+            {
+                if(ex is FormatException || ex is ArgumentNullException)
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                throw;
+            }
+
+            CheckZoneId(data, zoneId);
 
             Dictionary<string, object> dictionary = new Dictionary<string, object>()
                 {
-                    { "zoneID" , zone },
+                    { "zoneID" , zoneId },
                     { "x" , x },
                     { "y" , y }
                 };
@@ -192,31 +212,43 @@ namespace Perpetuum.Services.Channels.ChatCommands
         [ChatCommand("MovePlayer")]
         public static void MovePlayer(AdminCommandData data)
         {
-            bool err = false; //TODO this parse checking is broken
-            err = !int.TryParse(data.Command.Args[0], out int characterID);
-            err = !int.TryParse(data.Command.Args[1], out int zoneID);
-            err = !int.TryParse(data.Command.Args[2], out int x);
-            err = !int.TryParse(data.Command.Args[3], out int y);
-            if (err)
+            int characterId;
+            int zoneId;
+            int x;
+            int y;
+            CheckRequiredArgLength(data, 4);
+
+            try
             {
-                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                characterId = int.Parse(data.Command.Args[0]);
+                zoneId = int.Parse(data.Command.Args[1]);
+                x = int.Parse(data.Command.Args[2]);
+                y = int.Parse(data.Command.Args[3]);
+            }
+            catch (Exception ex)
+            {
+                if (ex is ArgumentNullException)
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                throw;
             }
 
+            CheckZoneId(data, zoneId);
+
             // get the target character's session.
-            var charactersession = data.SessionManager.GetByCharacter(characterID);
+            var charactersession = data.SessionManager.GetByCharacter(characterId);
 
             if (charactersession.Character.ZoneId == null)
             {
-                SendMessageToAll(data, string.Format("ERR: Character with ID {0} does not have a zone. Are they docked?", characterID));
+                SendMessageToAll(data, string.Format("ERR: Character with ID {0} does not have a zone. Are they docked?", characterId));
                 return;
             }
 
             // get destination zone.
-            var zone = data.Request.Session.ZoneMgr.GetZone(zoneID);
+            var zone = data.Request.Session.ZoneMgr.GetZone(zoneId);
 
             if (charactersession.Character.ZoneId == null)
             {
-                SendMessageToAll(data, string.Format("ERR: Invalid Zone ID {0}", zoneID));
+                SendMessageToAll(data, string.Format("ERR: Invalid Zone ID {0}", zoneId));
                 return;
             }
 
@@ -234,11 +266,12 @@ namespace Perpetuum.Services.Channels.ChatCommands
             tp.DoTeleportAsync(player);
             tp = null;
 
-            SendMessageToAll(data, string.Format("Moved Character {0}-{1} to Zone {2} @ {3},{4}", characterID, charactersession.Character.Nick, zone.Id, x, y));
+            SendMessageToAll(data, string.Format("Moved Character {0}-{1} to Zone {2} @ {3},{4}", characterId, charactersession.Character.Nick, zone.Id, x, y));
         }
         [ChatCommand("GiveItem")]
         public static void GiveItem(AdminCommandData data)
         {
+            CheckRequiredArgLength(data, 2);
             int.TryParse(data.Command.Args[0], out int definition);
             int.TryParse(data.Command.Args[1], out int qty);
 
@@ -307,6 +340,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
         [ChatCommand("SetVisibility")]
         public static void SetVisibility(AdminCommandData data)
         {
+            CheckRequiredArgLength(data, 1);
             bool.TryParse(data.Command.Args[0], out bool visiblestate);
 
             var character = data.Request.Session.Character;
@@ -344,6 +378,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
         public static void ListAllPlayersInZone(AdminCommandData data)
         {
             int.TryParse(data.Command.Args[0], out int zoneid);
+            CheckZoneId(data, zoneid);
 
             SendMessageToAll(data, string.Format("Players On Zone {0}", zoneid));
             SendMessageToAll(data, string.Format("  AccountId    CharacterId    Nick    Access Level    Docked?    DockedAt    Position"));
@@ -398,15 +433,28 @@ namespace Perpetuum.Services.Channels.ChatCommands
         [ChatCommand("FlagPlayerNameOffensive")]
         public static void FlagPlayerNameOffensive(AdminCommandData data)
         {
-            bool err = false;
-            err = !int.TryParse(data.Command.Args[0], out int characterID);
-            err = !bool.TryParse(data.Command.Args[1], out bool isoffensive);
+            int characterId;
+            bool isOffensive;
+
+            CheckRequiredArgLength(data, 2);
+
+            try 
+            {
+                characterId = int.Parse(data.Command.Args[0]);
+                isOffensive = bool.Parse(data.Command.Args[1]);
+            }
+            catch(Exception ex)
+            {
+                if (ex is FormatException || ex is ArgumentNullException)
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                throw;
+            }
 
             //TODO does this work if the character doesnt have a session?
-            var charactersession = data.SessionManager.GetByCharacter(characterID);
-            charactersession.Character.IsOffensiveNick = isoffensive;
+            var characterSession = data.SessionManager.GetByCharacter(characterId);
+            characterSession.Character.IsOffensiveNick = isOffensive;
 
-            SendMessageToAll(data, string.Format("Player with nick {0} is offensive:{1}", charactersession.Character.Nick, charactersession.Character.IsOffensiveNick));
+            SendMessageToAll(data, string.Format("Player with nick {0} is offensive:{1}", characterSession.Character.Nick, characterSession.Character.IsOffensiveNick));
         }
         [ChatCommand("RenameCorp")]
         public static void RenameCorp(AdminCommandData data)
@@ -414,6 +462,8 @@ namespace Perpetuum.Services.Channels.ChatCommands
             string currentCorpName = data.Command.Args[0];
             string desiredCorpName = data.Command.Args[1];
             string desiredCorpNick = data.Command.Args[2];
+
+            CheckRequiredArgLength(data, 3);
 
             Corporation.IsNameOrNickTaken(desiredCorpName, desiredCorpNick).ThrowIfTrue(ErrorCodes.NameTaken);
             var corp = Corporation.GetByName(currentCorpName);
@@ -424,16 +474,22 @@ namespace Perpetuum.Services.Channels.ChatCommands
         [ChatCommand("UnlockAllEP")]
         public static void UnlockAllEP(AdminCommandData data)
         {
-            bool err = false;
-            err = !int.TryParse(data.Command.Args[0], out int accountID);
-            if (err)
+            int accountId;
+
+            try 
             {
-                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                accountId = int.Parse(data.Command.Args[0]);
+            }
+            catch (Exception ex)
+            {
+                if (ex is FormatException || ex is ArgumentNullException)
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                throw;
             }
 
             Dictionary<string, object> dictionary = new Dictionary<string, object>()
                 {
-                    { k.accountID, accountID }
+                    { k.accountID, accountId }
                 };
 
             string cmd = string.Format("{0}:relay:{1}", Commands.ExtensionFreeAllLockedEpCommand.Text, GenxyConverter.Serialize(dictionary));
@@ -443,12 +499,20 @@ namespace Perpetuum.Services.Channels.ChatCommands
         [ChatCommand("EPBonusSet")]
         public static void EPBonusSet(AdminCommandData data)
         {
-            bool err = false;
-            err = !int.TryParse(data.Command.Args[0], out int bonusBoost);
-            err = !int.TryParse(data.Command.Args[1], out int hours);
-            if (err)
+            int bonusBoost;
+            int hours;
+
+            CheckRequiredArgLength(data, 2);
+
+            try 
             {
-                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                bonusBoost = int.Parse(data.Command.Args[0]);
+                hours = int.Parse(data.Command.Args[1]);
+            } catch (Exception ex)
+            {
+                if (ex is FormatException || ex is ArgumentNullException)
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                throw;
             }
 
             Dictionary<string, object> dictionary = new Dictionary<string, object>()
@@ -516,14 +580,24 @@ namespace Perpetuum.Services.Channels.ChatCommands
                 SendMessageToAll(data, $"bad or missing args");
                 throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
             }
+
             var zoneId = data.Sender.ZoneId ?? -1;
-            bool err = false;
-            err = !int.TryParse(data.Command.Args[0], out int weatherInt);
-            err = !int.TryParse(data.Command.Args[1], out int seconds);
-            if (data.Command.Args.Length > 2)
+            int weatherInt;
+            int seconds;
+            try
             {
-                err = !int.TryParse(data.Command.Args[2], out zoneId);
+                weatherInt = int.Parse(data.Command.Args[0]);
+                seconds = int.Parse(data.Command.Args[1]);
+                if (data.Command.Args.Length > 2)
+                    zoneId = int.Parse(data.Command.Args[2]);
             }
+            catch (Exception ex)
+            {
+                if (ex is FormatException || ex is ArgumentNullException)
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                throw;
+            }
+
             CheckZoneId(data, zoneId);
             var zone = data.Request.Session.ZoneMgr.GetZone(zoneId);
             var current = zone.Weather.GetCurrentWeather();
@@ -640,24 +714,43 @@ namespace Perpetuum.Services.Channels.ChatCommands
             if (!IsDevModeEnabled(data))
                 return;
 
-            bool err = false;
-            err = !int.TryParse(data.Command.Args[0], out int definition);
-            err = !int.TryParse(data.Command.Args[1], out int x);
-            err = !int.TryParse(data.Command.Args[2], out int y);
-            err = !int.TryParse(data.Command.Args[3], out int z);
-            err = !double.TryParse(data.Command.Args[4], out double qx);
-            err = !double.TryParse(data.Command.Args[5], out double qy);
-            err = !double.TryParse(data.Command.Args[6], out double qz);
-            err = !double.TryParse(data.Command.Args[7], out double qw);
-            err = !double.TryParse(data.Command.Args[8], out double scale);
-            err = !int.TryParse(data.Command.Args[9], out int cat);
+            int? zoneId = data.Sender.ZoneId;
+            int definition;
+            int x;
+            int y;
+            int z;
+            double qx;
+            double qy;
+            double qz;
+            double qw;
+            double scale;
+            int cat;
 
-            if (err)
+            try
             {
-                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                if (zoneId == null)
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                definition = int.Parse(data.Command.Args[0]);
+                x = int.Parse(data.Command.Args[1]);
+                y = int.Parse(data.Command.Args[2]);
+                z = int.Parse(data.Command.Args[3]);
+                qx = double.Parse(data.Command.Args[4]);
+                qy = double.Parse(data.Command.Args[5]);
+                qz = double.Parse(data.Command.Args[6]);
+                qw = double.Parse(data.Command.Args[7]);
+                scale = double.Parse(data.Command.Args[8]);
+                cat = int.Parse(data.Command.Args[9]);
+            }
+            catch (Exception ex)
+            {
+                if (ex is FormatException || ex is ArgumentNullException)
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                throw;
             }
 
-            Dictionary<string, object> dictionary = new Dictionary<string, object>()
+            string cmd() 
+            {
+                Dictionary<string, object> dictionary = new Dictionary<string, object>()
                 {
                     { "definition", definition },
                     { "x", x*256 },
@@ -671,8 +764,10 @@ namespace Perpetuum.Services.Channels.ChatCommands
                     { "category", cat }
                 };
 
-            string cmd = string.Format("zoneDecorAdd:zone_{0}:{1}", data.Sender.ZoneId, GenxyConverter.Serialize(dictionary));
-            HandleLocalRequest(data, cmd);
+                return string.Format("zoneDecorAdd:zone_{0}:{1}", zoneId, GenxyConverter.Serialize(dictionary));
+            }
+
+            HandleLocalRequest(data, cmd());
         }
         [ChatCommand("ZoneAddDecorToLockedTile")]
         public static void ZoneAddDecorToLockedTile(AdminCommandData data)
@@ -694,12 +789,19 @@ namespace Perpetuum.Services.Channels.ChatCommands
             double y = terrainLock.Location.Y;
             double z = terrainLock.Location.Z;
 
-            bool err = !double.TryParse(data.Command.Args[1], out double scale);
-            err = !int.TryParse(data.Command.Args[0], out int definition);
+            int definition;
+            double scale;
 
-            if (err)
+            try
             {
-                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                definition = int.Parse(data.Command.Args[0]);
+                scale = double.Parse(data.Command.Args[1]);
+            }
+            catch (Exception ex)
+            {
+                if (ex is ArgumentNullException)
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                throw;
             }
 
             Dictionary<string, object> dictionary = new Dictionary<string, object>()
@@ -868,9 +970,20 @@ namespace Perpetuum.Services.Channels.ChatCommands
             if (!IsDevModeEnabled(data))
                 return;
 
-            bool err = false;
-            err = !int.TryParse(data.Command.Args[0], out int id);
-            err = !int.TryParse(data.Command.Args[1], out int locked);
+            int id;
+            int locked;
+
+            try
+            {
+                id = int.Parse(data.Command.Args[0]);
+                locked = int.Parse(data.Command.Args[1]);
+            }
+            catch (Exception ex)
+            {
+                if (ex is ArgumentNullException)
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                throw;
+            }
 
             Dictionary<string, object> dictionary = new Dictionary<string, object>()
                 {
@@ -991,7 +1104,9 @@ namespace Perpetuum.Services.Channels.ChatCommands
             if (!IsDevModeEnabled(data))
                 return;
 
-            bool err = false;
+            int x;
+            int y;
+
             var dictionary = new Dictionary<string, object>();
             if (data.Command.Args.Length != 2)
             {
@@ -999,13 +1114,19 @@ namespace Perpetuum.Services.Channels.ChatCommands
                 throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
             }
 
-            err = !int.TryParse(data.Command.Args[0], out int x);
-            err = !int.TryParse(data.Command.Args[1], out int y);
-            if (err)
+            try
+            {
+                x = int.Parse(data.Command.Args[0]);
+                y = int.Parse(data.Command.Args[1]);
+            }
+            catch (Exception ex)
             {
                 SendMessageToAll(data, "Bad args");
-                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                if (ex is ArgumentNullException)
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                throw;
             }
+
             dictionary.Add(k.x, x);
             dictionary.Add(k.y, y);
             var cmd = string.Format("{0}:zone_{1}:{2}", Commands.ZoneCreateGarden.Text, data.Sender.ZoneId, GenxyConverter.Serialize(dictionary));
@@ -1080,7 +1201,6 @@ namespace Perpetuum.Services.Channels.ChatCommands
             if (!IsDevModeEnabled(data))
                 return;
 
-            bool err = false;
             var character = data.Request.Session.Character;
             var zone = data.Request.Session.ZoneMgr.GetZone((int)character.ZoneId);
             var player = zone.GetPlayer(character.ActiveRobotEid);
@@ -1089,17 +1209,27 @@ namespace Perpetuum.Services.Channels.ChatCommands
 
             int x, y, zoneid;
 
+            int xCommand;
+            int yCommand;
+            int zoneCommand;
+
+            try
+            {
+                xCommand = int.Parse(data.Command.Args[0]);
+                yCommand = int.Parse(data.Command.Args[1]);
+                zoneCommand = int.Parse(data.Command.Args[2]);
+            }
+            catch (Exception ex)
+            {
+                SendMessageToAll(data, "Bad args");
+                if (ex is ArgumentNullException)
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                throw;
+            }
+
             if (terrainLock == null)
             {
                 if (data.Command.Args.Length != 3)
-                {
-                    SendMessageToAll(data, "Bad args");
-                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
-                }
-                err = !int.TryParse(data.Command.Args[0], out int xCommand);
-                err = !int.TryParse(data.Command.Args[1], out int yCommand);
-                err = !int.TryParse(data.Command.Args[2], out int zoneCommand);
-                if (err)
                 {
                     SendMessageToAll(data, "Bad args");
                     throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
