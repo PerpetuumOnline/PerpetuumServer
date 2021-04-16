@@ -1,6 +1,5 @@
 ﻿using Perpetuum.EntityFramework;
 using Perpetuum.ExportedTypes;
-using Perpetuum.Log;
 using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Services.RiftSystem;
 using Perpetuum.Zones;
@@ -27,21 +26,6 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             return true;
         }
 
-        private Destination TryGetValidDestination(CustomRiftConfig riftConfig)
-        {
-            var attempts = 100;
-            while (attempts > 0)
-            {
-                attempts--;
-                var dest = riftConfig.GetDestination();
-                if (dest != null && _zoneManager.ContainsZone(dest.ZoneId))
-                {
-                    return dest;
-                }
-            }
-            return null;
-        }
-
         public override void HandleMessage(EventMessage value)
         {
             if (value is SpawnPortalMessage msg)
@@ -49,21 +33,12 @@ namespace Perpetuum.Services.EventServices.EventProcessors
                 if (!ValidateMessage(msg))
                     return;
 
-                var zone = _zoneManager.GetZone(msg.SourceZone);
-                var targetDestination = TryGetValidDestination(msg.RiftConfig);
-                if (targetDestination == null)
-                    return;
 
-                var zoneTarget = _zoneManager.GetZone(targetDestination.ZoneId);
-                var targetPos = targetDestination.GetPosition(zoneTarget);
-                var rift = (TargettedPortal)_entityServices.Factory.CreateWithRandomEID(DefinitionNames.TARGETTED_RIFT);
-                rift.AddToZone(zone, msg.SourcePosition, ZoneEnterType.NpcSpawn);
-                rift.SetTarget(zoneTarget, targetPos);
-                rift.SetConfig(msg.RiftConfig);
-
-                Logger.Info(string.Format("TargettedRift spawned on zone {0} {1} ({2})", zone.Id, rift.ED.Name, rift.CurrentPosition));
+                CustomRiftSpawner.TrySpawnRift(msg.RiftConfig, _zoneManager, msg.SourceZone, msg.SourcePosition, () =>
+                {
+                    return (StrongholdEntryRift)_entityServices.Factory.CreateWithRandomEID(DefinitionNames.TARGETTED_RIFT);
+                });
             }
         }
-
     }
 }

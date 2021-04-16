@@ -15,16 +15,18 @@ namespace Perpetuum.Services.RiftSystem.StrongholdRifts
         /// </summary>
         /// <param name="zone">IZone</param>
         /// <returns>IEnumerable of StrongholdRiftLocation</returns>
-        public static IEnumerable<StrongholdRiftLocation> GetAllInZone(IZone zone)
+        public static IEnumerable<StrongholdRiftLocation> GetAllInZone(IZone zone, ICustomRiftConfigReader customRiftConfigReader)
         {
-            var locations = Db.Query().CommandText("SELECT id, zoneid, x, y FROM strongholdexitconfig WHERE zoneid = @zoneId")
+            var locations = Db.Query().CommandText("SELECT id, zoneId, x, y, riftConfigId FROM strongholdexitconfig WHERE zoneId = @zoneId")
                 .SetParameter("@zoneId", zone.Id)
                 .Execute()
                 .Select((record) =>
                 {
                     var x = record.GetValue<int>("x");
                     var y = record.GetValue<int>("y");
-                    return new StrongholdRiftLocation(zone, new Position(x, y));
+                    var riftConfigId = record.GetValue<int>("riftConfigId");
+                    var riftConfig = customRiftConfigReader.GetById(riftConfigId);
+                    return new StrongholdRiftLocation(zone, new Position(x, y), riftConfig);
                 });
 
             return locations;
@@ -38,11 +40,13 @@ namespace Perpetuum.Services.RiftSystem.StrongholdRifts
     {
         public IZone Zone { get; private set; }
         public Position Location { get; private set; }
+        public CustomRiftConfig RiftConfig { get; private set; }
 
-        public StrongholdRiftLocation(IZone zone, Position location)
+        public StrongholdRiftLocation(IZone zone, Position location, CustomRiftConfig riftConfig)
         {
             Zone = zone;
             Location = location;
+            RiftConfig = riftConfig;
         }
     }
 }

@@ -1014,7 +1014,7 @@ namespace Perpetuum.Bootstrapper
             RegisterUnit<TrainingKillSwitch>();
             RegisterUnit<Gate>();
             RegisterUnit<RandomRiftPortal>();
-            RegisterUnit<TargettedPortal>(); // OPP: Special rift spawned eventfully to transport player to location
+            RegisterUnit<StrongholdEntryRift>(); // OPP: Special rift spawned eventfully to transport player to location
             RegisterUnit<StrongholdExitRift>(); // OPP: Special rift for exiting strongholds
 
             RegisterEntity<Item>();
@@ -1316,7 +1316,7 @@ namespace Perpetuum.Bootstrapper
                 ByName<ItemShop>(DefinitionNames.BASE_ITEM_SHOP);
                 ByName<Gift>(DefinitionNames.ANNIVERSARY_PACKAGE);
                 ByName<StrongholdExitRift>(DefinitionNames.STRONGHOLD_EXIT_RIFT); //OPP stronghold static exit rift
-                ByName<TargettedPortal>(DefinitionNames.TARGETTED_RIFT); //OPP targetted rift
+                ByName<StrongholdEntryRift>(DefinitionNames.TARGETTED_RIFT); //OPP targetted rift
                 ByName<Relic>(DefinitionNames.RELIC); //OPP Relic
                 ByName<SAPRelic>(DefinitionNames.RELIC_SAP); //OPP outpost Relic
 

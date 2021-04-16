@@ -16,6 +16,17 @@ using Perpetuum.Zones.Teleporting.Strategies;
 
 namespace Perpetuum.Services.RiftSystem
 {
+    public interface IConfigurablePortal
+    {
+        void SetConfig(CustomRiftConfig riftConfig);
+        void SetTarget(IZone zone, Position position);
+    }
+
+    public interface IDespawningPortal
+    {
+        void SetDespawnTime(TimeSpan despawnTime);
+    }
+
     /// <summary>
     /// Super class to all Rifts
     /// </summary>
@@ -32,7 +43,7 @@ namespace Perpetuum.Services.RiftSystem
     /// <summary>
     /// Rifts that despawn
     /// </summary>
-    public abstract class DespawningPortal : Portal
+    public abstract class DespawningPortal : Portal, IDespawningPortal
     {
         private UnitDespawnHelper _despawnHelper;
 
@@ -48,15 +59,18 @@ namespace Perpetuum.Services.RiftSystem
         }
     }
 
-    public class TargettedPortal : DespawningPortal
+    /// <summary>
+    /// Rifts that can have a configurable destination when used
+    /// </summary>
+    public class DespawningTargettedPortal : DespawningPortal, IConfigurablePortal
     {
+        protected readonly ITeleportStrategyFactories _teleportStrategyFactories;
         public IZone TargetZone { get; private set; }
         public Position TargetPosition { get; private set; }
         public CustomRiftConfig RiftConfig { get; private set; }
-        private readonly ITeleportStrategyFactories _teleportStrategyFactories;
         private int uses = 0;
 
-        public TargettedPortal(ITeleportStrategyFactories teleportStrategyFactories)
+        public DespawningTargettedPortal(ITeleportStrategyFactories teleportStrategyFactories)
         {
             _teleportStrategyFactories = teleportStrategyFactories;
         }
@@ -64,10 +78,9 @@ namespace Perpetuum.Services.RiftSystem
         public void SetConfig(CustomRiftConfig riftConfig)
         {
             RiftConfig = riftConfig;
+            // Only set despawner if config is despawning
             if (RiftConfig.IsDespawning)
-            {
                 SetDespawnTime(RiftConfig.Lifespan);
-            }
         }
 
         public void SetTarget(IZone zone, Position position)
@@ -75,6 +88,8 @@ namespace Perpetuum.Services.RiftSystem
             TargetZone = zone;
             TargetPosition = position;
         }
+
+        private bool HasTarget { get { return TargetZone != null && !TargetPosition.Equals(Position.Empty); } }
 
         private bool IsUsageExceeded()
         {
@@ -94,6 +109,7 @@ namespace Perpetuum.Services.RiftSystem
 
         public override void UseItem(Player player)
         {
+            HasTarget.ThrowIfFalse(ErrorCodes.NoTeleportDestinations);
             base.UseItem(player);
 
             IsUsageExceeded().ThrowIfTrue(ErrorCodes.MaximumAllowedRegistrationExceeded);
@@ -109,6 +125,16 @@ namespace Perpetuum.Services.RiftSystem
             if (IsUsageExceeded())
                 Kill();
         }
+    }
+
+    public class StrongholdExitRift : DespawningTargettedPortal
+    {
+        public StrongholdExitRift(ITeleportStrategyFactories teleportStrategyFactories) : base(teleportStrategyFactories) { }
+    }
+
+    public class StrongholdEntryRift : DespawningTargettedPortal
+    {
+        public StrongholdEntryRift(ITeleportStrategyFactories teleportStrategyFactories) : base(teleportStrategyFactories) { }
     }
 
     /// <summary>
