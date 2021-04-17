@@ -57,19 +57,23 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
             return ErrorCodes.NoError;
         }
 
+        [CanBeNull]
         private static FieldTerminal GetFieldTerminal(Entity container)
         {
             if (container == null)
                 return null;
 
+            var maxDepth = 9;
+            var depth = 0;
             var fieldTerminal = container.ParentEntity as FieldTerminal;
-            while (fieldTerminal == null)
+            while (fieldTerminal == null && depth < maxDepth)
             {
                 container = container.ParentEntity;
                 if(container == null)
                     break;
 
                 fieldTerminal = container.ParentEntity as FieldTerminal;
+                depth++;
             }
             return fieldTerminal;
         }
