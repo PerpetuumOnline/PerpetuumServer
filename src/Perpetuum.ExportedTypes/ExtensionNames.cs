@@ -75,6 +75,8 @@ namespace Perpetuum.ExportedTypes
  		 public const string EPRITON_MINING_BUFFER_EXPERT = "ext_epriton_mining_buffer_expert";
  		 public const string EXPLOSION_RADIUS_MODIFIER = "ext_explosion_radius_modifier";
  		 public const string FAST_EXTRACTION_LEADERSHIP = "ext_fast_extraction_leadership";
+ 		 public const string FLUX_MINER_EXPERT = "ext_flux_miner_expert";
+ 		 public const string FLUX_MINING_BUFFER_EXPERT = "ext_flux_mining_buffer_expert";
  		 public const string FUEL_EFFICIENCY = "ext_fuel_efficiency";
  		 public const string GAMMATERIAL_MINER_EXPERT = "ext_gammaterial_miner_expert";
  		 public const string GAMMATERIAL_MINING_BUFFER_EXPERT = "ext_gammaterial_mining_buffer_expert";

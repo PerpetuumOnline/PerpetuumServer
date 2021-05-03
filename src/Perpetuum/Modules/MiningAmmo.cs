@@ -16,6 +16,7 @@ namespace Perpetuum.Modules
         {
             _modifiers = new Dictionary<MaterialType, MiningAmmoModifier>
                              {
+                                 {MaterialType.FluxOre, new MiningAmmoModifier(AggregateField.mining_cycle_time_flux_modifier, AggregateField.mining_amount_flux_modifier)},
                                  {MaterialType.Epriton, new MiningAmmoModifier(AggregateField.mining_cycle_time_epriton_modifier, AggregateField.mining_amount_epriton_modifier)},
                                  {MaterialType.Titan, new MiningAmmoModifier(AggregateField.mining_cycle_time_titan_modifier, AggregateField.mining_amount_titan_modifier)},
                                  {MaterialType.Stermonit, new MiningAmmoModifier(AggregateField.mining_cycle_time_stermonit_modifier, AggregateField.mining_amount_stermonit_modifier)},
