@@ -114,6 +114,7 @@ namespace Perpetuum.ExportedTypes
         effect_night_clear = 111,
         effect_night_overcast = 112,
         effect_weather_good = 113,
-        effect_weather_bad = 114
+        effect_weather_bad = 114,
+        effect_stronghold_despawn_timer = 115
     }
 }

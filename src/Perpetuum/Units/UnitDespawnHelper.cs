@@ -10,19 +10,19 @@ namespace Perpetuum.Units
 
     public class UnitDespawnHelper 
     {
-        private readonly TimeSpan _despawnTime;
-        private readonly IntervalTimer _timer = new IntervalTimer(500);
+        protected readonly TimeSpan _despawnTime;
+        protected readonly IntervalTimer _timer = new IntervalTimer(650);
 
-        private UnitDespawnHelper(TimeSpan despawnTime)
+        protected UnitDespawnHelper(TimeSpan despawnTime)
         {
             _despawnTime = despawnTime;
         }
 
-        public UnitDespawnerCanApplyEffect CanApplyDespawnEffect { private get; set; }
+        public UnitDespawnerCanApplyEffect CanApplyDespawnEffect { protected get; set; }
 
-        public UnitDespawnStrategy DespawnStrategy { private get; set; }
+        public UnitDespawnStrategy DespawnStrategy { protected get; set; }
 
-        public void Update(TimeSpan time,Unit unit)
+        public virtual void Update(TimeSpan time,Unit unit)
         {
             _timer.Update(time).IsPassed(() =>
             {
@@ -44,7 +44,7 @@ namespace Perpetuum.Units
             });
         }
 
-        private readonly EffectToken _effectToken = EffectToken.NewToken();
+        protected readonly EffectToken _effectToken = EffectToken.NewToken();
 
         private void TryReApplyDespawnEffect(Unit unit)
         {

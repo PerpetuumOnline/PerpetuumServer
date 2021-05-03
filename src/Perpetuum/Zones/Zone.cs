@@ -18,6 +18,7 @@ using Perpetuum.Services.HighScores;
 using Perpetuum.Services.Relics;
 using Perpetuum.Services.RiftSystem;
 using Perpetuum.Services.Sessions;
+using Perpetuum.Services.Strongholds;
 using Perpetuum.Services.Weather;
 using Perpetuum.Timers;
 using Perpetuum.Units;
@@ -72,6 +73,9 @@ namespace Perpetuum.Zones
 
         [CanBeNull]
         public IRelicManager RelicManager { get; set; }
+
+        [CanBeNull]
+        public IStrongholdPlayerStateManager PlayerStateManager { get; set; }
 
         public IZoneEnterQueueService EnterQueueService { get; set; }
 
@@ -201,7 +205,10 @@ namespace Perpetuum.Zones
                 return;
 
             if (unit is Player player)
+            {
                 ImmutableInterlocked.TryAdd(ref _players, player.Eid, player);
+                PlayerStateManager?.OnPlayerEnterZone(player);
+            }
 
             unit.Updated += OnUnitUpdated;
             unit.Dead += OnUnitDead;
@@ -234,7 +241,10 @@ namespace Perpetuum.Zones
                 return;
 
             if (u is Player player)
+            {
                 ImmutableInterlocked.TryRemove(ref _players, player.Eid, out player);
+                PlayerStateManager?.OnPlayerExitZone(player);
+            }
 
             u.Updated -= OnUnitUpdated;
             Logger.Info($"Unit exited from zone. zone:{Id} eid = {u.InfoString} ({u.CurrentPosition})");

@@ -182,6 +182,7 @@ using SetItemName = Perpetuum.RequestHandlers.SetItemName;
 using TrashItems = Perpetuum.RequestHandlers.TrashItems;
 using UnpackItems = Perpetuum.RequestHandlers.UnpackItems;
 using UnstackAmount = Perpetuum.RequestHandlers.UnstackAmount;
+using Perpetuum.Services.Strongholds;
 
 namespace Perpetuum.Bootstrapper
 {
@@ -2550,6 +2551,18 @@ namespace Perpetuum.Bootstrapper
             _builder.RegisterType<SettingsLoader>();
             _builder.RegisterType<PlantRuleLoader>();
 
+            _builder.RegisterType<StrongholdPlayerStateManager>().As<IStrongholdPlayerStateManager>();
+
+
+            _builder.Register<Func<IZone, IStrongholdPlayerStateManager>>(x =>
+            {
+                var ctx = x.Resolve<IComponentContext>();
+                return zone =>
+                {
+                    return new StrongholdPlayerStateManager(zone);
+                };
+            });
+
             _builder.Register<Func<ZoneConfiguration, IZone>>(x =>
             {
                 var ctx = x.Resolve<IComponentContext>();
@@ -2581,6 +2594,11 @@ namespace Perpetuum.Bootstrapper
                     {
                         zone.HighwayHandler = ctx.Resolve<PBSHighwayHandler.Factory>().Invoke(zone);
                         zone.TerraformHandler = ctx.Resolve<TerraformHandler.Factory>().Invoke(zone);
+                    }
+
+                    if (configuration.Type == ZoneType.Stronghold)
+                    {
+                        zone.PlayerStateManager = ctx.Resolve<Func<IZone, IStrongholdPlayerStateManager>>().Invoke(zone);
                     }
 
                     ctx.Resolve<EventListenerService>().AttachListener(new NpcReinforcementSpawner(zone, ctx.Resolve<INpcReinforcementsRepository>()));

@@ -62,6 +62,8 @@ namespace Perpetuum.Zones
                     MaxDockingBase = record.GetValue<int>("maxdockingbase"),
                     PlantAltitudeScale = record.GetValue<double>("plantaltitudescale"),
                     Note = record.GetValue<string>("note"),
+
+                    TimeLimitMinutes = record.GetValue<int?>("timeLimitMinutes")
                 };
 
                 config.PlantRules = _plantRuleLoader.LoadPlantRulesWithOverrides(config.plantRuleSetId);
@@ -103,6 +105,8 @@ namespace Perpetuum.Zones
 
         public string ListenerAddress { get; set; }
         public int ListenerPort { get; set; }
+
+        public int? TimeLimitMinutes { get; set; }
 
         public ZoneType Type { get; set; }
 

@@ -561,6 +561,7 @@
     <Compile Include="Services\Sparks\Teleports\SparkTeleportHelper.cs" />
     <Compile Include="Services\Sparks\Teleports\SparkTeleportRepository.cs" />
     <Compile Include="Services\Steam\SteamHelper.cs" />
+    <Compile Include="Services\Strongholds\StrongholdPlayerStateManager.cs" />
     <Compile Include="Services\Weather\IWeatherService.cs" />
     <Compile Include="Services\Weather\WeatherInfo.cs" />
     <Compile Include="Services\Weather\WeatherObservers.cs" />

@@ -25,6 +25,7 @@ using Perpetuum.Services.Looting;
 using Perpetuum.Services.MissionEngine;
 using Perpetuum.Services.MissionEngine.MissionTargets;
 using Perpetuum.Services.MissionEngine.TransportAssignments;
+using Perpetuum.Services.Strongholds;
 using Perpetuum.Timers;
 using Perpetuum.Units;
 using Perpetuum.Units.DockingBases;
@@ -137,6 +138,7 @@ namespace Perpetuum.Players
         private readonly PlayerMovement _movement;
         private CombatLogger _combatLogger;
         private PlayerMoveCheckQueue _check;
+        private StrongholdPlayerDespawnHelper _despawnHelper;
 
         public Player(IExtensionReader extensionReader,
             ICorporationManager corporationManager,
@@ -251,7 +253,7 @@ namespace Perpetuum.Players
             MissionHandler = _missionHandlerFactory(zone, this);
             MissionHandler.InitMissions();
 
-            Direction = FastRandom.NextDouble(); 
+            Direction = FastRandom.NextDouble();
 
             var p = DynamicProperties.GetProperty<int>(k.pvpRemaining);
             if (!p.HasValue)
@@ -320,6 +322,22 @@ namespace Perpetuum.Players
             MissionHandler.Update(time);
 
             _combatLogger?.Update(time);
+            _despawnHelper?.Update(time, this);
+        }
+
+        public void SetStrongholdDespawn(TimeSpan time, UnitDespawnStrategy strategy)
+        {
+            if (_despawnHelper == null)
+            {
+                _despawnHelper = StrongholdPlayerDespawnHelper.Create(this, time);
+                _despawnHelper.DespawnStrategy = strategy;
+            }
+        }
+
+        public void ClearStrongholdDespawn()
+        {
+            _despawnHelper?.Cancel(this);
+            _despawnHelper = null;
         }
 
         public void SendModuleProcessError(Module module, ErrorCodes error)
@@ -345,7 +363,6 @@ namespace Perpetuum.Players
         {
             EffectHandler.RemoveEffectsByType(EffectType.effect_invulnerable);
         }
-
 
         public void ApplyTeleportSicknessEffect()
         {

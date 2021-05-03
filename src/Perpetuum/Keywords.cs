@@ -1007,6 +1007,7 @@ namespace Perpetuum
         public const string state = "state";
         public const string steambuildid = "steamBuildId";
         public const string steps = "steps";
+        public const string strongholdDespawnTime = "strongholdDespawnTime";
         public const string structureEid = "structureEid";
         public const string sub = "sub";
         public const string submitInterval = "submitInterval";
