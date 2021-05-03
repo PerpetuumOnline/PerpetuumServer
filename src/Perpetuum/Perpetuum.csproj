@@ -296,6 +296,7 @@
     <Compile Include="Services\EventServices\EventProcessors\NpcSpawnEventHandlers\NpcReinforcementSpawner.cs" />
     <Compile Include="Services\EventServices\EventProcessors\EnvironmentalEffectHandler.cs" />
     <Compile Include="Services\EventServices\EventProcessors\PortalSpawner.cs" />
+    <Compile Include="Services\EventServices\EventType.cs" />
     <Compile Include="Services\GameTime\GameTimeObserver.cs" />
     <Compile Include="Services\GameTime\GameTimeInfo.cs" />
     <Compile Include="Services\GameTime\GameTimeService.cs" />

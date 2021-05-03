@@ -21,6 +21,8 @@ namespace Perpetuum.Services.EventServices.EventProcessors.NpcSpawnEventHandlers
 
         private const int MIN_SPAWN_DIST_TOLERANCE = 30;
 
+        public override EventType Type => EventType.NpcOre;
+
         private readonly IDictionary<MineralNode, INpcReinforcements> _reinforcementsByNode = new Dictionary<MineralNode, INpcReinforcements>();
         private readonly IEnumerable<IMineralConfiguration> _mineralConfigs;
 
@@ -34,7 +36,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors.NpcSpawnEventHandlers
             return _reinforcementsByNode.Where(p => p.Value.HasActivePresence(presence)).Select(p => p.Value);
         }
 
-        protected override bool CheckMessage(EventMessage inMsg, out OreNpcSpawnMessage msg)
+        protected override bool CheckMessage(IEventMessage inMsg, out OreNpcSpawnMessage msg)
         {
             if (inMsg is OreNpcSpawnMessage message && _zone.Id == message.ZoneId)
             {

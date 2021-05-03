@@ -2,8 +2,10 @@
 
 namespace Perpetuum.Services.EventServices.EventMessages
 {
-    public class SpawnPortalMessage : EventMessage
+    public class SpawnPortalMessage : IEventMessage
     {
+        public EventType Type => EventType.PortalSpawn;
+
         public Position SourcePosition { get; private set; }
         public int SourceZone { get; private set; }
         public CustomRiftConfig RiftConfig { get; private set; }

@@ -14,7 +14,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors.NpcSpawnEventHandlers
     /// Common functions and event handling procedure for NpcReinforcement related events
     /// </summary>
     /// <typeparam name="T">EventMessage</typeparam>
-    public abstract class NpcSpawnEventHandler<T> : EventProcessor where T : EventMessage
+    public abstract class NpcSpawnEventHandler<T> : EventProcessor where T : IEventMessage
     {
         protected abstract TimeSpan SPAWN_DELAY { get; }
         protected abstract TimeSpan SPAWN_LIFETIME { get; }
@@ -30,7 +30,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors.NpcSpawnEventHandlers
 
         protected abstract IEnumerable<INpcReinforcements> GetActiveReinforcments(Presence presence);
 
-        protected abstract bool CheckMessage(EventMessage inMsg, out T msg);
+        protected abstract bool CheckMessage(IEventMessage inMsg, out T msg);
 
         protected abstract void CheckReinforcements(T msg);
 
@@ -81,7 +81,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors.NpcSpawnEventHandlers
 
         private bool _spawning = false;
 
-        public override void HandleMessage(EventMessage value)
+        public override void HandleMessage(IEventMessage value)
         {
             if (CheckMessage(value, out T msg))
             {

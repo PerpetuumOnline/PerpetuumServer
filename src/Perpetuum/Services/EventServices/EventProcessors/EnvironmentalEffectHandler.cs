@@ -71,7 +71,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             }
         }
 
-        private bool TryGetWeatherMessage(EventMessage value)
+        private bool TryGetWeatherMessage(IEventMessage value)
         {
             var msg = value as WeatherEventMessage;
             var isValidMsg = msg != null && msg.ZoneId == _zone.Id;
@@ -82,7 +82,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             return isValidMsg;
         }
 
-        private bool TryGetGameTimeMessage(EventMessage value)
+        private bool TryGetGameTimeMessage(IEventMessage value)
         {
             var msg = value as GameTimeMessage;
             var isValidMsg = msg != null;
@@ -93,7 +93,8 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             return isValidMsg;
         }
 
-        public override void HandleMessage(EventMessage value)
+        public override EventType Type => EventType.Environmental;
+        public override void HandleMessage(IEventMessage value)
         {
             var stateChange = TryGetWeatherMessage(value) || TryGetGameTimeMessage(value);
             if (stateChange)

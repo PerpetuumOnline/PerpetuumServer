@@ -3,16 +3,19 @@ using System;
 
 namespace Perpetuum.Services.EventServices.EventProcessors
 {
-    public interface IEventProcessor : IObserver<EventMessage>
+    public interface IEventProcessor : IObserver<IEventMessage>
     {
-        void HandleMessage(EventMessage value);
+        void HandleMessage(IEventMessage value);
+        EventType Type { get; }
     }
 
     public abstract class EventProcessor : IEventProcessor
     {
-        public abstract void HandleMessage(EventMessage value);
+        public abstract EventType Type { get; }
 
-        public void OnNext(EventMessage value)
+        public abstract void HandleMessage(IEventMessage value);
+
+        public void OnNext(IEventMessage value)
         {
             HandleMessage(value);
         }

@@ -8,8 +8,10 @@ namespace Perpetuum.Services.EventServices.EventMessages
         Removed
     }
 
-    public class OreNpcSpawnMessage : EventMessage
+    public class OreNpcSpawnMessage : IEventMessage
     {
+        public EventType Type => EventType.NpcOre;
+
         public OreNodeState NodeState { get; }
         public MineralNode Node { get; }
         public int ZoneId { get; }

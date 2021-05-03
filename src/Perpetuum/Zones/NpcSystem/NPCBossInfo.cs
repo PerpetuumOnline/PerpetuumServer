@@ -234,7 +234,7 @@ namespace Perpetuum.Zones.NpcSystem
         {
             if (!msg.IsNullOrEmpty())
             {
-                EventMessage eventMessage = new NpcMessage(msg, src);
+                IEventMessage eventMessage = new NpcMessage(msg, src);
                 Task.Run(() => eventChannel.PublishMessage(eventMessage));
             }
         }

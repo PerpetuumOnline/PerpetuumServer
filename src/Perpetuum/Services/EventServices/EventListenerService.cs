@@ -14,31 +14,34 @@ namespace Perpetuum.Services.EventServices
     public class EventListenerService : Process
     {
         private readonly object _lock = new object();
-        private readonly IList<IEventProcessor> _observers;
-        private readonly ConcurrentQueue<EventMessage> _queue;
+        private readonly IDictionary<EventType, IList<IEventProcessor>> _observers;
+        private readonly ConcurrentQueue<IEventMessage> _queue;
 
         public EventListenerService()
         {
-            _observers = new List<IEventProcessor>();
-            _queue = new ConcurrentQueue<EventMessage>();
+            _observers = new Dictionary<EventType, IList<IEventProcessor>>();
+            _queue = new ConcurrentQueue<IEventMessage>();
         }
 
         /// <summary>
         /// Send a message where the type of EventMessage determines which listener is notified
         /// </summary>
         /// <param name="message">EventMessage of the type</param>
-        public void PublishMessage(EventMessage message)
+        public void PublishMessage(IEventMessage message)
         {
             _queue.Enqueue(message);
         }
 
-        public void NotifyListeners(EventMessage message)
+        public void NotifyListeners(IEventMessage message)
         {
             lock (_lock)
             {
-                foreach (var obs in _observers)
+                if(_observers.TryGetValue(message.Type, out var list))
                 {
-                    obs.OnNext(message);
+                    foreach (var obs in list)
+                    {
+                        obs.OnNext(message);
+                    }
                 }
             }
         }
@@ -50,7 +53,16 @@ namespace Perpetuum.Services.EventServices
         public void AttachListener(IEventProcessor observer)
         {
             lock (_lock)
-                _observers.Add(observer);
+            {
+                if (!_observers.ContainsKey(observer.Type))
+                {
+                    _observers.Add(observer.Type, new List<IEventProcessor>() { observer });
+                }
+                else
+                {
+                    _observers[observer.Type].Add(observer);
+                }
+            }
         }
 
         public override void Update(TimeSpan time)

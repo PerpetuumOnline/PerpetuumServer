@@ -18,6 +18,8 @@ namespace Perpetuum.Services.EventServices.EventProcessors.NpcSpawnEventHandlers
         protected override TimeSpan SPAWN_LIFETIME { get { return TimeSpan.FromMinutes(30); } }
         protected override int MAX_SPAWN_DIST { get { return 10; } }
 
+        public override EventType Type => EventType.NpcReinforce;
+
         private readonly IDictionary<NpcBossInfo, INpcReinforcements> _reinforcementsByNpc = new Dictionary<NpcBossInfo, INpcReinforcements>();
         public NpcReinforcementSpawner(IZone zone, INpcReinforcementsRepository reinforcementsRepo) : base(zone, reinforcementsRepo) { }
 
@@ -26,7 +28,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors.NpcSpawnEventHandlers
             return _reinforcementsByNpc.Where(p => p.Value.HasActivePresence(presence)).Select(p => p.Value);
         }
 
-        protected override bool CheckMessage(EventMessage inMsg, out NpcReinforcementsMessage msg)
+        protected override bool CheckMessage(IEventMessage inMsg, out NpcReinforcementsMessage msg)
         {
             if (inMsg is NpcReinforcementsMessage message && _zone.Id == message.ZoneId)
             {

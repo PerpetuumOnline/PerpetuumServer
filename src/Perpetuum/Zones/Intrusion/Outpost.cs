@@ -17,8 +17,8 @@ using Perpetuum.Log;
 using Perpetuum.Services.Channels;
 using Perpetuum.Services.EventServices;
 using Perpetuum.Services.EventServices.EventMessages;
+using Perpetuum.Services.EventServices.EventProcessors;
 using Perpetuum.Services.Looting;
-using Perpetuum.Services.Relics;
 using Perpetuum.Timers;
 using Perpetuum.Units.DockingBases;
 using Perpetuum.Zones.Effects;
@@ -76,6 +76,11 @@ namespace Perpetuum.Zones.Intrusion
             _lootService = lootService;
             _eventChannel = eventChannel;
             _decay = new OutpostDecay(_eventChannel, this);
+        }
+
+        private void InitStabilityListener()
+        {
+            _eventChannel.AttachListener(new AffectOutpostStability(this));
         }
 
         public void PublishSAPEvent(StabilityAffectingEvent eventMsg)
@@ -311,6 +316,7 @@ namespace Perpetuum.Zones.Intrusion
         {
             base.OnEnterZone(zone, enterType);
             RefreshEffectBonus();
+            InitStabilityListener();
         }
 
         private bool _enabled = true;

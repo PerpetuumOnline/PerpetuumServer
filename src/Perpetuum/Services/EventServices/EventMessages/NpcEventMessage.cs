@@ -7,8 +7,9 @@ namespace Perpetuum.Services.EventServices.EventMessages
     /// <summary>
     /// EventMessage sent by an NPC
     /// </summary>
-    public class NpcMessage : EventMessage
+    public class NpcMessage : IEventMessage
     {
+        public EventType Type => EventType.NpcChat;
         private string _content;
         private readonly Unit _source;
 

@@ -861,10 +861,6 @@ namespace Perpetuum.Bootstrapper
             RegisterUnit<PBSDockingBase>();
             RegisterUnit<Outpost>().OnActivated(e =>
             {
-                var listener = new AffectOutpostStability(e.Instance);
-                e.Context.Resolve<EventListenerService>().AttachListener(listener);
-
-
 #if (DEBUG)
                 var intrusionWaitTime = TimeRange.FromLength(TimeSpan.FromSeconds(10),TimeSpan.FromSeconds(15));
 #else

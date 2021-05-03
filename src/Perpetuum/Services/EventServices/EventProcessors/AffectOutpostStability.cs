@@ -8,13 +8,15 @@ namespace Perpetuum.Services.EventServices.EventProcessors
     /// </summary>
     public class AffectOutpostStability : EventProcessor
     {
-        private Outpost _outpost;
+        private readonly Outpost _outpost;
         public AffectOutpostStability(Outpost outpost)
         {
             _outpost = outpost;
         }
 
-        public override void HandleMessage(EventMessage value)
+        public override EventType Type => EventType.OutpostStability;
+
+        public override void HandleMessage(IEventMessage value)
         {
             if (value is StabilityAffectingEvent msg)
             {

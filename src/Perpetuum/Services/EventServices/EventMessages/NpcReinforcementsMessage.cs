@@ -2,8 +2,10 @@
 
 namespace Perpetuum.Services.EventServices.EventMessages
 {
-    public class NpcReinforcementsMessage : EventMessage
+    public class NpcReinforcementsMessage : IEventMessage
     {
+        public EventType Type => EventType.NpcReinforce;
+
         public Npc Npc { get; }
         public int ZoneId { get; }
 

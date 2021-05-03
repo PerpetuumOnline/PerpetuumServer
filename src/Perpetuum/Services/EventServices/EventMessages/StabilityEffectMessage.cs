@@ -8,8 +8,10 @@ namespace Perpetuum.Services.EventServices.EventMessages
     /// <summary>
     /// An EventMessage of an event to alter Outpost stability (SAP)
     /// </summary>
-    public class StabilityAffectingEvent : EventMessage
+    public class StabilityAffectingEvent : IEventMessage
     {
+        public EventType Type => EventType.OutpostStability;
+
         public Corporation Winner { get; private set; }
         public Outpost Outpost { get; private set; }
         public bool OverrideRelations { get; private set; }
