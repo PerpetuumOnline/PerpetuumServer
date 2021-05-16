@@ -207,7 +207,7 @@ namespace Perpetuum.Zones
             if (unit is Player player)
             {
                 ImmutableInterlocked.TryAdd(ref _players, player.Eid, player);
-                PlayerStateManager?.OnPlayerEnterZone(player);
+                StrongholdPlayerStateManager.OnPlayerAddToZone(this, player);
             }
 
             unit.Updated += OnUnitUpdated;

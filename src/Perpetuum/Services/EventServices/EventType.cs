@@ -4,6 +4,7 @@
     {
         undefined,
         ChatEcho,
+        DMEcho,
         OutpostStability,
         NpcChat,
         NpcOre,

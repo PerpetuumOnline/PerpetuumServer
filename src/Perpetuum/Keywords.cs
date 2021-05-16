@@ -816,6 +816,7 @@ namespace Perpetuum
         public const string publicProfile = "publicProfile";
         public const string purchasable = "purchasable";
         public const string purchaseCount = "purchaseCount";
+        public const string prevZone = "prevZone";
         public const string PVEAdmin = "PVEAdmin";
         public const string pvpRemaining = "pvpRemaining";
 

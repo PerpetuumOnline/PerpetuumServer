@@ -40,5 +40,27 @@ namespace Perpetuum
         {
             return TimeSpan.FromTicks((long)(span.Ticks * multiplier));
         }
+
+        public static string ToHumanTimeString(this TimeSpan span)
+        {
+            var format = "g3";
+            if (span.TotalMilliseconds < 1000)
+            {
+                return $"{span.TotalMilliseconds.ToString(format)} milliseconds";
+            }
+            else if (span.TotalSeconds < 60)
+            {
+                return $"{span.TotalSeconds.ToString(format)} seconds";
+            }
+            else if (span.TotalMinutes < 60)
+            {
+                return $"{span.TotalMinutes.ToString(format)} minutes";
+            }
+            else if (span.TotalHours < 24)
+            {
+                return $"{span.TotalHours.ToString(format)} hours";
+            }
+            return $"{span.TotalDays.ToString(format)} days";
+        }
     }
 }

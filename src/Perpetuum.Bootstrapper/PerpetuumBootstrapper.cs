@@ -1698,6 +1698,7 @@ namespace Perpetuum.Bootstrapper
 
             // OPP: EventListenerService and consumers
             _builder.RegisterType<ChatEcho>();
+            _builder.RegisterType<DirectMessenger>();
             _builder.RegisterType<NpcChatEcho>();
             _builder.RegisterType<AffectOutpostStability>();
             _builder.RegisterType<PortalSpawner>();
@@ -1707,6 +1708,7 @@ namespace Perpetuum.Bootstrapper
             {
                 e.Context.Resolve<IProcessManager>().AddProcess(e.Instance.ToAsync().AsTimed(TimeSpan.FromSeconds(0.75)));
                 e.Instance.AttachListener(e.Context.Resolve<ChatEcho>());
+                e.Instance.AttachListener(e.Context.Resolve<DirectMessenger>());
                 e.Instance.AttachListener(e.Context.Resolve<NpcChatEcho>());
                 e.Instance.AttachListener(e.Context.Resolve<PortalSpawner>());
                 var obs = new GameTimeObserver(e.Instance);
@@ -2555,7 +2557,7 @@ namespace Perpetuum.Bootstrapper
                 var ctx = x.Resolve<IComponentContext>();
                 return zone =>
                 {
-                    return new StrongholdPlayerStateManager(zone);
+                    return new StrongholdPlayerStateManager(zone, ctx.Resolve<EventListenerService>());
                 };
             });
 
