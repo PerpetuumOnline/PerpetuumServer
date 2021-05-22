@@ -171,7 +171,7 @@ namespace Perpetuum.Services.Channels
 
         public void CheckRoleAndThrowIfFailed(Character member, ChannelMemberRole role)
         {
-            if (member == Character.None)
+            if (member == Character.None || Character.IsSystemCharacter(member))
                 return;
 
             GetMember(member).ThrowIfNull(ErrorCodes.NotMemberOfChannel).HasRole(role).ThrowIfFalse(ErrorCodes.InsufficientPrivileges);

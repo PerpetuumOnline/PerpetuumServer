@@ -124,10 +124,7 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
             if (IsMaxSpawnCountReached)
                 return;
 
-            if (IsBoss)
-            {
-                BossInfo.OnRespawn();
-            }
+            BossInfo?.OnRespawn();
             base.CreateMemberInZone();
         }
 

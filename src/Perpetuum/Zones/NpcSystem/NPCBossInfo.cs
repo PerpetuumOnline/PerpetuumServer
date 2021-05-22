@@ -6,6 +6,7 @@ using Perpetuum.Services.RiftSystem;
 using Perpetuum.Timers;
 using Perpetuum.Units;
 using Perpetuum.Zones.Intrusion;
+using Perpetuum.Zones.NpcSystem.Flocks;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -17,9 +18,11 @@ namespace Perpetuum.Zones.NpcSystem
     public class NpcBossInfoBuilder
     {
         private readonly ICustomRiftConfigReader _customRiftConfigReader;
-        public NpcBossInfoBuilder(ICustomRiftConfigReader customRiftConfigReader)
+        private readonly EventListenerService _eventChannel;
+        public NpcBossInfoBuilder(ICustomRiftConfigReader customRiftConfigReader, EventListenerService eventChannel)
         {
             _customRiftConfigReader = customRiftConfigReader;
+            _eventChannel = eventChannel;
         }
 
         public NpcBossInfo CreateBossInfoFromDB(IDataRecord record)
@@ -35,8 +38,10 @@ namespace Perpetuum.Zones.NpcSystem
             var aggressMessage = record.GetValue<string>("customAggressMessage");
             var riftConfigId = record.GetValue<int?>("riftConfigId");
             var riftConfig = _customRiftConfigReader.GetById(riftConfigId ?? -1);
+            var announce = record.GetValue<bool>("isAnnounced");
 
-            var info = new NpcBossInfo(id,
+            var info = new NpcBossInfo(_eventChannel,
+                id,
                 flockid,
                 respawnFactor,
                 lootSplit,
@@ -45,22 +50,30 @@ namespace Perpetuum.Zones.NpcSystem
                 overrideRelations,
                 deathMessage,
                 aggressMessage,
-                riftConfig
+                riftConfig,
+                announce
              );
             return info;
         }
 
-        public NpcBossInfo GetBossInfoByFlockID(int flockid)
+        public NpcBossInfo GetBossInfoByFlockID(int flockid, IFlockConfiguration config)
         {
             var bossInfos = Db.Query()
                 .CommandText(@"SELECT TOP 1 id, flockid, respawnNoiseFactor, lootSplitFlag, outpostEID,
-                    stabilityPts, overrideRelations, customDeathMessage, customAggressMessage, riftConfigId
+                    stabilityPts, overrideRelations, customDeathMessage, customAggressMessage, riftConfigId,
+                    isAnnounced
                     FROM dbo.npcbossinfo WHERE flockid=@flockid;")
                 .SetParameter("@flockid", flockid)
                 .Execute()
                 .Select(CreateBossInfoFromDB);
 
-            return bossInfos.SingleOrDefault();
+            var info = bossInfos.SingleOrDefault();
+            if(info == null)
+            {
+                return null;
+            }
+            info.RespawnTime = config.RespawnTime;
+            return info;
         }
     }
 
@@ -70,6 +83,7 @@ namespace Perpetuum.Zones.NpcSystem
     /// </summary>
     public class NpcBossInfo
     {
+        private readonly EventListenerService _eventChannel;
         private readonly int _id;
         private readonly double? _respawnNoiseFactor;
         private readonly long? _outpostEID;
@@ -80,6 +94,7 @@ namespace Perpetuum.Zones.NpcSystem
         private bool _speak;
 
         public int FlockId { get; }
+        public TimeSpan RespawnTime { get; set; }
 
         private bool IsOutpostBoss { get { return _outpostEID != null; } }
         private int StabilityPoints { get { return _stabilityPts ?? 0; } }
@@ -89,8 +104,11 @@ namespace Perpetuum.Zones.NpcSystem
         public bool IsLootSplit { get; }
         public bool IsDead { get; private set; }
 
-        public NpcBossInfo(int id, int flockid, double? respawnNoiseFactor, bool lootSplit, long? outpostEID, int? stabilityPts, bool overrideRelations, string customDeathMsg, string customAggroMsg, CustomRiftConfig riftConfig)
+        public bool IsAnnounced { get; private set; }
+
+        public NpcBossInfo(EventListenerService eventChannel, int id, int flockid, double? respawnNoiseFactor, bool lootSplit, long? outpostEID, int? stabilityPts, bool overrideRelations, string customDeathMsg, string customAggroMsg, CustomRiftConfig riftConfig, bool announce)
         {
+            _eventChannel = eventChannel;
             _id = id;
             FlockId = flockid;
             _respawnNoiseFactor = respawnNoiseFactor;
@@ -101,6 +119,7 @@ namespace Perpetuum.Zones.NpcSystem
             _deathMsg = customDeathMsg;
             _aggroMsg = customAggroMsg;
             _riftConfig = riftConfig;
+            IsAnnounced = announce;
             _speak = true;
             IsDead = false;
         }
@@ -117,27 +136,25 @@ namespace Perpetuum.Zones.NpcSystem
         /// Handle any actions that this NPC Boss should do upon Aggression, including sending a message
         /// </summary>
         /// <param name="aggressor">Player aggressor</param>
-        /// <param name="channel">the npc event channel</param>
-        public void OnAggro(Player aggressor, EventListenerService channel)
+        public void OnAggro(Player aggressor)
         {
-            CommunicateAggression(aggressor, channel);
+            CommunicateAggression(aggressor);
             HandleBossOutpostAggro(aggressor);
         }
 
         // Timer to buffer excessive decrease frequency of messages from OnDamageTaken
-        private readonly TimeKeeper _time = new TimeKeeper(TimeSpan.FromSeconds(5));
+        private readonly TimeKeeper _onDamageDebounce = new TimeKeeper(TimeSpan.FromSeconds(5));
         /// <summary>
         /// Handle events to dispatch when the npc boss takes damage
         /// </summary>
         /// <param name="npc">The npc Boss killed</param>
         /// <param name="killer">Player damager</param>
-        /// <param name="channel">npc-event listener channel</param>
-        public void OnDamageTaken(Npc npc, Player aggressor, EventListenerService channel)
+        public void OnDamageTaken(Npc npc, Player aggressor)
         {
-            if (_time.Expired)
+            if (_onDamageDebounce.Expired)
             {
-                channel.PublishMessage(new NpcReinforcementsMessage(npc, npc.Zone.Id));
-                _time.Reset();
+                PublishMessage(new NpcReinforcementsMessage(npc, npc.Zone.Id));
+                _onDamageDebounce.Reset();
             }
         }
 
@@ -147,14 +164,14 @@ namespace Perpetuum.Zones.NpcSystem
         /// </summary>
         /// <param name="npc">The npc Boss killed</param>
         /// <param name="killer">Player killer</param>
-        /// <param name="channel">npc-event listener channel</param>
-        public void OnDeath(Npc npc, Unit killer, EventListenerService channel)
+        public void OnDeath(Npc npc, Unit killer)
         {
-            CommunicateDeath(killer, channel);
-            HandleBossOutpostDeath(npc, killer, channel);
-            SpawnPortal(npc, killer, channel);
+            CommunicateDeath(killer);
+            HandleBossOutpostDeath(npc, killer);
+            SpawnPortal(npc, killer);
             IsDead = true;
-            channel.PublishMessage(new NpcReinforcementsMessage(npc, npc.Zone.Id));
+            PublishMessage(new NpcReinforcementsMessage(npc, npc.Zone.Id));
+            AnnounceDeath();
         }
 
         /// <summary>
@@ -164,6 +181,28 @@ namespace Perpetuum.Zones.NpcSystem
         {
             _speak = true;
             IsDead = false;
+            AnnouceRespawn();
+        }
+
+        private void AnnouceRespawn()
+        {
+            if (!IsAnnounced)
+                return;
+
+            var randomDelay = FastRandom.NextTimeSpan(RespawnTime.Divide(5), RespawnTime.Divide(2));
+            var timeStamp = DateTime.UtcNow;
+            Task.Delay(randomDelay).ContinueWith((t) =>
+            {
+                PublishMessage(new NpcStateMessage(FlockId, NpcState.Alive, timeStamp));
+            });
+        }
+
+        private void AnnounceDeath()
+        {
+            if (!IsAnnounced)
+                return;
+
+            PublishMessage(new NpcStateMessage(FlockId, NpcState.Dead, DateTime.UtcNow));
         }
 
         /// <summary>
@@ -185,21 +224,25 @@ namespace Perpetuum.Zones.NpcSystem
             }
         }
 
-        private void CommunicateAggression(Unit aggressor, EventListenerService channel)
+
+        // Timer to buffer excessive decrease frequency of messages from OnDamageTaken
+        private readonly TimeKeeper _aggroDebounce = new TimeKeeper(TimeSpan.FromSeconds(5));
+        private void CommunicateAggression(Unit aggressor)
         {
-            if (_speak)
+            if (_aggroDebounce.Expired && _speak)
             {
                 _speak = false;
-                SendMessage(aggressor, channel, _aggroMsg);
+                SendMessage(aggressor, _aggroMsg);
+                _aggroDebounce.Reset();
             }
         }
 
-        private void CommunicateDeath(Unit aggressor, EventListenerService channel)
+        private void CommunicateDeath(Unit aggressor)
         {
-            SendMessage(aggressor, channel, _deathMsg);
+            SendMessage(aggressor, _deathMsg);
         }
 
-        private void HandleBossOutpostDeath(Npc npc, Unit killer, EventListenerService channel)
+        private void HandleBossOutpostDeath(Npc npc, Unit killer)
         {
             if (!IsOutpostBoss)
                 return;
@@ -218,25 +261,29 @@ namespace Perpetuum.Zones.NpcSystem
                     .WithPoints(StabilityPoints)
                     .AddParticipants(participants)
                     .WithWinnerCorp(zone.ToPlayerOrGetOwnerPlayer(killer).CorporationEid);
-                channel.PublishMessage(builder.Build());
+                PublishMessage(builder.Build());
             }
         }
 
-        private void SpawnPortal(Npc npc, Unit killer, EventListenerService channel)
+        private void SpawnPortal(Npc npc, Unit killer)
         {
             if (!HasRiftToSpawn)
                 return;
 
-            channel.PublishMessage(new SpawnPortalMessage(npc.Zone.Id, npc.CurrentPosition, _riftConfig));
+            PublishMessage(new SpawnPortalMessage(npc.Zone.Id, npc.CurrentPosition, _riftConfig));
         }
 
-        private static void SendMessage(Unit src, EventListenerService eventChannel, string msg)
+        private void SendMessage(Unit src, string msg)
         {
             if (!msg.IsNullOrEmpty())
             {
-                IEventMessage eventMessage = new NpcMessage(msg, src);
-                Task.Run(() => eventChannel.PublishMessage(eventMessage));
+                PublishMessage(new NpcMessage(msg, src));
             }
+        }
+
+        private void PublishMessage (IEventMessage eventMessage)
+        {
+            _eventChannel.PublishMessage(eventMessage);
         }
 
         public override bool Equals(object obj)

@@ -292,10 +292,12 @@
     <Compile Include="Services\Channels\PreMadeChatMessageNames.cs" />
     <Compile Include="Services\EventServices\EventMessages\DirectMessage.cs" />
     <Compile Include="Services\EventServices\EventMessages\NpcReinforcementsMessage.cs" />
+    <Compile Include="Services\EventServices\EventMessages\NpcStateMessage.cs" />
     <Compile Include="Services\EventServices\EventMessages\SpawnPortalMessage.cs" />
     <Compile Include="Services\EventServices\EventProcessors\NpcSpawnEventHandlers\NpcSpawnEventHandler.cs" />
     <Compile Include="Services\EventServices\EventProcessors\NpcSpawnEventHandlers\NpcReinforcementSpawner.cs" />
     <Compile Include="Services\EventServices\EventProcessors\EnvironmentalEffectHandler.cs" />
+    <Compile Include="Services\EventServices\EventProcessors\NpcStateAnnouncer.cs" />
     <Compile Include="Services\EventServices\EventProcessors\PortalSpawner.cs" />
     <Compile Include="Services\EventServices\EventType.cs" />
     <Compile Include="Services\GameTime\GameTimeObserver.cs" />

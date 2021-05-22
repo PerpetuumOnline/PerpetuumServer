@@ -7,6 +7,7 @@
         DMEcho,
         OutpostStability,
         NpcChat,
+        NpcState,
         NpcOre,
         NpcReinforce,
         Environmental,

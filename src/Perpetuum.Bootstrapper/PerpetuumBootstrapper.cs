@@ -1702,6 +1702,7 @@ namespace Perpetuum.Bootstrapper
             _builder.RegisterType<NpcChatEcho>();
             _builder.RegisterType<AffectOutpostStability>();
             _builder.RegisterType<PortalSpawner>();
+            _builder.RegisterType<NpcStateAnnouncer>();
             _builder.RegisterType<OreNpcSpawner>().As<NpcSpawnEventHandler<OreNpcSpawnMessage>>();
             _builder.RegisterType<NpcReinforcementSpawner>().As<NpcSpawnEventHandler<NpcReinforcementsMessage>>();
             _builder.RegisterType<EventListenerService>().SingleInstance().OnActivated(e =>
@@ -1711,6 +1712,7 @@ namespace Perpetuum.Bootstrapper
                 e.Instance.AttachListener(e.Context.Resolve<DirectMessenger>());
                 e.Instance.AttachListener(e.Context.Resolve<NpcChatEcho>());
                 e.Instance.AttachListener(e.Context.Resolve<PortalSpawner>());
+                e.Instance.AttachListener(e.Context.Resolve<NpcStateAnnouncer>());
                 var obs = new GameTimeObserver(e.Instance);
                 obs.Subscribe(e.Context.Resolve<IGameTimeService>());
             });

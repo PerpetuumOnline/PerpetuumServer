@@ -480,11 +480,7 @@ namespace Perpetuum.Zones.NpcSystem
                 _movement.Start(npc);
             });
 
-            if (npc.IsBoss())
-            {
-                npc.BossInfo.OnDeAggro();
-            }
-
+            npc.BossInfo?.OnDeAggro();
             base.Enter();
         }
 
@@ -812,11 +808,6 @@ namespace Perpetuum.Zones.NpcSystem
         public NpcSpecialType SpecialType { get; set; }
         public NpcBossInfo BossInfo { get; set; }
 
-        public bool IsBoss()
-        {
-            return SpecialType == NpcSpecialType.Boss && BossInfo != null;
-        }
-
         [CanBeNull]
         private INpcGroup _group;
 
@@ -875,9 +866,9 @@ namespace Perpetuum.Zones.NpcSystem
 
         public void AddThreat(Unit hostile, Threat threat, bool spreadToGroup)
         {
-            if (IsBoss() && hostile.IsPlayer())
+            if (hostile.IsPlayer())
             {
-                BossInfo.OnAggro(hostile as Player, _eventChannel);
+                BossInfo?.OnAggro(hostile as Player);
             }
             _threatManager.GetOrAddHostile(hostile).AddThreat(threat);
 
@@ -980,11 +971,7 @@ namespace Perpetuum.Zones.NpcSystem
             if (player == null)
                 return;
 
-            if (IsBoss())
-            {
-                BossInfo.OnDamageTaken(this, player, _eventChannel);
-            }
-
+            BossInfo?.OnDamageTaken(this, player);
             AddThreat(player, new Threat(ThreatType.Damage, e.TotalDamage * 0.9), true);
         }
 
@@ -994,10 +981,7 @@ namespace Perpetuum.Zones.NpcSystem
             var tagger = GetTagger();
             Debug.Assert(zone != null, "zone != null");
 
-            if (IsBoss())
-            {
-                BossInfo.OnDeath(this, killer, _eventChannel);
-            }
+            BossInfo?.OnDeath(this, killer);
             HandleNpcDeadAsync(zone, killer, tagger).ContinueWith((t) => base.OnDead(killer)).LogExceptions();
         }
 
@@ -1013,7 +997,7 @@ namespace Perpetuum.Zones.NpcSystem
             using (var scope = Db.CreateTransaction())
             {
 
-                if (IsBoss() && BossInfo.IsLootSplit)
+                if (BossInfo?.IsLootSplit ?? false)
                 {
                     //Boss - Split loot equally to all participants
                     List<Player> participants = new List<Player>();

@@ -34,6 +34,11 @@ namespace Perpetuum.Accounting.Characters
 
         public static Character None => _none ?? (_none = CharacterFactory(0));
 
+        public static bool IsSystemCharacter(Character c)
+        {
+            return c.Nick.Contains("[OPP]");  //TODO better configuration of system characters to avoid flimsy name rule
+        }
+
         private readonly IAccountManager _accountManager;
         private readonly Lazy<IZoneManager> _zoneManager;
         private readonly DockingBaseHelper _dockingBaseHelper;
