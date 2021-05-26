@@ -1221,7 +1221,6 @@ namespace Perpetuum.Zones.NpcSystem
         /// <summary>
         /// This determines if threat can be added to a target based on the following:
         ///  - Is the target already on the threat manager
-        ///  - Or is the npc aggressive and within aggrorange
         ///  - Or is the npc non-passive and the Threat is of some defined type
         /// </summary>
         /// <param name="target">Unit target</param>
@@ -1232,16 +1231,10 @@ namespace Perpetuum.Zones.NpcSystem
             if (_threatManager.Contains(target))
                 return true;
 
-            switch (Behavior.Type)
-            {
-                case NpcBehaviorType.Passive:
-                    return false;
-                case NpcBehaviorType.Neutral:
-                    {
-                        return threat.type != ThreatType.Undefined;
-                    }
-            }
-            return IsInAggroRange(target);
+            if (Behavior.Type == NpcBehaviorType.Passive)
+                return false;
+
+            return threat.type != ThreatType.Undefined;
         }
 
         private void AddBodyPullThreat(Unit enemy)
