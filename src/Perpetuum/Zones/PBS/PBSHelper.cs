@@ -255,8 +255,7 @@ namespace Perpetuum.Zones.PBS
                 pushPos = TryMovePlayerOutOfRadius(pushPos, position, zone, player, safeRadius);
                 Logger.DebugInfo($"player bumped from:{player.CurrentPosition.ToDoubleString2D()} to:{pushPos.ToDoubleString2D()} distance:{pushPos.TotalDistance2D(player.CurrentPosition)}");
 
-                player.CurrentPosition = pushPos;
-                player.SendForceUpdate();
+                player.TeleportToPositionAsync(pushPos, false, false);
             }
         }
 
