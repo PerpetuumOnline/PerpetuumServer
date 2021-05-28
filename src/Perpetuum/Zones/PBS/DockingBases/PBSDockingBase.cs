@@ -456,6 +456,26 @@ namespace Perpetuum.Zones.PBS.DockingBases
             return true;
         }
 
+        public override bool IsVisible(Character character)
+        {
+            if (DockingBaseMapVisibility == PBSDockingBaseVisibility.open)
+                return true;
+
+            Corporation.GetCorporationEidAndRoleFromSql(character, out long corporationEid, out CorporationRole role);
+            if (Owner == corporationEid)
+            {
+                if (DockingBaseMapVisibility == PBSDockingBaseVisibility.corporation)
+                {
+                    return true;
+                }
+                else if (DockingBaseMapVisibility == PBSDockingBaseVisibility.hidden)
+                {
+                    return role.IsAnyRole(CorporationRole.CEO, CorporationRole.DeputyCEO, CorporationRole.viewPBS);
+                }
+            }
+            return false;
+        }
+
         private bool _trashWasKilled;
         public void TrashMe()
         {

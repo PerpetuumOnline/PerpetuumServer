@@ -256,5 +256,15 @@ namespace Perpetuum.Zones.Gates
                 source.ApplyPvPEffect();
             }
         }
+
+        public bool IsVisible(Character character)
+        {
+            Corporation.GetCorporationEidAndRoleFromSql(character, out long corporationEid, out CorporationRole role);
+            if (Owner == corporationEid)
+            {
+                return role.IsAnyRole(CorporationRole.CEO, CorporationRole.DeputyCEO, CorporationRole.viewPBS);
+            }
+            return false;
+        }
     }
 }

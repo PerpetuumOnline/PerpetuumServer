@@ -47,13 +47,13 @@ namespace Perpetuum.RequestHandlers.Markets
             //exclude training market
             //include corp orders if character in private corp
             //include normal orders (non corp)
-            var orders = _marketOrderRepository.GetAllByDefinition(itemDefinition).Where(r => r.marketEID != trainingMarketEid && (r.forMembersOf == corporationEid || r.forMembersOf == null)).ToArray();
+            //var orders = _marketOrderRepository.GetAllByDefinition(itemDefinition).Where(r => r.marketEID != trainingMarketEid && (r.forMembersOf == corporationEid || r.forMembersOf == null)).ToArray();
 
 
             //ez szabalyozza le, hogy nem latszanak a pbs marketek
             //itt lehet ugyeskedni
             //filtered markets
-            //var orders = repo.GetByMarketEids(MarketHandler.GetAllDefaultMarketsEids(), itemDefinition, request.character.CorporationEid).ToArray();
+            var orders = _marketOrderRepository.GetByMarketEids(_marketHandler.GetAllVisibleMarketsFor(character), itemDefinition, corporationEid).ToArray();
 
             var orderDict = new Dictionary<string, object>(orders.Length);
             var counter = 0;

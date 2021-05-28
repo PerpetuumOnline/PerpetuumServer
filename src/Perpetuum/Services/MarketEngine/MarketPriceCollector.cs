@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using Perpetuum.Accounting.Characters;
 using Perpetuum.EntityFramework;
 using Perpetuum.Log;
 
@@ -27,6 +28,11 @@ namespace Perpetuum.Services.MarketEngine
         public bool IsTrainingMarket => Market.IsOnTrainingZone();
 
         public bool IsGammaMarket => Market.IsOnGammaZone();
+
+        public bool IsVisible(Character character)
+        {
+            return Market.IsVisible(character);
+        }
 
         /// <summary>
         /// Filters and inserts an average price entry

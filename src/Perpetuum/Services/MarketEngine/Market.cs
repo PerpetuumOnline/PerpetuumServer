@@ -97,7 +97,12 @@ namespace Perpetuum.Services.MarketEngine
 
         public bool IsOnGammaZone()
         {
-            return GetDockingBase().IsOnGammaZone();
+            return GetDockingBase()?.IsOnGammaZone() ?? false;
+        }
+
+        public bool IsVisible(Character character)
+        {
+            return GetDockingBase()?.IsVisible(character) ?? false;
         }
 
         public bool IsPlayerControlledMarketTax()

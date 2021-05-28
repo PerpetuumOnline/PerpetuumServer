@@ -271,6 +271,11 @@ namespace Perpetuum.Units.DockingBases
             return false;
         }
 
+        public virtual bool IsVisible(Character character)
+        {
+            return true;
+        }
+
         public void AddCentralBank(TransactionType transactionType, double amount)
         {
             amount = Math.Abs(amount);

@@ -41,70 +41,23 @@ namespace Perpetuum.Zones
 
         public static Dictionary<string, object> GetBuildingsDictionaryForCharacter(this IZone zone, Character character)
         {
-            long corporationEid;
-            CorporationRole role;
-            Corporation.GetCorporationEidAndRoleFromSql(character, out corporationEid, out role);
-            
             var count = 0;
             var buildingsDict = zone.Units
                                     .NotOf().Types<Robot, LootContainer, MobileTeleport>().Type<ProximityProbeBase>()
                                     .Where(u =>
                                     {
-                                        
-                                        var pbsDockingBase = u as PBSDockingBase;
-                                        if (pbsDockingBase != null)
+                                        if (u is PBSDockingBase pbsDockingBase)
                                         {
-                                            //pbs docking base was found
-
-                                            if (pbsDockingBase.DockingBaseMapVisibility == PBSDockingBaseVisibility.open)
-                                                return true;
-
-                                            if (pbsDockingBase.DockingBaseMapVisibility == PBSDockingBaseVisibility.corporation)
-                                            {
-                                                if (u.Owner == corporationEid)
-                                                {
-                                                    return true; //everybody within corporation
-                                                }
-
-                                                return false;
-
-                                            }
-
-                                            if (pbsDockingBase.DockingBaseMapVisibility == PBSDockingBaseVisibility.hidden)
-                                            {
-                                                if (u.Owner == corporationEid)
-                                                {
-                                                    return role.IsAnyRole(CorporationRole.CEO, CorporationRole.DeputyCEO, CorporationRole.viewPBS);
-
-                                                }
-
-                                                return false;
-                                            }
-                                                
-
-                                            return false; //fallback, unknown visibility
+                                            return pbsDockingBase.IsVisible(character);
                                         }
-                                        
-                                        var pbs = u as IPBSObject;
-                                        if (pbs != null)
+                                        else if (u is IPBSObject pbs)
                                         {
                                             return false; //pbs cuccok nem latszodnak
                                         }
-
-                                        var gate = u as Gate;
-                                        if (gate != null)
+                                        else if (u is Gate gate)
                                         {
-                                            if (gate.Owner == corporationEid)
-                                            {
-                                                //our gate
-                                                return role.IsAnyRole(CorporationRole.CEO, CorporationRole.DeputyCEO, CorporationRole.viewPBS);
-
-                                            }
-
-                                            return false;
+                                            return gate.IsVisible(character);
                                         }
-
-
                                         return true;
                                     })
                                     .ToDictionary<Unit, string, object>(unit => "b" + count++, unit => unit.ToDictionary());

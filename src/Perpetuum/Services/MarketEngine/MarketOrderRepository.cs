@@ -19,7 +19,7 @@ namespace Perpetuum.Services.MarketEngine
         MarketOrder GetHighestBuyOrder(int itemDefinition, double price, long submitterEid, Market market, long forMembersOf);
 
         IEnumerable<MarketOrder> GetByMarket(Market market);
-        IEnumerable<MarketOrder> GetByMarketEids(IEnumerable<long> marketEids, int itemDefinition, long forMembersOf);
+        IEnumerable<MarketOrder> GetByMarketEids(IEnumerable<long> marketEids, int itemDefinition, long? forMembersOf);
         IEnumerable<MarketOrder> GetByCharacter(Character character);
         IEnumerable<MarketOrder> GetByDefinition(int itemDefinition, long forMembersOf, Market market);
         IEnumerable<MarketOrder> GetExpiredOrders(TimeSpan duration);
@@ -115,7 +115,7 @@ namespace Perpetuum.Services.MarketEngine
                            .ToArray();
         }
 
-        public IEnumerable<MarketOrder> GetByMarketEids(IEnumerable<long> marketEids, int itemDefinition, long forMembersOf)
+        public IEnumerable<MarketOrder> GetByMarketEids(IEnumerable<long> marketEids, int itemDefinition, long? forMembersOf)
         {
             var marketEidsString = marketEids.ArrayToString();
 

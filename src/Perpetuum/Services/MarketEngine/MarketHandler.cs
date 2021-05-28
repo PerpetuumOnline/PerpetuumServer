@@ -2,6 +2,8 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
+using Perpetuum.Accounting.Characters;
 using Perpetuum.Data;
 using Perpetuum.EntityFramework;
 using Perpetuum.ExportedTypes;
@@ -24,6 +26,7 @@ namespace Perpetuum.Services.MarketEngine
         /// </summary>
         private readonly ConcurrentDictionary<long, MarketPriceCollector> _marketPriceCollectors = new ConcurrentDictionary<long, MarketPriceCollector>();
         private readonly ConcurrentDictionary<long,long> _marketEidToDockingBaseEid = new ConcurrentDictionary<long, long>();
+        private readonly ObjectCache _visibleMarkets = new MemoryCache("visibleMarkets");
 
         public MarketHandler(DockingBaseHelper dockingBaseHelper)
         {
@@ -81,7 +84,17 @@ namespace Perpetuum.Services.MarketEngine
                 .Where(pc => includeGamma == pc.IsGammaMarket)
                 .Select(pc => pc.Market.Eid);
         }
-    
+
+        public IEnumerable<long> GetAllVisibleMarketsFor(Character c)
+        {
+            return _visibleMarkets.Get(c.Eid.ToString(), () =>
+            {
+                return _marketPriceCollectors.Values
+                .Where(pc => !pc.IsTrainingMarket)
+                .Where(pc => pc.IsVisible(c))
+                .Select(pc => pc.Market.Eid);
+            }, TimeSpan.FromMinutes(2));
+        }
 
         private long _trainingMarketEid = -1L;
 
