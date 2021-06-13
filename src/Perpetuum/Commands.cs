@@ -1222,6 +1222,28 @@ namespace Perpetuum
             }
         };
 
+        public static readonly Command ZoneCreateTerraformLimit = new Command
+        {
+            Text = "ZoneCreateTerraformLimit",
+            AccessLevel = AccessLevel.admin,
+            Arguments =
+            {
+                new Argument<string>(k.mode),
+                new Argument<int>(k.distance)
+            }
+        };
+
+        public static readonly Command ZoneSetLayerWithBitMap = new Command
+        {
+            Text = "ZoneSetLayerWithBitMap",
+            AccessLevel = AccessLevel.admin,
+            Arguments =
+            {
+                new Argument<string>(k.file),
+                new Argument<int>(k.flags)
+            }
+        };
+
         public static readonly Command ZoneSampleEnvironment = new Command
         {
             Text = "zoneSampleEnvironment",

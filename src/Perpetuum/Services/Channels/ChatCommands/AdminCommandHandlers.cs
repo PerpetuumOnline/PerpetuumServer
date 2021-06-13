@@ -372,7 +372,9 @@ namespace Perpetuum.Services.Channels.ChatCommands
             CheckZoneId(data, zoneId);
             var dictionary = new Dictionary<string, object>() { { k.type, type } };
             string cmd = string.Format("zoneDrawStatMap:zone_{0}:{1}", zoneId, GenxyConverter.Serialize(dictionary));
+            SendMessageToAll(data, $"Draw map command accepted: {dictionary.ToDebugString()} \r\nDrawing... ");
             HandleLocalRequest(data, cmd);
+            SendMessageToAll(data, $"Command complete!");
         }
         [ChatCommand("ListAllPlayersInZone")]
         public static void ListAllPlayersInZone(AdminCommandData data)
@@ -684,11 +686,77 @@ namespace Perpetuum.Services.Channels.ChatCommands
 
             Dictionary<string, object> dictionary = new Dictionary<string, object>()
                 {
-                    { "low", lvl }
+                    { k.low, lvl }
                 };
 
             string cmd = string.Format("zoneCreateIsland:zone_{0}:{1}", data.Sender.ZoneId, GenxyConverter.Serialize(dictionary));
+            SendMessageToAll(data, $"zoneCreateIsland accepted: {dictionary.ToDebugString()} \r\nplease wait... ");
             HandleLocalRequest(data, cmd);
+            SendMessageToAll(data, $"Complete!");
+        }
+        [ChatCommand("ZoneCreateTerraformLimit")]
+        public static void ZoneCreateTerraformLimit(AdminCommandData data)
+        {
+            if (!IsDevModeEnabled(data))
+                return;
+
+            int radius = 0;
+            string mode;
+            try
+            {
+                mode = data.Command.Args[0];
+                if(mode!="clear")
+                    radius = int.Parse(data.Command.Args[1]);
+            }
+            catch (Exception ex)
+            {
+                if (ex is FormatException || ex is ArgumentNullException)
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                throw;
+            }
+
+            Dictionary<string, object> dictionary = new Dictionary<string, object>()
+                {
+                    { k.distance, radius },
+                    { k.mode,  mode }
+                };
+
+            string cmd = string.Format("ZoneCreateTerraformLimit:zone_{0}:{1}", data.Sender.ZoneId, GenxyConverter.Serialize(dictionary));
+            SendMessageToAll(data, $"ZoneCreateTerraformLimit accepted: {dictionary.ToDebugString()} \r\nplease wait... ");
+            HandleLocalRequest(data, cmd);
+            SendMessageToAll(data, $"Complete!");
+        }
+        [ChatCommand("ZoneSetLayerWithBitMap")]
+        public static void ZoneSetLayerWithBitMap(AdminCommandData data)
+        {
+            if (!IsDevModeEnabled(data))
+                return;
+
+            string fileName;
+            int flagValue;
+            try
+            {
+                var flagName = data.Command.Args[0];
+                fileName = data.Command.Args[1];
+                flagValue = (int)EnumHelper.GetEnumFromName<TerrainControlFlags>(flagName);
+            }
+            catch (Exception ex)
+            {
+                if (ex is FormatException || ex is ArgumentNullException)
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                throw;
+            }
+
+            Dictionary<string, object> dictionary = new Dictionary<string, object>()
+                {
+                    { k.file, fileName },
+                    { k.flags, flagValue }
+                };
+
+            string cmd = string.Format("ZoneSetLayerWithBitMap:zone_{0}:{1}", data.Sender.ZoneId, GenxyConverter.Serialize(dictionary));
+            SendMessageToAll(data, $"ZoneSetLayerWithBitMap accepted: {dictionary.ToDebugString()} \r\nplease wait... ");
+            HandleLocalRequest(data, cmd);
+            SendMessageToAll(data, $"Complete!");
         }
         [ChatCommand("ZonePlaceWall")]
         public static void ZonePlaceWall(AdminCommandData data)

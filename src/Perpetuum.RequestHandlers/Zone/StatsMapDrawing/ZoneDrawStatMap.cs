@@ -56,6 +56,18 @@ namespace Perpetuum.RequestHandlers.Zone.StatsMapDrawing
             RegisterCreator("passable", () => _zone.CreatePassableBitmap(Color.White));
             RegisterCreator("islandmask", CreateIslandMaskMap);
             RegisterCreator("controlmap", CreateControlMap);
+            RegisterCreator("TerraformProtected", CreateControlFlagMap(TerrainControlFlags.TerraformProtected));
+            RegisterCreator("PBSTerraformProtected", CreateControlFlagMap(TerrainControlFlags.PBSTerraformProtected));
+            RegisterCreator("Roaming", CreateControlFlagMap(TerrainControlFlags.Roaming));
+            RegisterCreator("AntiPlant", CreateControlFlagMap(TerrainControlFlags.AntiPlant));
+            RegisterCreator("Highway", CreateControlFlagMap(TerrainControlFlags.Highway));
+            RegisterCreator("ConcreteA", CreateControlFlagMap(TerrainControlFlags.ConcreteA));
+            RegisterCreator("ConcreteB", CreateControlFlagMap(TerrainControlFlags.ConcreteB));
+            RegisterCreator("NpcRestricted", CreateControlFlagMap(TerrainControlFlags.NpcRestricted));
+            RegisterCreator("PBSHighway", CreateControlFlagMap(TerrainControlFlags.PBSHighway));
+            RegisterCreator("SyndicateArea", CreateControlFlagMap(TerrainControlFlags.SyndicateArea));
+            RegisterCreator("HighWayCombo", CreateControlFlagMap(TerrainControlFlags.HighWayCombo));
+            RegisterCreator("TerraformProtectedCombo", CreateControlFlagMap(TerrainControlFlags.TerraformProtectedCombo));
             RegisterCreator("block",CreateBlockingMap);
             RegisterCreator("plants",CreatePlantsMap);
             RegisterCreator("placemo",GenerateMissionSpots );
@@ -631,6 +643,21 @@ namespace Perpetuum.RequestHandlers.Zone.StatsMapDrawing
                 bmp.SetPixel(x, y, Color.White);
             });
         }
+
+        private Func<Bitmap> CreateControlFlagMap(TerrainControlFlags flag)
+        {
+            return () =>
+            {
+                return _zone.CreateBitmap().ForEach((bmp, x, y) =>
+                {
+                    var control = _zone.Terrain.Controls.GetValue(x, y);
+                    if (!control.Flags.HasFlag(flag))
+                        return;
+                    bmp.SetPixel(x, y, Color.White);
+                });
+            };
+        }
+
 
         private Bitmap CreateControlMap()
         {
