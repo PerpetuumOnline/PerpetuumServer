@@ -121,14 +121,19 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             return next.TimeStamp > current.TimeStamp;
         }
 
-        private void UpdateState(NpcStateMessage msg)
+        private bool UpdateState(NpcStateMessage msg)
         {
             var defKey = GetNpcDef(msg);
-            if (defKey < 0) return;
-            if (!_state.ContainsKey(defKey) || IsUpdatable(_state[defKey], msg))
+            if (defKey < 0)
+            {
+                return false;
+            }
+            else if (!_state.ContainsKey(defKey) || IsUpdatable(_state[defKey], msg))
             {
                 _state[defKey] = msg;
+                return true;
             }
+            return false;
         }
 
         public override EventType Type => EventType.NpcState;
@@ -136,17 +141,20 @@ namespace Perpetuum.Services.EventServices.EventProcessors
         {
             if (value is NpcStateMessage msg)
             {
-                UpdateState(msg);
-                var announcement = BuildChatAnnouncement(msg);
-                var motd = BuildTopicFromState();
-                if (!announcement.IsNullOrEmpty())
+                if (UpdateState(msg))
                 {
-                    _channelManager.Announcement(CHANNEL, _announcer, announcement);
+                    var announcement = BuildChatAnnouncement(msg);
+                    var motd = BuildTopicFromState();
+                    if (!announcement.IsNullOrEmpty())
+                    {
+                        _channelManager.Announcement(CHANNEL, _announcer, announcement);
+                    }
+                    if (!motd.IsNullOrEmpty())
+                    {
+                        _channelManager.SetTopic(CHANNEL, _announcer, motd);
+                    }
                 }
-                if (!motd.IsNullOrEmpty())
-                {
-                    _channelManager.SetTopic(CHANNEL, _announcer, motd);
-                }
+
             }
         }
     }
