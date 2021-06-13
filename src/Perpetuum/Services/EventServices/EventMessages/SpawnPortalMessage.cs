@@ -15,5 +15,10 @@ namespace Perpetuum.Services.EventServices.EventMessages
             SourceZone = sourceZone;
             RiftConfig = riftConfig;
         }
+
+        public override string ToString()
+        {
+            return $"SpawnPortalMessage:z:{SourceZone};Pos:{SourcePosition};{RiftConfig};";
+        }
     }
 }

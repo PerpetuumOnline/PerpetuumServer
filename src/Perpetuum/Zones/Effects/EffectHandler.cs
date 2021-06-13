@@ -178,6 +178,11 @@ namespace Perpetuum.Zones.Effects
             Remove(effect);
         }
 
+        public bool ContainsOrPending(EffectToken token)
+        {
+            return ContainsToken(token) || _newEffects.Any(e => e.Token == token);
+        }
+
         public bool ContainsToken(EffectToken token)
         {
             return Effects.Any(e => e.Token == token);

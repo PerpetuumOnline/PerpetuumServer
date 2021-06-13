@@ -138,7 +138,7 @@ namespace Perpetuum.Players
         private readonly PlayerMovement _movement;
         private CombatLogger _combatLogger;
         private PlayerMoveCheckQueue _check;
-        private StrongholdPlayerDespawnHelper _despawnHelper;
+        private CancellableDespawnHelper _despawnHelper;
 
         public Player(IExtensionReader extensionReader,
             ICorporationManager corporationManager,
@@ -329,7 +329,7 @@ namespace Perpetuum.Players
         {
             if (_despawnHelper == null)
             {
-                _despawnHelper = StrongholdPlayerDespawnHelper.Create(this, time);
+                _despawnHelper = CancellableDespawnHelper.Create(this, time);
                 _despawnHelper.DespawnStrategy = strategy;
             }
         }

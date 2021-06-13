@@ -5,12 +5,29 @@ using Perpetuum.Zones.Effects;
 
 namespace Perpetuum.Units
 {
+    public interface IUnitDespawnHelper
+    {
+        UnitDespawnerCanApplyEffect CanApplyDespawnEffect { set; }
+        UnitDespawnStrategy DespawnStrategy { set; }
+        EffectType DespawnEffect { get; }
+        void Update(TimeSpan time, Unit unit);
+    }
+
     public delegate bool UnitDespawnerCanApplyEffect(Unit unit);
     public delegate void UnitDespawnStrategy(Unit unit);
 
-    public class UnitDespawnHelper 
+    public class UnitDespawnHelper : IUnitDespawnHelper
     {
+        public UnitDespawnerCanApplyEffect CanApplyDespawnEffect { protected get; set; }
+        public UnitDespawnStrategy DespawnStrategy { protected get; set; }
+
+        public virtual EffectType DespawnEffect
+        {
+            get { return EffectType.effect_despawn_timer; }
+        }
+
         protected readonly TimeSpan _despawnTime;
+        protected readonly EffectToken _effectToken = EffectToken.NewToken();
         protected readonly IntervalTimer _timer = new IntervalTimer(650);
 
         protected UnitDespawnHelper(TimeSpan despawnTime)
@@ -18,17 +35,18 @@ namespace Perpetuum.Units
             _despawnTime = despawnTime;
         }
 
-        public UnitDespawnerCanApplyEffect CanApplyDespawnEffect { protected get; set; }
+        protected bool HasEffectOrPending(Unit unit)
+        {
+            return unit.EffectHandler.ContainsOrPending(_effectToken);
+        }
 
-        public UnitDespawnStrategy DespawnStrategy { protected get; set; }
-
-        public virtual void Update(TimeSpan time,Unit unit)
+        public virtual void Update(TimeSpan time, Unit unit)
         {
             _timer.Update(time).IsPassed(() =>
             {
                 TryReApplyDespawnEffect(unit);
 
-                if (unit.HasDespawnEffect)
+                if (HasEffectOrPending(unit))
                     return;
 
                 CanApplyDespawnEffect = null;
@@ -44,8 +62,6 @@ namespace Perpetuum.Units
             });
         }
 
-        protected readonly EffectToken _effectToken = EffectToken.NewToken();
-
         private void TryReApplyDespawnEffect(Unit unit)
         {
             var canApplyDespawnEffect = CanApplyDespawnEffect;
@@ -59,9 +75,9 @@ namespace Perpetuum.Units
             ApplyDespawnEffect(unit);
         }
 
-        private void ApplyDespawnEffect(Unit unit)
+        protected void ApplyDespawnEffect(Unit unit)
         {
-            var effectBuilder = unit.NewEffectBuilder().SetType(EffectType.effect_despawn_timer).WithDuration(_despawnTime).WithToken(_effectToken);
+            var effectBuilder = unit.NewEffectBuilder().SetType(DespawnEffect).WithDuration(_despawnTime).WithToken(_effectToken);
             unit.ApplyEffect(effectBuilder);
         }
 
@@ -70,12 +86,50 @@ namespace Perpetuum.Units
             return $"DespawnTime: {_despawnTime}";
         }
 
-        public static UnitDespawnHelper Create(Unit unit,TimeSpan despawnTime)
+        public static UnitDespawnHelper Create(Unit unit, TimeSpan despawnTime)
         {
             var helper = new UnitDespawnHelper(despawnTime);
             helper.ApplyDespawnEffect(unit);
             return helper;
         }
+    }
 
+    public class CancellableDespawnHelper : UnitDespawnHelper
+    {
+        public override EffectType DespawnEffect
+        {
+            get { return EffectType.effect_stronghold_despawn_timer; }
+        }
+        private CancellableDespawnHelper(TimeSpan despawnTime) : base(despawnTime) { }
+
+        private bool _canceled = false;
+        public void Cancel(Unit unit)
+        {
+            _canceled = true;
+            RemoveDespawnEffect(unit);
+        }
+
+        private void RemoveDespawnEffect(Unit unit)
+        {
+            unit.EffectHandler.RemoveEffectByToken(_effectToken);
+        }
+
+        public override void Update(TimeSpan time, Unit unit)
+        {
+            _timer.Update(time).IsPassed(() =>
+            {
+                if (_canceled || HasEffectOrPending(unit))
+                    return;
+
+                DespawnStrategy?.Invoke(unit);
+            });
+        }
+
+        public new static CancellableDespawnHelper Create(Unit unit, TimeSpan despawnTime)
+        {
+            var helper = new CancellableDespawnHelper(despawnTime);
+            helper.ApplyDespawnEffect(unit);
+            return helper;
+        }
     }
 }

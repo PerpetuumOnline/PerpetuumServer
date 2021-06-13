@@ -1,9 +1,7 @@
 ﻿using Perpetuum.Data;
-using Perpetuum.ExportedTypes;
 using Perpetuum.Players;
 using Perpetuum.Services.EventServices;
 using Perpetuum.Services.EventServices.EventMessages;
-using Perpetuum.Units;
 using Perpetuum.Zones;
 using System;
 
@@ -121,66 +119,4 @@ namespace Perpetuum.Services.Strongholds
             _eventChannel.PublishMessage(new DirectMessage(player.Character, message));
         }
     }
-
-    public class StrongholdPlayerDespawnHelper : UnitDespawnHelper
-    {
-        private static readonly EffectType DespawnEffect = EffectType.effect_stronghold_despawn_timer;
-
-        private StrongholdPlayerDespawnHelper(TimeSpan despawnTime) : base(despawnTime) { }
-
-        private bool _canceled = false;
-        public void Cancel(Unit unit)
-        {
-            _canceled = true;
-            RemoveDespawnEffect(unit);
-        }
-
-        public bool HasEffect(Unit unit)
-        {
-            return unit.EffectHandler.ContainsToken(_effectToken);
-        }
-
-        private bool _detectedEffectApplied = false;
-        private bool EffectLive(Unit unit)
-        {
-            var effectRunning = HasEffect(unit);
-            if (!_detectedEffectApplied)
-            {
-                _detectedEffectApplied = effectRunning;
-            }
-            return _detectedEffectApplied == effectRunning;
-        }
-
-        public override void Update(TimeSpan time, Unit unit)
-        {
-            _timer.Update(time).IsPassed(() =>
-            {
-                if (_canceled || EffectLive(unit))
-                    return;
-
-                DespawnStrategy?.Invoke(unit);
-            });
-        }
-
-        private void RemoveDespawnEffect(Unit unit)
-        {
-            unit.EffectHandler.RemoveEffectByToken(_effectToken);
-        }
-
-        private void ApplyDespawnEffect(Unit unit)
-        {
-            var effectBuilder = unit.NewEffectBuilder().SetType(DespawnEffect).WithDuration(_despawnTime).WithToken(_effectToken);
-            unit.ApplyEffect(effectBuilder);
-        }
-
-        public new static StrongholdPlayerDespawnHelper Create(Unit unit, TimeSpan despawnTime)
-        {
-            var helper = new StrongholdPlayerDespawnHelper(despawnTime);
-            helper.ApplyDespawnEffect(unit);
-            return helper;
-        }
-    }
 }
-
-
-

@@ -108,9 +108,9 @@ namespace Perpetuum.Services.RiftSystem
 
             var targetPos = targetDestination.GetPosition(zoneTarget);
             var rift = riftFactory();
-            rift.AddToZone(zone, sourcePosition, ZoneEnterType.NpcSpawn);
             rift.SetTarget(zoneTarget, targetPos);
             rift.SetConfig(config);
+            rift.AddToZone(zone, sourcePosition, ZoneEnterType.NpcSpawn);
 
             Logger.Info(string.Format("Rift spawned on zone {0} {1} ({2})", zone.Id, rift.ED.Name, rift.CurrentPosition));
             return true;
@@ -148,6 +148,11 @@ namespace Perpetuum.Services.RiftSystem
         public Destination GetDestination()
         {
             return _destinations.GetRandom();
+        }
+
+        public override string ToString()
+        {
+            return $"CustomRiftConfig:id:{Id};n:{Name};l:{Lifespan};u:{MaxUses};";
         }
     }
 
