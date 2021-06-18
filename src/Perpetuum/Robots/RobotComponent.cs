@@ -42,6 +42,20 @@ namespace Perpetuum.Robots
             _extensionReader = extensionReader;
         }
 
+        public override void Initialize()
+        {
+            InitModules();
+            base.Initialize();
+        }
+
+        private Lazy<IEnumerable<Module>> _modules;
+        private Lazy<IEnumerable<ActiveModule>> _activeModules;
+        private void InitModules()
+        {
+            _modules = new Lazy<IEnumerable<Module>>(() => Children.OfType<Module>().ToArray());
+            _activeModules = new Lazy<IEnumerable<ActiveModule>>(() => Children.OfType<ActiveModule>().ToArray());
+        }
+
         public override void AcceptVisitor(IEntityVisitor visitor)
         {
             if (!TryAcceptVisitor(this, visitor))
@@ -76,12 +90,12 @@ namespace Perpetuum.Robots
 
         public IEnumerable<Module> Modules
         {
-            get { return Children.OfType<Module>(); }
+            get { return _modules.Value; }
         }
 
         public IEnumerable<ActiveModule> ActiveModules
         {
-            get { return Modules.OfType<ActiveModule>(); }
+            get { return _activeModules.Value; }
         }
 
         public void Update(TimeSpan time)
