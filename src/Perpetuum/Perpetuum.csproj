@@ -714,6 +714,7 @@
     <Compile Include="Zones\NpcSystem\Flocks\IFlockConfigurationRepository.cs" />
     <Compile Include="Zones\NpcSystem\Flocks\RemoteSpawningFlock.cs" />
     <Compile Include="Zones\NpcSystem\NpcBossInfo.cs" />
+    <Compile Include="Zones\NpcSystem\NpcEp.cs" />
     <Compile Include="Zones\NpcSystem\Reinforcements\INpcReinforcementWave.cs" />
     <Compile Include="Zones\NpcSystem\Reinforcements\INpcReinforcementsRepository.cs" />
     <Compile Include="Zones\NpcSystem\Reinforcements\INpcReinforcements.cs" />

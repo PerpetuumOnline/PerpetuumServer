@@ -15,7 +15,6 @@ using Perpetuum.Log;
 using Perpetuum.Modules.Weapons;
 using Perpetuum.PathFinders;
 using Perpetuum.Players;
-using Perpetuum.Services.EventServices;
 using Perpetuum.Services.Looting;
 using Perpetuum.Services.MissionEngine;
 using Perpetuum.Services.MissionEngine.MissionTargets;
@@ -790,14 +789,12 @@ namespace Perpetuum.Zones.NpcSystem
         private Lazy<int> _maxCombatRange;
         private Lazy<int> _optimalCombatRange;
         private TimeSpan _lastHelpCalled;
-        private readonly EventListenerService _eventChannel;
         private readonly IPseudoThreatManager _pseudoThreatManager;
 
-        public Npc(TagHelper tagHelper, EventListenerService eventChannel)
+        public Npc(TagHelper tagHelper)
         {
             _maxCombatRange = new Lazy<int>(CalculateMaxCombatRange);
             _optimalCombatRange = new Lazy<int>(CalculateCombatRange);
-            _eventChannel = eventChannel;
             _tagHelper = tagHelper;
             _threatManager = new ThreatManager();
             AI = new StackFSM();
@@ -807,6 +804,7 @@ namespace Perpetuum.Zones.NpcSystem
         public NpcBehavior Behavior { get; set; }
         public NpcSpecialType SpecialType { get; set; }
         public NpcBossInfo BossInfo { get; set; }
+        public int EP { get; private set; }
 
         [CanBeNull]
         private INpcGroup _group;
@@ -1035,27 +1033,18 @@ namespace Perpetuum.Zones.NpcSystem
                         EnqueueKill(killerPlayer, killer);
                 }
 
-                var ep = Db.Query().CommandText("GetNpcKillEp").SetParameter("@definition", Definition).ExecuteScalar<int>();
-
-                //Logger.Warning($"Ep4Npc:{ep} def:{Definition} {ED.Name}");
-
-                if (zone.Configuration.IsBeta)
-                    ep *= 2;
-
-                if (zone.Configuration.Type == ZoneType.Training) ep = 0;
-
-                if (ep > 0)
+                if (EP > 0)
                 {
                     var awardedPlayers = new List<Unit>();
                     foreach (var hostile in ThreatManager.Hostiles)
                     {
                         var playerUnit = hostile.unit;
                         var hostilePlayer = zone.ToPlayerOrGetOwnerPlayer(playerUnit);
-                        hostilePlayer?.Character.AddExtensionPointsBoostAndLog(EpForActivityType.Npc, ep);
+                        hostilePlayer?.Character.AddExtensionPointsBoostAndLog(EpForActivityType.Npc, EP);
                         awardedPlayers.Add(playerUnit);
                     }
 
-                    _pseudoThreatManager.AwardPseudoThreats(awardedPlayers, zone, ep);
+                    _pseudoThreatManager.AwardPseudoThreats(awardedPlayers, zone, EP);
                 }
 
                 scope.Complete();
@@ -1147,6 +1136,7 @@ namespace Perpetuum.Zones.NpcSystem
 
         protected override void OnEnterZone(IZone zone, ZoneEnterType enterType)
         {
+            SetEP(zone);
             States.Aggressive = Behavior.Type == NpcBehaviorType.Aggressive;
 
             base.OnEnterZone(zone, enterType);
@@ -1159,6 +1149,23 @@ namespace Perpetuum.Zones.NpcSystem
             {
                 AI.Push(new IdleAI(this));
             }
+        }
+
+        private void SetEP(IZone zone)
+        {
+            if (zone.Configuration.Type == ZoneType.Training)
+            {
+                EP = 0;
+                return;
+            }
+
+            var ep = NpcEp.GetEpForNpc(this);
+
+            if (zone.Configuration.IsBeta)
+                ep *= 2;
+
+            EP = ep;
+            Logger.DebugInfo($"Ep4Npc:{ep} def:{Definition} {ED.Name}");
         }
 
         public override string InfoString
@@ -1184,7 +1191,7 @@ namespace Perpetuum.Zones.NpcSystem
 
         private bool IsInAggroRange(Unit target)
         {
-            return this.IsStationary || IsInRangeOf3D(target, AGGRO_RANGE);
+            return IsStationary || IsInRangeOf3D(target, AGGRO_RANGE);
         }
 
         protected override void OnUnitLockStateChanged(Lock @lock)
