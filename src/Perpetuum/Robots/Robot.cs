@@ -71,24 +71,19 @@ namespace Perpetuum.Robots
         public override void Initialize()
         {
             InitComponents();
-            InitModules();
             base.Initialize();
         }
 
         private Lazy<IEnumerable<Module>> _modules;
         private Lazy<IEnumerable<ActiveModule>> _activeModules;
-        private void InitModules()
-        {
-            _modules = new Lazy<IEnumerable<Module>>(() => RobotComponents.SelectMany(c => c.Modules).ToArray());
-            _activeModules = new Lazy<IEnumerable<ActiveModule>>(() => Modules.OfType<ActiveModule>().ToArray());
-        }
-
         private Lazy<IEnumerable<Item>> _components;
         private Lazy<IEnumerable<RobotComponent>> _robotComponents;
         private void InitComponents()
         {
             _components = new Lazy<IEnumerable<Item>>(() => Children.OfType<Item>().ToArray());
             _robotComponents = new Lazy<IEnumerable<RobotComponent>>(() => Components.OfType<RobotComponent>().ToArray());
+            _modules = new Lazy<IEnumerable<Module>>(() => RobotComponents.SelectMany(c => c.Modules).ToArray());
+            _activeModules = new Lazy<IEnumerable<ActiveModule>>(() => Modules.OfType<ActiveModule>().ToArray());
         }
 
         protected virtual void OnLockError(Lock @lock, ErrorCodes error)

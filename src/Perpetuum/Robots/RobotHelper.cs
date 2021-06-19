@@ -47,12 +47,16 @@ namespace Perpetuum.Robots
 
         public Robot LoadRobot(long robotEid)
         {
-            return (Robot) _unitHelper.LoadUnit(robotEid);
+            var robot = (Robot) _unitHelper.LoadUnit(robotEid);
+            robot?.Initialize();
+            return robot;
         }
 
         public Robot LoadRobotOrThrow(long robotEid)
         {
-            return (Robot) _unitHelper.LoadUnitOrThrow(robotEid);
+            var robot = (Robot) _unitHelper.LoadUnitOrThrow(robotEid);
+            robot.Initialize();
+            return robot;
         }
 
         public bool IsSelected(Robot robot)

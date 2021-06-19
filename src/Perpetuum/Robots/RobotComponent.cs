@@ -53,7 +53,7 @@ namespace Perpetuum.Robots
         private void InitModules()
         {
             _modules = new Lazy<IEnumerable<Module>>(() => Children.OfType<Module>().ToArray());
-            _activeModules = new Lazy<IEnumerable<ActiveModule>>(() => Children.OfType<ActiveModule>().ToArray());
+            _activeModules = new Lazy<IEnumerable<ActiveModule>>(() => Modules.OfType<ActiveModule>().ToArray());
         }
 
         public override void AcceptVisitor(IEntityVisitor visitor)
