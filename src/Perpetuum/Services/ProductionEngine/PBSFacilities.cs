@@ -674,6 +674,9 @@ namespace Perpetuum.Services.ProductionEngine
             sourceCalibration.ED.CategoryFlags.IsCategory(CategoryFlags.cf_random_calibration_programs).ThrowIfTrue(ErrorCodes.MissionItemCantBeForged);
             targetCalibration.ED.CategoryFlags.IsCategory(CategoryFlags.cf_random_calibration_programs).ThrowIfTrue(ErrorCodes.MissionItemCantBeForged);
 
+            //OPP: prevent combination of Shop-provided CTs - will inflate number of runs
+            sourceCalibration.ED.CategoryFlags.IsCategory(CategoryFlags.cf_dynamic_cprg).ThrowIfTrue(ErrorCodes.MissionItemCantBeForged);
+            targetCalibration.ED.CategoryFlags.IsCategory(CategoryFlags.cf_dynamic_cprg).ThrowIfTrue(ErrorCodes.MissionItemCantBeForged);
 
             sourceCalibration.CheckTargetForForgeAndThrowIfFailed(targetCalibration);
 
