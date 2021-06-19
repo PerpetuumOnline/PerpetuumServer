@@ -15,7 +15,7 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
         {
             if (Presence is DynamicPresenceExtended presence)
             {
-                return presence.SpawnLocation;
+                return presence.SpawnLocation.Clamp(Presence.Zone.Size);
             }
             return base.GetSpawnPosition(spawnOrigin);
         }

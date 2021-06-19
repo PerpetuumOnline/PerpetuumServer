@@ -713,6 +713,7 @@
     <Compile Include="Zones\NpcSystem\Flocks\IFlockConfiguration.cs" />
     <Compile Include="Zones\NpcSystem\Flocks\IFlockConfigurationRepository.cs" />
     <Compile Include="Zones\NpcSystem\Flocks\RemoteSpawningFlock.cs" />
+    <Compile Include="Zones\NpcSystem\Flocks\RoamingFlock.cs" />
     <Compile Include="Zones\NpcSystem\NpcBossInfo.cs" />
     <Compile Include="Zones\NpcSystem\NpcEp.cs" />
     <Compile Include="Zones\NpcSystem\Reinforcements\INpcReinforcementWave.cs" />

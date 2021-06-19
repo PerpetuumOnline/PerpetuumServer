@@ -69,13 +69,14 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
         {
             Position spawnPosition;
             bool anyPlayersAround;
+            int range = 200;
 
             do
             {
                 spawnPosition = _presence.PathFinder.FindSpawnPosition(_presence).ToPosition();
-                anyPlayersAround = _presence.Zone.Players.WithinRange(spawnPosition, 200).Any();
-
-            } while (anyPlayersAround);
+                anyPlayersAround = _presence.Zone.Players.WithinRange(spawnPosition, range).Any();
+                range--;
+            } while (anyPlayersAround && range > 0);
 
             _presence.SpawnOrigin = spawnPosition;
             _presence.CurrentRoamingPosition = spawnPosition;

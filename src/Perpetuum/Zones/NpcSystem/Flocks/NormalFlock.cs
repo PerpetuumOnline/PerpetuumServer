@@ -11,8 +11,6 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
     {
         private readonly ConcurrentQueue<TimeTracker> _spawnTimes = new ConcurrentQueue<TimeTracker>();
 
-        private TimeSpan _elapsedTime = TimeSpan.Zero;
-
         public double respawnMultiplierLow;
         public double respawnMultiplier = 1.0;
 
@@ -80,8 +78,6 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
 
         public override void Update(TimeSpan time)
         {
-            _elapsedTime += time;
-
             if (!Presence.Configuration.IsRespawnAllowed) 
                 return;
 

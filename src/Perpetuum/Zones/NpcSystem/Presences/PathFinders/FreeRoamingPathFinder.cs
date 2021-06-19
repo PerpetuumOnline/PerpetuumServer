@@ -24,7 +24,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
 
         public Point FindSpawnPosition(IRoamingPresence presence)
         {
-            var homeRange = presence.Flocks.Max(f => f.HomeRange);
+            var homeRange = presence.Flocks.Max(f => f.HomeRange).Clamp(10, 40);
             var rangeMax = homeRange * 2;
 
             var walkableArea = _zone.FindWalkableArea(presence.Area, rangeMax * rangeMax);

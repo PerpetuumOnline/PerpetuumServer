@@ -1501,10 +1501,10 @@ namespace Perpetuum.Bootstrapper
             RegisterFlock<NormalFlock>(PresenceType.Dynamic);
             RegisterFlock<RemoteSpawningFlock>(PresenceType.DynamicExtended);
             RegisterFlock<Flock>(PresenceType.Random);
-            RegisterFlock<Flock>(PresenceType.Roaming);
-            RegisterFlock<NormalFlock>(PresenceType.FreeRoaming);
+            RegisterFlock<RoamingFlock>(PresenceType.Roaming);
+            RegisterFlock<RoamingFlock>(PresenceType.FreeRoaming);
             RegisterFlock<NormalFlock>(PresenceType.Interzone);
-            RegisterFlock<NormalFlock>(PresenceType.InterzoneRoaming);
+            RegisterFlock<RoamingFlock>(PresenceType.InterzoneRoaming);
 
             RegisterPresence<Presence>(PresenceType.Normal);
             RegisterPresence<DirectPresence>(PresenceType.Direct).OnActivated(e =>
