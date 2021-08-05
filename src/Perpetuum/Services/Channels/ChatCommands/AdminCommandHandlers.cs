@@ -109,9 +109,9 @@ namespace Perpetuum.Services.Channels.ChatCommands
 
         public static void CheckRequiredArgLength(AdminCommandData data, int expectedLength)
         {
-            if(data.Command.Args.Length != expectedLength)
+            if (data.Command.Args.Length != expectedLength)
             {
-                SendMessageToAll(data, $"Error - Command expects " + expectedLength.ToString() + " args, but was given " +data.Command.Args.Length.ToString()+ " args");
+                SendMessageToAll(data, $"Command expects {expectedLength} args, but was given {data.Command.Args.Length} args");
                 throw PerpetuumException.Create(ErrorCodes.TooManyOrTooFewArguments);
             }
         }
@@ -176,6 +176,25 @@ namespace Perpetuum.Services.Channels.ChatCommands
             string cmd = string.Format("serverShutDownCancel:relay:null");
             HandleLocalRequest(data, cmd);
         }
+        [ChatCommand("SetMaxSessions")]
+        public static void SetMaxSessions(AdminCommandData data)
+        {
+            int minSessionBound = 1;
+            int maxSessionBound = 10000;
+            CheckRequiredArgLength(data, 1);
+            if (!int.TryParse(data.Command.Args[0], out var maxPlayerSessions))
+            {
+                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+            }
+            if (!maxPlayerSessions.IsInRange(minSessionBound, maxSessionBound))
+            {
+                SendMessageToAll(data, $"maxPlayerSessions {maxPlayerSessions} is outside of accepted range [{minSessionBound},{maxSessionBound}]");
+                throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+            }
+            var dictionary = new Dictionary<string, object>() { { k.amount, maxPlayerSessions } };
+            string cmd = string.Format("{0}:relay:{1}", Commands.SetMaxUserCount.Text, GenxyConverter.Serialize(dictionary));
+            HandleLocalRequest(data, cmd);
+        }
         [ChatCommand("JumpTo")]
         public static void JumpTo(AdminCommandData data)
         {
@@ -192,7 +211,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
             }
             catch (Exception ex)
             {
-                if(ex is FormatException || ex is ArgumentNullException)
+                if (ex is FormatException || ex is ArgumentNullException)
                     throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
                 throw;
             }
@@ -440,12 +459,12 @@ namespace Perpetuum.Services.Channels.ChatCommands
 
             CheckRequiredArgLength(data, 2);
 
-            try 
+            try
             {
                 characterId = int.Parse(data.Command.Args[0]);
                 isOffensive = bool.Parse(data.Command.Args[1]);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 if (ex is FormatException || ex is ArgumentNullException)
                     throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
@@ -478,7 +497,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
         {
             int accountId;
 
-            try 
+            try
             {
                 accountId = int.Parse(data.Command.Args[0]);
             }
@@ -506,11 +525,12 @@ namespace Perpetuum.Services.Channels.ChatCommands
 
             CheckRequiredArgLength(data, 2);
 
-            try 
+            try
             {
                 bonusBoost = int.Parse(data.Command.Args[0]);
                 hours = int.Parse(data.Command.Args[1]);
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 if (ex is FormatException || ex is ArgumentNullException)
                     throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
@@ -705,7 +725,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
             try
             {
                 mode = data.Command.Args[0];
-                if(mode!="clear")
+                if (mode != "clear")
                     radius = int.Parse(data.Command.Args[1]);
             }
             catch (Exception ex)
@@ -816,7 +836,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
                 throw;
             }
 
-            string cmd() 
+            string cmd()
             {
                 Dictionary<string, object> dictionary = new Dictionary<string, object>()
                 {

@@ -35,7 +35,7 @@ namespace Perpetuum.Services.Sessions
             _sessionFactory = sessionFactory;
             _relayStateService = relayStateService;
             _steamManager = steamManager;
-            MaxSessions = 1000;
+            MaxSessions = 5000;
 
             hostStateService.StateChanged += (sender,state) =>
             {

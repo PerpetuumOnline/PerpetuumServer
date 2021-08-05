@@ -75,6 +75,12 @@ namespace Perpetuum
             return num >= minRange && num <= maxRange;
         }
 
+        [Pure, UsedImplicitly]
+        public static bool IsInRange(this int num, int minRange, int maxRange)
+        {
+            return num >= minRange && num <= maxRange;
+        }
+
         public static bool IsZero(this double num)
         {
             return Math.Abs(num) < double.Epsilon;
