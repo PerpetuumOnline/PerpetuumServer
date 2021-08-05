@@ -113,16 +113,8 @@ namespace Perpetuum.Zones.PBS
         }
 
         public static ErrorCodes ValidatePBSDockingBasePlacement(IZone zone, Position position, long owner,
-            EntityDefault dockingbasEntityDefault)
+            EntityDefault dockingbaseEntityDefault)
         {
-            //only a set number of bases for one corporation
-            var baseCountPerCorporation = zone.Units.Count(u => u is PBSDockingBase && u.Owner == owner);
-
-            if (baseCountPerCorporation + 1 > MAX_BASES_PER_CORP_PER_ZONE)
-            {
-                return ErrorCodes.MaxDockingBasePerZonePerCorporationReached;
-            }
-
             //current total number of bases per zone
             var baseCountPerZone = zone.Units.Count(u => u is PBSDockingBase);
 
@@ -134,16 +126,26 @@ namespace Perpetuum.Zones.PBS
                 return ErrorCodes.MaxDockingBasePerZoneReached;
             }
 
-            var typeExclusiveRange = dockingbasEntityDefault.Config.typeExclusiveRange;
+            if (maxBasesPerZone > MAX_BASES_PER_CORP_PER_ZONE)
+            {
+                //only a set number of bases for one corporation
+                var baseCountPerCorporation = zone.Units.Count(u => u is PBSDockingBase && u.Owner == owner);
+
+                if (baseCountPerCorporation + 1 > MAX_BASES_PER_CORP_PER_ZONE)
+                {
+                    return ErrorCodes.MaxDockingBasePerZonePerCorporationReached;
+                }
+            }
+
+            var typeExclusiveRange = dockingbaseEntityDefault.Config.typeExclusiveRange;
 
             if (typeExclusiveRange == null)
             {
-                Logger.Error("no typeExclusiveRange defined for " + dockingbasEntityDefault);
+                Logger.Error("no typeExclusiveRange defined for " + dockingbaseEntityDefault);
                 return ErrorCodes.WTFErrorMedicalAttentionSuggested;
             }
 
-            return zone.IsUnitWithCategoryInRange(CategoryFlags.cf_pbs_docking_base, position, (int) typeExclusiveRange)
-
+            return zone.IsUnitWithCategoryInRange(CategoryFlags.cf_pbs_docking_base, position, (int)typeExclusiveRange)
                 ? ErrorCodes.PlacedTooCloseToPBSDockingbase
                 : ErrorCodes.NoError;
         }

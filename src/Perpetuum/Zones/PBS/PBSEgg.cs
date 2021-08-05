@@ -153,7 +153,8 @@ namespace Perpetuum.Zones.PBS
                 throw new PerpetuumException(ErrorCodes.ConsistencyError);
             }
 
-            
+            (pbsNodeEntityDefault.Tier.level > zone.Configuration.PBSTechLimit).ThrowIfTrue(ErrorCodes.PBSTechLevelTooHighForZone);
+
             if (pbsNodeEntityDefault.CategoryFlags.IsCategory(CategoryFlags.cf_pbs_docking_base))
             {
                 //check deploying of bases
@@ -170,7 +171,6 @@ namespace Perpetuum.Zones.PBS
             }
 
             //itt meg lehet mast is megnezni egyelore nem kellett
-           
         }
 
         public EntityDefault TargetPBSNodeDefault

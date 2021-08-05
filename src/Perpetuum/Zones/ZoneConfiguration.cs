@@ -63,7 +63,8 @@ namespace Perpetuum.Zones
                     PlantAltitudeScale = record.GetValue<double>("plantaltitudescale"),
                     Note = record.GetValue<string>("note"),
 
-                    TimeLimitMinutes = record.GetValue<int?>("timeLimitMinutes")
+                    TimeLimitMinutes = record.GetValue<int?>("timeLimitMinutes"),
+                    PBSTechLimit = record.GetValue<int?>("pbsTechLimit") ?? 0
                 };
 
                 config.PlantRules = _plantRuleLoader.LoadPlantRulesWithOverrides(config.plantRuleSetId);
@@ -107,6 +108,7 @@ namespace Perpetuum.Zones
         public int ListenerPort { get; set; }
 
         public int? TimeLimitMinutes { get; set; }
+        public int PBSTechLimit { get; set; }
 
         public ZoneType Type { get; set; }
 
