@@ -11,6 +11,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
         Direct = 6,
         Interzone = 7,
         InterzoneRoaming = 8,
-        DynamicExtended = 9
+        DynamicExtended = 9,
+        ExpiringRandom = 10
     }
 }

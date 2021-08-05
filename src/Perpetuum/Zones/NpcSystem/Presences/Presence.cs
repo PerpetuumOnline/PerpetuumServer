@@ -10,6 +10,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
 {
     public class Presence : INpcGroup
     {
+        public int ID { get; private set; }
         private ImmutableHashSet<Flock> _flocks = ImmutableHashSet<Flock>.Empty;
 
         public IPresenceConfiguration Configuration { get; private set; }
@@ -25,6 +26,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
         {
             Zone = zone;
             Configuration = configuration;
+            ID = Configuration.ID;
         }
 
         public FlockFactory FlockFactory { private get; set; }

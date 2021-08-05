@@ -120,6 +120,7 @@ namespace Perpetuum.Zones.NpcSystem
 
     public interface IThreatManager
     {
+        bool IsThreatened { get; }
         bool Contains(Unit hostile);
         void Remove(Hostile hostile);
         ImmutableSortedSet<Hostile> Hostiles { get; }
@@ -150,6 +151,11 @@ namespace Perpetuum.Zones.NpcSystem
         public ImmutableSortedSet<Hostile> Hostiles
         {
             get { return _hostiles.Values.ToImmutableSortedSet(); }
+        }
+
+        public bool IsThreatened
+        {
+            get { return !_hostiles.IsEmpty; }
         }
 
         public bool Contains(Unit unit)

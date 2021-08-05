@@ -1,5 +1,6 @@
 ﻿using Perpetuum.Zones.NpcSystem.Presences;
 using Perpetuum.Zones.NpcSystem.Presences.PathFinders;
+using Perpetuum.Zones.NpcSystem.Presences.RandomExpiringPresence;
 using System;
 
 namespace Perpetuum.Zones.NpcSystem.Flocks
@@ -21,7 +22,7 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
             base.Update(time);
         }
 
-        private bool IsPresenceInSpawningState()
+        protected virtual bool IsPresenceInSpawningState()
         {
             if (Presence is IRoamingPresence roaming)
             {
@@ -34,7 +35,7 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
         {
             if (Presence is IRoamingPresence roaming)
             {
-                return roaming.SpawnOrigin.Clamp(Presence.Zone.Size);
+                spawnOrigin = roaming.SpawnOrigin.Clamp(Presence.Zone.Size);
             }
             return base.GetSpawnPosition(spawnOrigin);
         }

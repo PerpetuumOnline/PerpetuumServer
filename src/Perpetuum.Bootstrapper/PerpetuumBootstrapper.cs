@@ -183,6 +183,7 @@ using TrashItems = Perpetuum.RequestHandlers.TrashItems;
 using UnpackItems = Perpetuum.RequestHandlers.UnpackItems;
 using UnstackAmount = Perpetuum.RequestHandlers.UnstackAmount;
 using Perpetuum.Services.Strongholds;
+using Perpetuum.Zones.NpcSystem.Presences.RandomExpiringPresence;
 
 namespace Perpetuum.Bootstrapper
 {
@@ -1500,6 +1501,7 @@ namespace Perpetuum.Bootstrapper
             RegisterFlock<NormalFlock>(PresenceType.DynamicPool);
             RegisterFlock<NormalFlock>(PresenceType.Dynamic);
             RegisterFlock<RemoteSpawningFlock>(PresenceType.DynamicExtended);
+            RegisterFlock<StaticExpiringFlock>(PresenceType.ExpiringRandom);
             RegisterFlock<Flock>(PresenceType.Random);
             RegisterFlock<RoamingFlock>(PresenceType.Roaming);
             RegisterFlock<RoamingFlock>(PresenceType.FreeRoaming);
@@ -1514,6 +1516,7 @@ namespace Perpetuum.Bootstrapper
             RegisterPresence<DynamicPoolPresence>(PresenceType.DynamicPool);
             RegisterPresence<DynamicPresence>(PresenceType.Dynamic);
             RegisterPresence<DynamicPresenceExtended>(PresenceType.DynamicExtended);
+            RegisterPresence<RandomSpawningExpiringPresence>(PresenceType.ExpiringRandom);
             RegisterPresence<RandomPresence>(PresenceType.Random);
             RegisterPresence<RoamingPresence>(PresenceType.Roaming);
             RegisterPresence<RoamingPresence>(PresenceType.FreeRoaming);
@@ -1535,20 +1538,11 @@ namespace Perpetuum.Bootstrapper
                         switch (p.Configuration.PresenceType)
                         {
                             case PresenceType.Roaming:
-                            {
                                 roamingPresence.PathFinder = new NormalRoamingPathFinder(zone);
                                 break;
-                            }
-                            case PresenceType.FreeRoaming:
-                            {
+                            default:
                                 roamingPresence.PathFinder = new FreeRoamingPathFinder(zone);
                                 break;
-                            }
-                            case PresenceType.InterzoneRoaming:
-                            {
-                                roamingPresence.PathFinder = new FreeRoamingPathFinder(zone);
-                                break;
-                            }
                         }
                     }
 

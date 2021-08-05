@@ -110,7 +110,7 @@ namespace Perpetuum.Zones.NpcSystem
                 return;
             }
 
-            if (!npc.ThreatManager.Hostiles.IsEmpty)
+            if (npc.ThreatManager.IsThreatened)
             {
                 ToAggressorAI();
                 return;
@@ -133,7 +133,7 @@ namespace Perpetuum.Zones.NpcSystem
 
         public override void Update(TimeSpan time)
         {
-            if (!npc.ThreatManager.Hostiles.IsEmpty)
+            if (npc.ThreatManager.IsThreatened)
             {
                 ToAggressorAI();
             }
@@ -536,7 +536,7 @@ namespace Perpetuum.Zones.NpcSystem
                 return;
             }
 
-            if (npc.ThreatManager.Hostiles.IsEmpty)
+            if (!npc.ThreatManager.IsThreatened)
             {
                 EnterEvadeMode();
                 return;
@@ -1363,7 +1363,7 @@ namespace Perpetuum.Zones.NpcSystem
                     return;
 
                 var threat = Threat.BODY_PULL;
-                if (!_npc.ThreatManager.Hostiles.IsEmpty)
+                if (_npc.ThreatManager.IsThreatened)
                 {
                     var h = _npc.ThreatManager.GetMostHatedHostile();
                     if (h != null)

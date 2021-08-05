@@ -69,6 +69,7 @@ namespace Perpetuum.Zones
     {
         public static List<Point> FindWalkableArea(this IZone zone, Area area, int size,double slope = 4.0)
         {
+            area = area.Clamp(zone.Size);
             while (true)
             {
                 Point startPosition;

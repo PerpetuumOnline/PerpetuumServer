@@ -18,6 +18,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
         IEnumerable<Flock> Flocks { get; }
         Area Area { get; }
         void Log(string message);
+        void OnSpawned();
     }
 
     public class RoamingPresence : Presence, IRoamingPresence
@@ -38,5 +39,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
         {
             StackFSM.Update(time);
         }
+
+        public void OnSpawned() { }
     }
 }

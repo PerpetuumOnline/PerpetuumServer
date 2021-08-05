@@ -7,25 +7,30 @@ using System.Threading.Tasks;
 
 namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
 {
-
     public class SpawnState : IState
     {
-        private readonly IRoamingPresence _presence;
+        protected readonly IRoamingPresence _presence;
         private TimeSpan _delay = TimeSpan.Zero;
 
-        private bool _spawning;
-        private bool _spawned;
+        protected bool _spawning;
+        protected bool _spawned;
         private double _repawnDelayModifier = 0.0;
 
-        public SpawnState(IRoamingPresence presence)
+        protected readonly int _playerMinDist;
+
+        public SpawnState(IRoamingPresence presence, int playerMinDist = 200)
         {
             _presence = presence;
+            _playerMinDist = playerMinDist;
         }
 
-        public void Enter()
+        public virtual void Enter()
         {
             _spawning = false;
             _spawned = false;
+
+            _presence.SpawnOrigin = Position.Empty;
+            _presence.CurrentRoamingPosition = Position.Empty;
 
             _elapsed = TimeSpan.Zero;
 
@@ -33,12 +38,21 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
             _repawnDelayModifier = FastRandom.NextDouble(1.0, 2.0);
         }
 
-        public void Exit()
-        {
+        public void Exit() { }
 
+        protected virtual void OnSpawned()
+        {
+            _presence.OnSpawned();
+            _presence.StackFSM.Push(new RoamingState(_presence));
         }
 
         private TimeSpan _elapsed;
+
+        private bool CheckElapsed(TimeSpan time)
+        {
+            _elapsed += time;
+            return _elapsed < _delay;
+        }
 
         //updated
         public void Update(TimeSpan time)
@@ -48,13 +62,11 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
 
             if (_spawned)
             {
-                _presence.StackFSM.Push(new RoamingState(_presence));
+                OnSpawned();
                 return;
             }
 
-            _elapsed += time;
-
-            if (_elapsed < _delay)
+            if (CheckElapsed(time))
                 return;
 
             _spawning = true;
@@ -65,11 +77,11 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
             });
         }
 
-        private void SpawnFlocks()
+        protected virtual void SpawnFlocks()
         {
             Position spawnPosition;
             bool anyPlayersAround;
-            int range = 200;
+            int range = _playerMinDist;
 
             do
             {
@@ -78,6 +90,17 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
                 range--;
             } while (anyPlayersAround && range > 0);
 
+            if (anyPlayersAround)
+            {
+                _presence.Log("FAILED to resolve spawn position out of range of players: " + spawnPosition);
+                return;
+            }
+
+            DoSpawning(spawnPosition);
+        }
+
+        protected void DoSpawning(Position spawnPosition)
+        {
             _presence.SpawnOrigin = spawnPosition;
             _presence.CurrentRoamingPosition = spawnPosition;
             _presence.Log("spawn position: " + spawnPosition);
@@ -90,39 +113,62 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
         }
     }
 
-    public class RoamingState : IState
+    public class NullRoamingState : IState
     {
-        private readonly IRoamingPresence _presence;
+        protected readonly IRoamingPresence _presence;
 
-        public RoamingState(IRoamingPresence presence)
+        public NullRoamingState(IRoamingPresence presence)
         {
             _presence = presence;
         }
 
-        public void Enter()
+        public virtual void Enter() { }
+        public virtual void Exit() { }
+
+        protected Npc[] GetAllMembers()
         {
+            return _presence.Flocks.GetMembers().ToArray();
         }
 
-        public void Exit()
+        protected bool IsDeadAndExiting(Npc[] members)
         {
+            if (members.Length <= 0)
+            {
+                _presence.StackFSM.Pop();
+                return true;
+            }
+            return false;
         }
+
+        public virtual void Update(TimeSpan time)
+        {
+            var members = GetAllMembers();
+            IsDeadAndExiting(members);
+        }
+    }
+
+    public class RoamingState : NullRoamingState
+    {
+        public RoamingState(IRoamingPresence presence) : base(presence) { }
 
         private bool _finding;
 
-        public void Update(TimeSpan time)
+        private bool IsAllNotIdle(Npc[] members)
+        {
+            var idleMembersCount = members.Select(m => m.AI.Current).OfType<IdleAI>().Count();
+            return idleMembersCount < members.Length;
+        }
+
+        public override void Update(TimeSpan time)
         {
             if (_finding)
                 return;
 
-            var members = _presence.Flocks.GetMembers().ToArray();
-            if (members.Length <= 0)
-            {
-                _presence.StackFSM.Pop();
+            var members = GetAllMembers();
+            if (IsDeadAndExiting(members))
                 return;
-            }
 
-            var idleMembersCount = members.Select(m => m.AI.Current).OfType<IdleAI>().Count();
-            if (idleMembersCount < members.Length)
+            if (IsAllNotIdle(members))
                 return;
 
             _finding = true;

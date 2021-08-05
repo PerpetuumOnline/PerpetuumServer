@@ -5,17 +5,47 @@ using Perpetuum.Zones.NpcSystem.Flocks;
 
 namespace Perpetuum.Zones.NpcSystem.Presences
 {
-    public class DynamicPresence : Presence, INotifyPresenceExpired
+    public class ExpiringPresence : Presence
     {
-        private TimeTracker _lifeTimeTracker = new TimeTracker(TimeSpan.FromHours(1));
-
-        public Position DynamicPosition { get; set; }
+        protected TimeTracker _lifeTimeTracker = new TimeTracker(TimeSpan.FromHours(1));
 
         public TimeSpan LifeTime
         {
             protected get { return _lifeTimeTracker.Duration; }
             set { _lifeTimeTracker = new TimeTracker(value); }
         }
+
+        public ExpiringPresence(IZone zone, IPresenceConfiguration configuration) : base(zone, configuration)
+        {
+            if (Configuration.DynamicLifeTime != null)
+                LifeTime = TimeSpan.FromSeconds((int)Configuration.DynamicLifeTime);
+        }
+
+        public void ResetDynamicDespawnTimer()
+        {
+            _lifeTimeTracker.Reset();
+        }
+
+        protected override void OnUpdate(TimeSpan time)
+        {
+            var x = Flocks.GetMembers().Any(m => m.ThreatManager.IsThreatened);
+            if (x)
+                ResetDynamicDespawnTimer();
+
+            _lifeTimeTracker.Update(time);
+
+            if (_lifeTimeTracker.Expired)
+            {
+                OnPresenceExpired();
+            }
+        }
+
+        protected virtual void OnPresenceExpired() { }
+    }
+
+    public class DynamicPresence : ExpiringPresence, INotifyPresenceExpired
+    {
+        public Position DynamicPosition { get; set; }
 
         public event Action<Presence> PresenceExpired;
 
@@ -30,29 +60,10 @@ namespace Perpetuum.Zones.NpcSystem.Presences
             get { return Zone.Size.ToArea(); }
         }
 
-        public void ResetDynamicDespawnTimer()
+        protected override void OnPresenceExpired()
         {
-            _lifeTimeTracker.Reset();
-        }
-
-        protected override void OnUpdate(TimeSpan time)
-        {
-            var x = Flocks.GetMembers().Any(m => m.AI.Current is CombatAI);
-            if (x)
-                ResetDynamicDespawnTimer();
-
-            _lifeTimeTracker.Update(time);
-
-            if (_lifeTimeTracker.Expired)
-            {
-                OnPresenceExpired();
-            }
-        }
-
-        protected virtual void OnPresenceExpired()
-        {
+            base.OnPresenceExpired();
             ClearFlocks();
-
             PresenceExpired?.Invoke(this);
         }
     }

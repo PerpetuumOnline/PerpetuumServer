@@ -11,7 +11,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences.InterzonePresences
         {
             var groups = Db.Query().CommandText("SELECT id, name, respawnTime, respawnNoiseFactor FROM npcinterzonegroup").Execute().Select(CreateIZGroupFromRecord).ToArray();
 
-            var presenceConfigs = Db.Query().CommandText("SELECT p.*, z.id as zoneID FROM npcpresence p INNER JOIN npcinterzonegroup iz ON p.izgroupid=iz.id INNER JOIN zones z ON z.spawnid=p.spawnid WHERE p.enabled=1")
+            var presenceConfigs = Db.Query().CommandText("SELECT p.*, z.id as zoneID FROM npcpresence p INNER JOIN npcinterzonegroup iz ON p.izgroupid=iz.id INNER JOIN zones z ON z.spawnid=p.spawnid WHERE p.enabled=1 AND z.enabled=1")
                 .Execute()
                 .Select(CreatePresenceConfigurationFromRecord).ToArray();
 
