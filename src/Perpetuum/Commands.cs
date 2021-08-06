@@ -1302,6 +1302,17 @@ namespace Perpetuum
             }
         };
 
+        public static readonly Command ZoneFillGroundTypeRandom = new Command
+        {
+            Text = "zoneFillGroundTypeRandom",
+            AccessLevel = AccessLevel.admin,
+            Arguments =
+            {
+                new Argument<int>(k.size),
+                new Argument<int>(k.numberOfRuns)
+            }
+        };
+
         public static readonly Command ZoneSetBaseDetails = new Command
         {
             Text = "zoneSetBaseDetails",

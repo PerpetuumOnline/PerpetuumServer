@@ -25,7 +25,12 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
 
         public void ClearGroundType()
         {
-            groundType = GroundType.undefined;
+            SetGroundType(GroundType.undefined);
+        }
+
+        public void SetGroundType(GroundType type)
+        {
+            groundType = type;
         }
 
         public void SetPlant(byte newState, PlantType newPlantType)

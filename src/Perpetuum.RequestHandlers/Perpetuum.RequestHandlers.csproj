@@ -624,6 +624,7 @@
     <Compile Include="Zone\ZoneSetPlantsMode.cs" />
     <Compile Include="Zone\ZoneSetPlantSpeed.cs" />
     <Compile Include="Zone\ZoneSetQueueLength.cs" />
+    <Compile Include="Zone\ZoneFillGroundTypeRandom.cs" />
     <Compile Include="Zone\ZoneSetReinforceCounter.cs" />
     <Compile Include="Zone\ZoneSetRuntimeZoneEntityName.cs" />
     <Compile Include="Zone\ZoneSwitchDegrade.cs" />

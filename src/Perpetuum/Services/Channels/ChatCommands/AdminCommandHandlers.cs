@@ -937,7 +937,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
                     { "layerName", data.Command.Args[0] }
                 };
 
-            string cmd = string.Format("zoneClearLayer:zone_{0}:{1}", data.Sender.ZoneId, GenxyConverter.Serialize(dictionary));
+            string cmd = string.Format("{0}:zone_{1}:{2}", Commands.ZoneClearLayer.Text, data.Sender.ZoneId, GenxyConverter.Serialize(dictionary));
             HandleLocalRequest(data, cmd);
         }
         [ChatCommand("ZoneSetPlantSpeed")]
@@ -1243,6 +1243,47 @@ namespace Perpetuum.Services.Channels.ChatCommands
             CheckZoneId(data, zoneId);
             var dictionary = new Dictionary<string, object>() { { k.layerName, k.groundType } };
             var cmd = string.Format("{0}:zone_{1}:{2}", Commands.ZoneClearLayer.Text, zoneId, GenxyConverter.Serialize(dictionary));
+            SendMessageToAll(data, $"Sending: {cmd}");
+            HandleLocalRequest(data, cmd);
+            SendMessageToAll(data, $"Command completed");
+        }
+        [ChatCommand("ZoneRandomFillGroundType")]
+        public static void ZoneRandomFillGroundType(AdminCommandData data)
+        {
+            if (!IsDevModeEnabled(data))
+                return;
+
+            int radius = 200;
+            int iterations = 10;
+            int zoneId = data.Sender.ZoneId ?? -1;
+            if (data.Command.Args.Length > 0)
+            {
+                if (!int.TryParse(data.Command.Args[0], out radius))
+                {
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                }
+                if (data.Command.Args.Length > 1)
+                {
+                    if (!int.TryParse(data.Command.Args[1], out iterations))
+                    {
+                        throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                    }
+                    if (data.Command.Args.Length > 2)
+                    {
+                        if (!int.TryParse(data.Command.Args[2], out zoneId))
+                        {
+                            throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                        }
+                    }
+                }
+            }
+
+            CheckZoneId(data, zoneId);
+            var dictionary = new Dictionary<string, object>(){
+                    { k.size, radius },
+                    { k.numberOfRuns, iterations }
+                };
+            var cmd = string.Format("{0}:zone_{1}:{2}", Commands.ZoneFillGroundTypeRandom.Text, zoneId, GenxyConverter.Serialize(dictionary));
             SendMessageToAll(data, $"Sending: {cmd}");
             HandleLocalRequest(data, cmd);
             SendMessageToAll(data, $"Command completed");
