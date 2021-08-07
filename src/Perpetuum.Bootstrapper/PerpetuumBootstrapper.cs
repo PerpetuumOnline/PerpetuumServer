@@ -2339,15 +2339,18 @@ namespace Perpetuum.Bootstrapper
                     terrain.Plants = new Layer<PlantInfo>(LayerType.Plants, plants, size.Width, size.Height);
 
                     var altitude = loader.Load<ushort>(zone, LayerType.Altitude);
-                    var altitudeLayer = new AltitudeLayer(altitude, size.Width, size.Height);
+                    AltitudeLayer altitudeLayer;
 
                     if (zone.Configuration.Terraformable)
                     {
-                        var original = loader.LoadLayerData<ushort>(zone, "altitude_original");
-                        var originalAltitude = new Layer<ushort>(LayerType.OriginalAltitude, original, size.Width, size.Height);
+                        var originalAltitude = new Layer<ushort>(LayerType.OriginalAltitude, altitude, size.Width, size.Height);
                         var blend = loader.LoadLayerData<ushort>(zone, "altitude_blend");
                         var blendLayer = new Layer<ushort>(LayerType.Blend, blend, size.Width, size.Height);
-                        altitudeLayer = new TerraformableAltitude(originalAltitude, blendLayer, altitudeLayer.RawData);
+                        altitudeLayer = new TerraformableAltitude(originalAltitude, blendLayer, altitude);
+                    }
+                    else
+                    {
+                        altitudeLayer = new AltitudeLayer(altitude, size.Width, size.Height);
                     }
 
                     terrain.Altitude = altitudeLayer;
