@@ -629,6 +629,7 @@
     <Compile Include="Zone\ZoneSetRuntimeZoneEntityName.cs" />
     <Compile Include="Zone\ZoneSwitchDegrade.cs" />
     <Compile Include="Zone\ZoneTerraformTest.cs" />
+    <Compile Include="Zone\ZoneSmooth.cs" />
     <Compile Include="Zone\ZoneUploadScanResult.cs" />
   </ItemGroup>
   <ItemGroup>

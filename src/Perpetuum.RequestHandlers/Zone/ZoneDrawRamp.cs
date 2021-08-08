@@ -1,15 +1,9 @@
-﻿using Perpetuum.Accounting.Characters;
-using Perpetuum.Host.Requests;
+﻿using Perpetuum.Host.Requests;
 using Perpetuum.Players;
 using Perpetuum.Zones;
-using Perpetuum.Zones.Beams;
-using Perpetuum.Zones.NpcSystem.Reinforcements;
 using Perpetuum.Zones.Terrains;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Perpetuum.RequestHandlers.Zone
 {

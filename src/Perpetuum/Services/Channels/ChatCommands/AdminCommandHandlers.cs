@@ -1288,6 +1288,33 @@ namespace Perpetuum.Services.Channels.ChatCommands
             HandleLocalRequest(data, cmd);
             SendMessageToAll(data, $"Command completed");
         }
+        [ChatCommand("ZoneSmoothAll")]
+        public static void ZoneUpdateSlope(AdminCommandData data)
+        {
+            if (!IsDevModeEnabled(data))
+                return;
+
+            int zoneId = data.Sender.ZoneId ?? -1;
+
+            try
+            {
+                if(data.Command.Args.Length > 0)
+                    zoneId = int.Parse(data.Command.Args[0]);
+            }
+            catch (Exception ex)
+            {
+                SendMessageToAll(data, "Bad args");
+                if (ex is ArgumentNullException)
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                throw;
+            }
+
+            CheckZoneId(data, zoneId);
+            var cmd = string.Format("{0}:zone_{1}:null", Commands.ZoneSmooth.Text, zoneId);
+            SendMessageToAll(data, $"Sending: {cmd}");
+            HandleLocalRequest(data, cmd);
+            SendMessageToAll(data, $"Command completed");
+        }
         [ChatCommand("ZoneLockLayers")]
         public static void ZoneLockLayers(AdminCommandData data)
         {

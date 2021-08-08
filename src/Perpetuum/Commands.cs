@@ -98,6 +98,12 @@ namespace Perpetuum
             }
         };
 
+        public static readonly Command ZoneSmooth = new Command
+        {
+            Text = "zoneSmooth",
+            AccessLevel = AccessLevel.admin,
+        };
+
         public static readonly Command ZoneDisplayMissionSpots = new Command
         {
             Text = "zoneDisplayMissionSpots",
