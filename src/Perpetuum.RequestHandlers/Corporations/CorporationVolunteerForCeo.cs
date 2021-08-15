@@ -22,7 +22,7 @@ namespace Perpetuum.RequestHandlers.Corporations
                 var corporation = character.GetPrivateCorporationOrThrow();
 
                 var role = corporation.GetMemberRole(character);
-                if (role.IsAnyRole(CorporationRole.CEO,CorporationRole.DeputyCEO))
+                if (!role.IsAnyRole(CorporationRole.CEO, CorporationRole.DeputyCEO))
                     throw new PerpetuumException(ErrorCodes.InsufficientPrivileges);
 
                 var volunteerCEO = _volunteerCEOService.GetVolunteer(corporation.Eid);
