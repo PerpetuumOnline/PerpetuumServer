@@ -702,7 +702,8 @@ namespace Perpetuum
         InviteOnlyServer,
         SteamLoginDisabled,
         AccountAlreadyExists,
-        RobotWrongType,
-        PBSTechLevelTooHighForZone
+        RobotWrongType, // 666
+        PBSTechLevelTooHighForZone,
+        TooCloseToOtherDevice
     }
 }

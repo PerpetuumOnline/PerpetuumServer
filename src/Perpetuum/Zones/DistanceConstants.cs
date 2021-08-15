@@ -48,6 +48,8 @@ namespace Perpetuum.Zones
 
         public const double MAX_NPC_FLOCK_HOME_RANGE = 40;
 
+        public const double GAMMA_BOMB_STACK_DISTANCE = 5.0;
+
         public static Dictionary<string, object> GetEnumDictionary()
         {
             var result = new Dictionary<string, object>();

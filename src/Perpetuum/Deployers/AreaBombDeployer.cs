@@ -4,6 +4,7 @@ using Perpetuum.Players;
 using Perpetuum.Units;
 using Perpetuum.Units.DockingBases;
 using Perpetuum.Zones;
+using Perpetuum.Zones.Eggs;
 using Perpetuum.Zones.Teleporting;
 
 namespace Perpetuum.Deployers
@@ -29,6 +30,11 @@ namespace Perpetuum.Deployers
 
                 if (zone.Units.OfType<TeleportColumn>().WithinRange(spawnPosition, DistanceConstants.AREA_BOMB_DISTANCE_TO_TELEPORTS).Any())
                     return ErrorCodes.NotDeployableNearObject;
+            }
+            else
+            {
+                if (zone.Units.OfType<AreaBomb>().WithinRange(spawnPosition, DistanceConstants.GAMMA_BOMB_STACK_DISTANCE).Any())
+                    return ErrorCodes.TooCloseToOtherDevice;
             }
 
             return base.CanDeploy(zone, unit, spawnPosition, player);
