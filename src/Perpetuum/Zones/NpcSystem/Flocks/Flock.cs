@@ -137,7 +137,7 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
 
             npc.LootGenerator = gen;
             npc.HomeRange = HomeRange;
-            npc.HomePosition = spawnPosition;
+            npc.HomePosition = GetHomePosition(spawnPosition);
             npc.CallForHelp = Configuration.IsCallForHelp;
 
             OnNpcCreated(npc);
@@ -155,6 +155,11 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
 
             var spawnPosition = spawnOrigin.GetRandomPositionInRange2D(spawnRangeMin, spawnRangeMax).Clamp(Presence.Zone.Size);
             return spawnPosition;
+        }
+
+        protected virtual Position GetHomePosition(Position spawnOrigin)
+        {
+            return spawnOrigin;
         }
 
         public event Action<Npc> NpcCreated;

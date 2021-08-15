@@ -19,5 +19,14 @@ namespace Perpetuum.Zones.NpcSystem.Flocks
             }
             return base.GetSpawnPosition(spawnOrigin);
         }
+
+        protected override Position GetHomePosition(Position spawnOrigin)
+        {
+            if (Presence is DynamicPresenceExtended presence)
+            {
+                return presence.DynamicPosition.Clamp(Presence.Zone.Size);
+            }
+            return base.GetSpawnPosition(spawnOrigin);
+        }
     }
 }
