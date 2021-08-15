@@ -142,6 +142,8 @@ namespace Perpetuum.Zones.PBS.DockingBases
             _pbsReinforceHandler.Init();
             _pbsTerritorialVisibilityHelper.Init();
 
+            ZoneIdCached = zone.Id; //OPP: make sure this is set!
+
             //OPP: The following line is commented because it broke the BaseListFacilities command.
             // ClearChildren(); //ez azert kell, hogy a zonan ne legyenek gyerekei semmikepp
             Parent = 0; //ez azert kell, hogy a bazison levo kontenerek megtalaljak, mint root
