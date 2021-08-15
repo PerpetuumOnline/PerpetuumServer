@@ -39,6 +39,7 @@ namespace Perpetuum.RequestHandlers.FittingPreset
 
                 var container = Container.GetWithItems(containerEid, character);
                 robot.EmptyRobot(character, container, false);
+                robot.Initialize(character);
 
                 foreach (var moduleInfos in preset.Modules.GroupBy(i => i.Component))
                 {
