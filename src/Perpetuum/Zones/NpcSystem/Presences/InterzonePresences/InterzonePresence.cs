@@ -28,6 +28,12 @@ namespace Perpetuum.Zones.NpcSystem.Presences.InterzonePresences
             base.OnUpdate(time);
         }
 
+        protected override void OnPresenceExpired()
+        {
+            StackFSM.DirectClear();
+            base.OnPresenceExpired();
+        }
+
         public void OnSpawned()
         {
             ResetDynamicDespawnTimer();
@@ -80,15 +86,6 @@ namespace Perpetuum.Zones.NpcSystem.Presences.InterzonePresences
         {
             if (Flocks.IsNullOrEmpty())
                 OnPresenceExpired();
-        }
-
-        public override void LoadFlocks()
-        {
-            base.LoadFlocks();
-            foreach (var flock in Flocks)
-            {
-                flock.SpawnAllMembers();
-            }
         }
     }
 }
