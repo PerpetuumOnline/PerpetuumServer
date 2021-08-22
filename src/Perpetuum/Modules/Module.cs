@@ -139,5 +139,15 @@ namespace Perpetuum.Modules
                 ParentRobot?.GetPropertyModifier(m).Modify(ref modifier);
             }
         }
+
+        public void SimulateRobotPropertyModifiers(Robot parent, ref ItemPropertyModifier modifier)
+        {
+            var modifiers = PropertyModifiers.GetOrEmpty(modifier.Field);
+
+            foreach (var m in modifiers)
+            {
+                parent.GetPropertyModifier(m).Modify(ref modifier);
+            }
+        }
     }
 }

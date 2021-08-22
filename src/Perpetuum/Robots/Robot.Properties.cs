@@ -133,14 +133,29 @@ namespace Perpetuum.Robots
             return modifier;
         }
 
-        public bool CheckPowerGridForModule(Module module)
+        public bool CheckPowerGridForModule(Module module, bool removing=false)
         {
-            return TotalPowerGridUsage + module.PowerGridUsage <= PowerGridMax;
+            return SimulateFitting(module, removing, PowerGridMax, TotalPowerGridUsage, AggregateField.powergrid_usage, AggregateField.powergrid_max_modifier);
         }
 
-        public bool CheckCpuForModule(Module module)
+        public bool CheckCpuForModule(Module module, bool removing = false)
         {
-            return TotalCpuUsage + module.CpuUsage <= CpuMax;
+            return SimulateFitting(module, removing, CpuMax, TotalCpuUsage, AggregateField.cpu_usage, AggregateField.cpu_max_modifier);
+        }
+
+        private bool SimulateFitting(Module module, bool removing, double max, double current, AggregateField usageField, AggregateField maxModField)
+        {
+            double moduleUsageEstimate = 0;
+            var itemMod = module.BasePropertyModifiers.GetPropertyModifier(usageField);
+            module.SimulateRobotPropertyModifiers(this, ref itemMod);
+            itemMod.Modify(ref moduleUsageEstimate);
+            moduleUsageEstimate = removing ? -moduleUsageEstimate : moduleUsageEstimate;
+            if (removing && module.BasePropertyModifiers.GetPropertyModifier(maxModField).HasValue)
+            {
+                var mod = module.BasePropertyModifiers.GetPropertyModifier(maxModField).Value;
+                max /= Math.Max(mod, 1);
+            }
+            return current + moduleUsageEstimate <= max;
         }
 
         public double TotalPowerGridUsage

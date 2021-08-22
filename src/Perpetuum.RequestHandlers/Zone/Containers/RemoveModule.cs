@@ -10,6 +10,7 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
         {
             var moduleEid = request.Data.GetOrDefault<long>(k.moduleEID);
             var module = player.GetModule(moduleEid).ThrowIfNull(ErrorCodes.ModuleNotFound);
+            player.CheckEnergySystemAndThrowIfFailed(module, true);
             module.Owner = player.Character.Eid;
             module.Unequip(container);
         }

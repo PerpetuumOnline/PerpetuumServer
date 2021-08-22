@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Transactions;
 using Perpetuum.Accounting.Characters;
@@ -77,6 +78,7 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
             DoChange(request, player, container);
             player.OnEquipChange();
             player.Initialize(character);
+
             player.CheckEnergySystemAndThrowIfFailed();
 
             // Apply ratios to prevent resetting values
@@ -106,6 +108,7 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
 
         private static void OnCompleted(Player player, MessageBuilder message)
         {
+            player.Initialize(player.Character);
             player.SendRefreshUnitPacket();
             message.Send();
         }

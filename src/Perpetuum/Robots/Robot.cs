@@ -354,6 +354,15 @@ namespace Perpetuum.Robots
             get { return _robotComponents.Value; }
         }
 
+        public void CheckEnergySystemAndThrowIfFailed(Module module, bool isRemoving=false)
+        {
+            if (!CheckPowerGridForModule(module, isRemoving))
+                throw PerpetuumException.Create(ErrorCodes.OutOfPowergrid);
+
+            if (!CheckCpuForModule(module, isRemoving))
+                throw PerpetuumException.Create(ErrorCodes.OutOfCpu);
+        }
+
         public void CheckEnergySystemAndThrowIfFailed()
         {
             if (PowerGrid < 0)
