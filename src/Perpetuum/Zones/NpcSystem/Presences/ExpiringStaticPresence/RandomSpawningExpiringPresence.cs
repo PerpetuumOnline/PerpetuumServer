@@ -63,7 +63,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences.RandomExpiringPresence
             _presence.StackFSM.Push(new NullRoamingState(_presence));
         }
 
-        private bool IsInRange(Position position)
+        protected override bool IsInRange(Position position, int range)
         {
             var zone = _presence.Zone;
             if (zone.Configuration.IsGamma && zone.IsUnitWithCategoryInRange(CategoryFlags.cf_pbs_docking_base, position, BASE_RADIUS))
@@ -76,28 +76,6 @@ namespace Perpetuum.Zones.NpcSystem.Presences.RandomExpiringPresence
                 return true;
 
             return zone.Players.WithinRange2D(position, PLAYER_RADIUS).Any();
-        }
-
-        protected override void SpawnFlocks()
-        {
-            Position spawnPosition;
-            bool anyPlayersAround;
-            int maxRetries = 100;
-
-            do
-            {
-                spawnPosition = _presence.PathFinder.FindSpawnPosition(_presence).ToPosition();
-                anyPlayersAround = IsInRange(spawnPosition);
-                maxRetries--;
-            } while (anyPlayersAround && maxRetries > 0);
-
-            if (anyPlayersAround)
-            {
-                _presence.Log("FAILED to resolve spawn position out of range of players: " + spawnPosition);
-                return;
-            }
-
-            DoSpawning(spawnPosition);
         }
     }
 }

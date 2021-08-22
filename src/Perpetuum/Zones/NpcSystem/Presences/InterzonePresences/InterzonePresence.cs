@@ -30,7 +30,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences.InterzonePresences
 
         protected override void OnPresenceExpired()
         {
-            StackFSM.DirectClear();
+            StackFSM.Clear();
             base.OnPresenceExpired();
         }
 

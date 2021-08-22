@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using Perpetuum.Collections;
 using Perpetuum.ExportedTypes;
+using Perpetuum.Log;
 using Perpetuum.PathFinders;
 using Perpetuum.Zones.NpcSystem.Flocks;
 
@@ -22,9 +23,35 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
             _direction = FastRandom.NextDouble();
         }
 
+        private int TryGetMaxHomeRange(IRoamingPresence presence)
+        {
+            try
+            {
+                return presence.Flocks.Max(f => f.HomeRange).Clamp(10, 40);
+            }
+            catch(Exception e)
+            {
+                Logger.Exception(e);
+            }
+            return 10;
+        }
+
+        private double TryGetMinSlope(IRoamingPresence presence)
+        {
+            try
+            {
+                return presence.Flocks.GetMembers().Min(m => m.Slope);
+            }
+            catch (Exception e)
+            {
+                Logger.Exception(e);
+            }
+            return ZoneExtensions.MIN_SLOPE;
+        }
+
         public Point FindSpawnPosition(IRoamingPresence presence)
         {
-            var homeRange = presence.Flocks.Max(f => f.HomeRange).Clamp(10, 40);
+            var homeRange = TryGetMaxHomeRange(presence);
             var rangeMax = homeRange * 2;
 
             var walkableArea = _zone.FindWalkableArea(presence.Area, rangeMax * rangeMax);
@@ -33,8 +60,8 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
 
         public Point FindNextRoamingPosition(IRoamingPresence presence)
         {
-            var minSlope = presence.Flocks.GetMembers().Min(m => m.Slope);
-            var maxHomeRange = presence.Flocks.Max(f => f.HomeRange);
+            var minSlope = TryGetMinSlope(presence);
+            var maxHomeRange = TryGetMaxHomeRange(presence);
             var range = new IntRange((int) (maxHomeRange * 1.1), (int) (maxHomeRange * 1.5));
 
             var queue = new PriorityQueue<Node>(500);
