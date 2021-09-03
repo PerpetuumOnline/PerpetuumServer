@@ -2144,7 +2144,8 @@ namespace Perpetuum.Bootstrapper
             RegisterRequestHandler<ZoneSetBaseDetails>(Commands.ZoneSetBaseDetails);
             RegisterRequestHandler<ZoneSelfDestruct>(Commands.ZoneSelfDestruct);
             RegisterRequestHandler<ZoneSOS>(Commands.ZoneSOS);
-            
+            RegisterRequestHandler<ZoneCopyGroundType>(Commands.ZoneCopyGroundType); //OPP
+
             RegisterRequestHandler<ZoneGetZoneObjectDebugInfo>(Commands.ZoneGetZoneObjectDebugInfo);
             RegisterRequestHandler<ZoneDrawBlockingByEid>(Commands.ZoneDrawBlockingByEid);
 

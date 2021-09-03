@@ -1308,6 +1308,17 @@ namespace Perpetuum
             }
         };
 
+        public static readonly Command ZoneCopyGroundType = new Command
+        {
+            Text = "zoneCopyGroundType",
+            AccessLevel = AccessLevel.admin,
+            Arguments =
+            {
+                new Argument<int>(k.source),
+                new Argument<int>(k.target)
+            }
+        };
+
         public static readonly Command ZoneFillGroundTypeRandom = new Command
         {
             Text = "zoneFillGroundTypeRandom",

@@ -23,6 +23,16 @@ namespace Perpetuum.RequestHandlers.Zone
                     request.Zone.Terrain.Plants.UpdateAll((x, y, pi) =>
                     {
                         pi.Clear();
+
+                        // Update blocking footprint of plants for this tile
+                        request.Zone.Terrain.Blocks.UpdateValue(x, y, bi =>
+                        {
+                            // only reset the height if there is a plant here.
+                            // otherwise we reset blocking heights for decor, etc!
+                            bi.Height = bi.Plant ? 0 : bi.Height;
+                            bi.Plant = false;
+                            return bi;
+                        });
                         return pi;
                     });
                     break;

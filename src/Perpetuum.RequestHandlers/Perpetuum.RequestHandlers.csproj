@@ -494,6 +494,7 @@
     <Compile Include="UnpackItems.cs" />
     <Compile Include="UnstackAmount.cs" />
     <Compile Include="UseLotteryItem.cs" />
+    <Compile Include="ZoneCopyGroundType.cs" />
     <Compile Include="ZoneDebugLOS.cs" />
     <Compile Include="ZoneGetZoneObjectDebugInfo.cs" />
     <Compile Include="ZoneRemoveObject.cs" />
