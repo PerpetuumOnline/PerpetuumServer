@@ -706,7 +706,7 @@ namespace Perpetuum.Services.MissionEngine.MissionTargets
                 Logger.Error("target must have 10 level multipliers " + this);
         }
 
-        private readonly double[] _levelMultipliers = new double[] { 5, 10, 25, 50, 75, 100, 150, 200, 300, 500 };
+        private readonly double[] _levelMultipliers = new double[] { 5, 10, 25, 50, 80, 125, 200, 300, 450, 650 };
         public override double GetLevelMultiplier(MissionInProgress missionInProgress)
         {
             var level = missionInProgress.MissionLevel;
@@ -773,7 +773,7 @@ namespace Perpetuum.Services.MissionEngine.MissionTargets
             base.PostLoadedAsConfigTarget();
         }
 
-        private readonly double[] _levelMultipliers = new double[] { 5, 10, 25, 50, 75, 100, 150, 200, 300, 500 };
+        private readonly double[] _levelMultipliers = new double[] { 5, 10, 25, 50, 75, 115, 175, 250, 425, 600 };
         public override double GetLevelMultiplier(MissionInProgress missionInProgress)
         {
             var level = missionInProgress.MissionLevel;
