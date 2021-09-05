@@ -40,6 +40,7 @@ namespace Perpetuum.Zones.ProximityProbes
         {
             zone.Units.OfType<DockingBase>().WithinRange(spawnPosition, DistanceConstants.PROXIMITY_PROBE_DEPLOY_RANGE_FROM_BASE).Any().ThrowIfTrue(ErrorCodes.NotDeployableNearObject);
             zone.Units.OfType<Teleport>().WithinRange(spawnPosition, DistanceConstants.PROXIMITY_PROBE_DEPLOY_RANGE_FROM_TELEPORT).Any().ThrowIfTrue(ErrorCodes.TeleportIsInRange);
+            zone.Units.OfType<ProximityProbeBase>().WithinRange(spawnPosition, DistanceConstants.PROXIMITY_PROBE_DEPLOY_RANGE_FROM_PROBE).Any().ThrowIfTrue(ErrorCodes.TooCloseToOtherDevice);
         }
 
         public void SetDespawnTime(TimeSpan despawnTime)

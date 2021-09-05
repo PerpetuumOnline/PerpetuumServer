@@ -23,8 +23,9 @@ namespace Perpetuum.Zones
         public const double MAX_TERRAFORM_LEVEL_DIFFERENCE = 8.0;
         public const double MAX_TERRAFORM_ALTITUDE_PLAYER_VS_TARGET_DIFFERENCE = 20.0;
         public const double MOBILE_WORLD_TELEPORT_RANGE = 3072;
-        public const double PROXIMITY_PROBE_DEPLOY_RANGE_FROM_BASE = 0.0;
-        public const double PROXIMITY_PROBE_DEPLOY_RANGE_FROM_TELEPORT = 0.0;
+        public const double PROXIMITY_PROBE_DEPLOY_RANGE_FROM_BASE = 100.0;
+        public const double PROXIMITY_PROBE_DEPLOY_RANGE_FROM_TELEPORT = 100.0;
+        public const double PROXIMITY_PROBE_DEPLOY_RANGE_FROM_PROBE = 100.0;
         public const double PLANT_MIN_DISTANCE_FROM_BASE = 100.0;
         public const double PLANT_MAX_DISTANCE_FROM_OUTPOST = 300.0;
 
