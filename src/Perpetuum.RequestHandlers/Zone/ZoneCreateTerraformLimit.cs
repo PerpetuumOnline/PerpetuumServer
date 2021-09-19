@@ -1,7 +1,6 @@
 ﻿using Perpetuum.Host.Requests;
 using Perpetuum.Zones;
-using Perpetuum.Zones.Terrains;
-using System.Drawing;
+using System.Threading.Tasks;
 
 namespace Perpetuum.RequestHandlers.Zone
 {
@@ -9,39 +8,55 @@ namespace Perpetuum.RequestHandlers.Zone
     {
         private void Clear(IZoneRequest request)
         {
-            request.Zone.Terrain.Controls.UpdateAll((x, y, c) =>
+            var zone = request.Zone;
+            var area = Area.FromRectangle(0, 0, zone.Size.Width, zone.Size.Height);
+            var workAreas = area.Slice(32);
+
+            Parallel.ForEach(workAreas, (workArea) =>
             {
-                c.TerraformProtected = false;
-                return c;
+                var controlArea = zone.Terrain.Controls.GetArea(workArea);
+                for(int i=0; i< controlArea.Length; i++)
+                {
+                    controlArea[i].TerraformProtected = false;
+                    controlArea[i].PBSTerraformProtected = false;
+                }
+                zone.Terrain.Controls.SetArea(workArea, controlArea);
             });
         }
 
         private void SetRadiusOnTeleports(IZoneRequest request, int radius)
         {
             var zone = request.Zone;
+            var maxX = zone.Terrain.Controls.Width-1;
+            var maxY = zone.Terrain.Controls.Height-1;
             var teleports = request.Zone.GetTeleportColumns();
             foreach (var tele in teleports)
             {
                 var center = tele.CurrentPosition.ToPoint();
-                var x0 = (center.X - radius).Clamp(0, zone.Terrain.Controls.Width);
-                var x1 = (center.X + radius).Clamp(0, zone.Terrain.Controls.Width);
-                var y0 = (center.Y - radius).Clamp(0, zone.Terrain.Controls.Height);
-                var y1 = (center.Y + radius).Clamp(0, zone.Terrain.Controls.Height);
-                for (var y = y0; y < y1; y++)
+                var x0 = (center.X - radius).Clamp(0, maxX);
+                var x1 = (center.X + radius).Clamp(0, maxX);
+                var y0 = (center.Y - radius).Clamp(0, maxY);
+                var y1 = (center.Y + radius).Clamp(0, maxY);
+
+                var area = Area.FromRectangle(x0, y0, x1, y1);
+                var workAreas = area.Slice(32);
+                Parallel.ForEach(workAreas, (workArea) =>
                 {
-                    for (var x = x0; x < x1; x++)
+                    foreach (var p in workArea.GetPositions())
                     {
-                        var p = new Point(x, y);
-                        if (center.Distance(p) < radius)
+                        if(!p.intX.IsInRange(0, maxY) || !p.intY.IsInRange(0, maxY))
                         {
-                            zone.Terrain.Controls.UpdateValue(x, y, (c) =>
-                            {
-                                c.TerraformProtected = true;
-                                return c;
-                            });
+                            continue;
+                        }
+                        else if (center.Distance(p) < radius)
+                        {
+                            var c = zone.Terrain.Controls[p.intX, p.intY];
+                            c.TerraformProtected = true;
+                            c.PBSTerraformProtected = true;
+                            zone.Terrain.Controls[p.intX, p.intY] = c;
                         }
                     }
-                }
+                });
             }
         }
 

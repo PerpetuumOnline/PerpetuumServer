@@ -52,6 +52,11 @@ namespace Perpetuum.Zones.NpcSystem.Presences.InterzonePresences
             ResetSpawnTimer();
             ImmutableInterlocked.Update(ref _presences, p => p.RemoveAll(q => true));
             var config = GetRandom();
+            if (config == null)
+            {
+                _spawning = false;
+                return;
+            }
             var zone = _zoneManager.GetZone(config.ZoneID);
             var presence = _presenceFactory(zone, config);
             presence.LoadFlocks();

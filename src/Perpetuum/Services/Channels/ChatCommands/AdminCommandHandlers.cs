@@ -730,6 +730,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
             if (!IsDevModeEnabled(data))
                 return;
 
+            int zoneId = data.Sender.ZoneId ?? -1;
             int radius = 0;
             string mode;
             try
@@ -737,6 +738,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
                 mode = data.Command.Args[0];
                 if (mode != "clear")
                     radius = int.Parse(data.Command.Args[1]);
+                zoneId = int.Parse(data.Command.Args[2]);
             }
             catch (Exception ex)
             {
@@ -744,14 +746,15 @@ namespace Perpetuum.Services.Channels.ChatCommands
                     throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
                 throw;
             }
+            CheckZoneId(data, zoneId);
 
-            Dictionary<string, object> dictionary = new Dictionary<string, object>()
+            var dictionary = new Dictionary<string, object>()
                 {
                     { k.distance, radius },
                     { k.mode,  mode }
                 };
 
-            string cmd = string.Format("ZoneCreateTerraformLimit:zone_{0}:{1}", data.Sender.ZoneId, GenxyConverter.Serialize(dictionary));
+            string cmd = string.Format("{0}:zone_{1}:{2}", Commands.ZoneCreateTerraformLimit.Text, zoneId, GenxyConverter.Serialize(dictionary));
             SendMessageToAll(data, $"ZoneCreateTerraformLimit accepted: {dictionary.ToDebugString()} \r\nplease wait... ");
             HandleLocalRequest(data, cmd);
             SendMessageToAll(data, $"Complete!");
@@ -762,6 +765,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
             if (!IsDevModeEnabled(data))
                 return;
 
+            int zoneId = data.Sender.ZoneId ?? -1;
             string fileName;
             int flagValue;
             try
@@ -769,6 +773,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
                 var flagName = data.Command.Args[0];
                 fileName = data.Command.Args[1];
                 flagValue = (int)EnumHelper.GetEnumFromName<TerrainControlFlags>(flagName);
+                zoneId = int.Parse(data.Command.Args[2]);
             }
             catch (Exception ex)
             {
@@ -776,14 +781,15 @@ namespace Perpetuum.Services.Channels.ChatCommands
                     throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
                 throw;
             }
+            CheckZoneId(data, zoneId);
 
-            Dictionary<string, object> dictionary = new Dictionary<string, object>()
+            var dictionary = new Dictionary<string, object>()
                 {
                     { k.file, fileName },
                     { k.flags, flagValue }
                 };
 
-            string cmd = string.Format("ZoneSetLayerWithBitMap:zone_{0}:{1}", data.Sender.ZoneId, GenxyConverter.Serialize(dictionary));
+            string cmd = string.Format("{0}:zone_{1}:{2}", Commands.ZoneSetLayerWithBitMap.Text, zoneId, GenxyConverter.Serialize(dictionary));
             SendMessageToAll(data, $"ZoneSetLayerWithBitMap accepted: {dictionary.ToDebugString()} \r\nplease wait... ");
             HandleLocalRequest(data, cmd);
             SendMessageToAll(data, $"Complete!");
