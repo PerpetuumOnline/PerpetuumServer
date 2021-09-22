@@ -73,7 +73,7 @@ namespace Perpetuum.Services.Relay
                 Contact = record.GetValue<string>("contact"),
                 IsOpen = record.GetValue<bool>("isOpen"),
                 IsBroadcast = record.GetValue<bool>("isBroadcast"),
-                UsersCount = _sessionManager.Sessions.Count()
+                UsersCount = _sessionManager.Sessions.Count(c => c.IsAuthenticated)
             };
 
             return serverInfo;
