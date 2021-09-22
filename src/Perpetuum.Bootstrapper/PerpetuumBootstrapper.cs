@@ -2531,6 +2531,7 @@ namespace Perpetuum.Bootstrapper
 
             _builder.RegisterType<BeamService>().As<IBeamService>();
             _builder.RegisterType<MiningLogHandler>();
+            _builder.RegisterType<HarvestLogHandler>();
             _builder.RegisterType<MineralConfigurationReader>().As<IMineralConfigurationReader>().SingleInstance();
 
             void RegisterZone<T>(ZoneType type) where T:Zone
@@ -2577,6 +2578,7 @@ namespace Perpetuum.Bootstrapper
                     zone.PlantHandler = ctx.Resolve<PlantHandler.Factory>().Invoke(zone);
                     zone.CorporationHandler = ctx.Resolve<CorporationHandler.Factory>().Invoke(zone);
                     zone.MiningLogHandler = ctx.Resolve<MiningLogHandler.Factory>().Invoke(zone);
+                    zone.HarvestLogHandler = ctx.Resolve<HarvestLogHandler.Factory>().Invoke(zone);
                     zone.RiftManager = ctx.Resolve<Func<IZone, IRiftManager>>().Invoke(zone);
                     zone.ChatLogger = ctx.Resolve<ChatLoggerFactory>().Invoke("zone", zone.Configuration.Name);
                     zone.EnterQueueService = ctx.Resolve<ZoneEnterQueueService.Factory>().Invoke(zone);
