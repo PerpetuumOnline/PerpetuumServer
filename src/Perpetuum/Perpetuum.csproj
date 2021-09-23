@@ -643,6 +643,7 @@
     <Compile Include="Zones\Effects\ZoneEffects\ZoneEffectReader.cs" />
     <Compile Include="Zones\Finders\PositionFinders\RandomWalkableAroundPositionFinder.cs" />
     <Compile Include="Zones\Finders\PositionFinders\RandomWalkableOnCircle.cs" />
+    <Compile Include="Zones\HarvestLogHandler.cs" />
     <Compile Include="Zones\Intrusion\OutpostDecay.cs" />
     <Compile Include="Zones\IUsableItem.cs" />
     <Compile Include="Services\Channels\Channel.cs" />
