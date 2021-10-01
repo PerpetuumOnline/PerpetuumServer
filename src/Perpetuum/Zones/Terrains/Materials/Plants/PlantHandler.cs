@@ -83,7 +83,7 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
         // https://github.com/OpenPerpetuum/PerpetuumServer/issues/304
         private void AddTimerScaling(int zoneWidth)
         {
-            _plantsTimer = new IntervalTimer(TimeSpan.FromSeconds(TIME_SCALING_BASE / zoneWidth));
+            _plantsTimer = new IntervalTimer(TimeSpan.FromSeconds((TIME_SCALING_BASE / zoneWidth) * 7));
         }
 
         private void ProcessPlants()
