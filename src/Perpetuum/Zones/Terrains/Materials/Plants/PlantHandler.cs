@@ -21,6 +21,8 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
         public delegate IPlantHandler Factory(IZone zone);
 
         private const int AREA_SIZE = 32;
+        // The number of 32x32 cubes across the zone max width of 2048x2048
+        private const int TIME_SCALING_BASE = 64;
 
         private readonly IZone _zone;
         private readonly TimeSpan _natureSleepAmount = TimeSpan.FromSeconds(7);
@@ -41,6 +43,8 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
         {
             _zone = zone;
             _areaAmount = zone.Size.Width / AREA_SIZE; //the amount of areas
+            // We want to scale the time it takes to repopulate a zone
+            AddTimerScaling(_areaAmount);
             WorkArea = zone.Size.ToArea();
 
             ScannerMode = PlantScannerMode.Scanner;
@@ -74,6 +78,12 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
                 _isInProcess = 0;
                 _stopSignal = false;
             });
+        }
+
+        // https://github.com/OpenPerpetuum/PerpetuumServer/issues/304
+        private void AddTimerScaling(int zoneWidth)
+        {
+            _plantsTimer = new IntervalTimer(TimeSpan.FromSeconds(TIME_SCALING_BASE / zoneWidth));
         }
 
         private void ProcessPlants()
