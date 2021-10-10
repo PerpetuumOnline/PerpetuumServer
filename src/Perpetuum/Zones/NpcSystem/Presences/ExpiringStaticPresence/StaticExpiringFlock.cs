@@ -1,4 +1,5 @@
 ﻿using Perpetuum.Zones.NpcSystem.Flocks;
+using Perpetuum.Zones.NpcSystem.Presences.ExpiringStaticPresence;
 
 namespace Perpetuum.Zones.NpcSystem.Presences.RandomExpiringPresence
 {
@@ -8,7 +9,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences.RandomExpiringPresence
 
         protected override bool IsPresenceInSpawningState()
         {
-            if (Presence is RandomSpawningExpiringPresence pres)
+            if (Presence is IRandomStaticPresence pres)
             {
                 return pres.StackFSM.Current is StaticSpawnState;
             }
@@ -17,7 +18,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences.RandomExpiringPresence
 
         protected override Position GetSpawnPosition(Position spawnOrigin)
         {
-            if (Presence is RandomSpawningExpiringPresence pres)
+            if (Presence is IRandomStaticPresence pres)
             {
                 spawnOrigin = pres.SpawnOrigin.Clamp(Presence.Zone.Size);
             }

@@ -48,7 +48,7 @@ namespace Perpetuum.Zones
         public const double MISSION_RANDOM_POINT_FINDRADIUS_DEFAULT = 100;
 
         public const double MAX_NPC_FLOCK_HOME_RANGE = 40;
-
+        public const double PBS_DIST_FROM_NPC_BASE = 300;
         public const double GAMMA_BOMB_STACK_DISTANCE = 5.0;
 
         public static Dictionary<string, object> GetEnumDictionary()

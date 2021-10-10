@@ -184,6 +184,8 @@ using UnpackItems = Perpetuum.RequestHandlers.UnpackItems;
 using UnstackAmount = Perpetuum.RequestHandlers.UnstackAmount;
 using Perpetuum.Services.Strongholds;
 using Perpetuum.Zones.NpcSystem.Presences.RandomExpiringPresence;
+using Perpetuum.Zones.NpcSystem.Presences.ExpiringStaticPresence;
+using Perpetuum.Zones.NpcSystem.Presences.GrowingPresences;
 
 namespace Perpetuum.Bootstrapper
 {
@@ -1462,6 +1464,13 @@ namespace Perpetuum.Bootstrapper
                 .SingleInstance()
                 .OnActivated(e => e.Instance.Init());
 
+            _builder.RegisterType<EscalatingPresenceFlockSelector>().As<IEscalatingPresenceFlockSelector>().SingleInstance();
+
+            _builder.RegisterType<EscalatingFlocksReader>()
+                .As<IEscalatingFlocksReader>()
+                .SingleInstance()
+                .OnActivated(e => e.Instance.Init());
+
             _builder.RegisterType<NpcSafeSpawnPointsRepository>().As<ISafeSpawnPointsRepository>();
             _builder.RegisterType<PresenceConfigurationReader>().As<IPresenceConfigurationReader>();
             _builder.RegisterType<InterzonePresenceConfigReader>().As<IInterzonePresenceConfigurationReader>();
@@ -1507,6 +1516,8 @@ namespace Perpetuum.Bootstrapper
             RegisterFlock<RoamingFlock>(PresenceType.FreeRoaming);
             RegisterFlock<NormalFlock>(PresenceType.Interzone);
             RegisterFlock<RoamingFlock>(PresenceType.InterzoneRoaming);
+            RegisterFlock<StaticExpiringFlock>(PresenceType.EscalatingRandomPresence);
+            RegisterFlock<StaticExpiringFlock>(PresenceType.GrowingNPCBasePresence);
 
             RegisterPresence<Presence>(PresenceType.Normal);
             RegisterPresence<DirectPresence>(PresenceType.Direct).OnActivated(e =>
@@ -1522,6 +1533,8 @@ namespace Perpetuum.Bootstrapper
             RegisterPresence<RoamingPresence>(PresenceType.FreeRoaming);
             RegisterPresence<InterzonePresence>(PresenceType.Interzone);
             RegisterPresence<InterzoneRoamingPresence>(PresenceType.InterzoneRoaming);
+            RegisterPresence<GrowingPresence>(PresenceType.EscalatingRandomPresence);
+            RegisterPresence<GrowingNPCBasePresence>(PresenceType.GrowingNPCBasePresence);
 
             _builder.Register<PresenceFactory>(x =>
             {

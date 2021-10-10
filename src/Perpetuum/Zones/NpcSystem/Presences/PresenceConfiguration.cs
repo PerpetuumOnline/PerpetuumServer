@@ -24,6 +24,8 @@ namespace Perpetuum.Zones.NpcSystem.Presences
 
         public int? InterzoneGroupId { get; set; }
 
+        public int? GrowthSeconds { get; set; }
+
         public int ZoneID { get; set; }
 
         public Position RandomCenter => new Position((double)RandomCenterX, (double)RandomCenterY);

@@ -22,6 +22,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
         bool IsRespawnAllowed { get; }
 
         int? InterzoneGroupId { get; }
+        int? GrowthSeconds { get; }
 
         int ZoneID { get; }
 
