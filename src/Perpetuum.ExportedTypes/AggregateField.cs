@@ -344,7 +344,8 @@ namespace Perpetuum.ExportedTypes
         module_missile_range_modifier = 586,
 		optimal_range = 255,
 		optimal_range_modifier = 256,
-		pbs_turret_core_per_sec = 652,
+        pbs_tech_limit = 664, //OPP: a no-op field for localization in gamma effect
+        pbs_turret_core_per_sec = 652,
 		plasma_cycle_time_modifier = 258,
 		plasma_falloff_modifier = 259,
 		plasma_optimal_range_modifier = 260,
@@ -386,7 +387,8 @@ namespace Perpetuum.ExportedTypes
 		projectile_cycle_time_modifier = 297,
 		projectile_falloff_modifier = 298,
 		projectile_optimal_range_modifier = 299,
-		railgun_ammo_cycle_time_modifier = 639,
+        pvp_no_teleport = 665, //OPP: field to use with zoneeffect to indicate prevention of teleport w/ pvp flag
+        railgun_ammo_cycle_time_modifier = 639,
 		railgun_cycle_time_modifier = 300,
 		railgun_falloff_modifier = 301,
 		railgun_optimal_range_modifier = 302,

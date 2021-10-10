@@ -248,6 +248,8 @@ namespace Perpetuum.Units
 
         public bool HasDespawnEffect => EffectHandler.ContainsEffect(EffectType.effect_despawn_timer);
 
+        public bool HasNoTeleportWhilePVP => EffectHandler.Effects.Any(e => e.PropertyModifiers.Any(p => p.Field == AggregateField.pvp_no_teleport));
+
         public Position WorldPosition
         {
             get { return Zone?.ToWorldPosition(CurrentPosition) ?? CurrentPosition; }
