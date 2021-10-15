@@ -33,7 +33,7 @@ namespace Perpetuum.Zones.PBS
 
             var constructionAmount = ammo.GetPropertyModifier(AggregateField.construction_charge_amount);
 
-            if (constructionAmount.Value < 0)
+            if (constructionAmount.Value < 0) // Deconstruction (negative amount)
             {
                 //deconstructhoz access kell
                 pbsObject.CheckAccessAndThrowIfFailed(ParentRobot.GetCharacter());
@@ -45,9 +45,14 @@ namespace Perpetuum.Zones.PBS
 
                 pbsObject.OnlineStatus.ThrowIfTrue(ErrorCodes.NotPossibleOnOnlineNode);
             }
+            else // Construction
+            {
+                var techLevel = pbsObject.ED.Tier.level;
+                var constructionLevel = ammo.GetPropertyModifier(AggregateField.construction_charge_techmax);
+                techLevel.ThrowIfGreater((int)constructionLevel.Value, ErrorCodes.TechLevelTooLow);
+            }
 
             pbsObject.ModifyConstructionLevel((int) constructionAmount.Value).ThrowIfError();
-           
 
             CreateBeam(unitLock.Target, BeamState.AlignToTerrain);
         }

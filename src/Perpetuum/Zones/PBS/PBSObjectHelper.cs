@@ -260,7 +260,7 @@ namespace Perpetuum.Zones.PBS
                 {
                     LootContainer.Create()
                                  .AddLoot(PBSHelper.GetCapsuleDefinitionByPBSObject(_pbsUnit),1)
-                                 .AddLoot(PBSHelper.GetConstructionAmmoLootOnDeconstruct(_pbsUnit))
+                                 .AddLoot(ConstructionAmmoHelpers.GetConstructionAmmoLootOnDeconstruct(_pbsUnit))
                                  .BuildAndAddToZone(zone, _pbsUnit.CurrentPosition);
 
                     var dockingBase = _pbsUnit as PBSDockingBase;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Perpetuum.Accounting.Characters;
+using Perpetuum.EntityFramework;
 using Perpetuum.Groups.Corporations;
 using Perpetuum.Log;
 using Perpetuum.Players;
@@ -66,6 +67,7 @@ namespace Perpetuum.Zones.PBS
         bool IsOrphaned { get; set; }
 
         int ZoneIdCached { get; }
+        EntityDefault ED { get; }
 
         event Action<Unit,bool /*orphanedState*/> OrphanedStateChanged;
 

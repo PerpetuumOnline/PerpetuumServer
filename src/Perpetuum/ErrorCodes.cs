@@ -706,5 +706,6 @@ namespace Perpetuum
         PBSTechLevelTooHighForZone,
         TooCloseToOtherDevice,
         TooCloseToNPCBase,
+        TechLevelTooLow
     }
 }

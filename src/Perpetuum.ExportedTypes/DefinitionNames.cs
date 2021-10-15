@@ -480,6 +480,10 @@ namespace Perpetuum.ExportedTypes
  		 public const string CONSTRUCTION_MODULE_AMMO_NORMAL = "def_construction_module_ammo_normal";
  		 public const string CONSTRUCTION_MODULE_AMMO_NORMAL_CPRG = "def_construction_module_ammo_normal_cprg";
  		 public const string CONSTRUCTION_MODULE_AMMO_SYNDICATE = "def_construction_module_ammo_syndicate";
+ 		 public const string CONSTRUCTION_MODULE_AMMO_T0 = "def_construction_module_ammo_t0";
+ 		 public const string CONSTRUCTION_MODULE_AMMO_T1 = "def_construction_module_ammo_t1";
+ 		 public const string CONSTRUCTION_MODULE_AMMO_T2 = "def_construction_module_ammo_t2";
+ 		 public const string CONSTRUCTION_MODULE_AMMO_T3 = "def_construction_module_ammo_t3";
  		 public const string CONTAINER_CAPSULE = "def_container_capsule";
  		 public const string COREBOOSTER_AMMO = "def_corebooster_ammo";
  		 public const string COREBOOSTER_AMMO_CPRG = "def_corebooster_ammo_cprg";

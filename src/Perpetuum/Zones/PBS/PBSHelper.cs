@@ -876,7 +876,7 @@ namespace Perpetuum.Zones.PBS
             //ha minden oke akkor majd dobjuk a lootot
             LootContainer.Create()
                                 .AddLoot(GetLootFromCapsule(pbsNode))
-                                .AddLoot(GetConstructionAmmoLootOnDead(pbsNode))
+                                .AddLoot(ConstructionAmmoHelpers.GetConstructionAmmoLootOnDead(pbsNode))
                                 .BuildAndAddToZone(zone, lootPosition);
 
             Transaction.Current.OnCommited(() =>
@@ -886,38 +886,6 @@ namespace Perpetuum.Zones.PBS
             });
 
             return ec;
-        }
-
-        public const int CONSTRUCTION_AMMO_DEFINITION = 4658; //TODO: Fetch this from DB
-
-        public static IEnumerable<LootItem> GetConstructionAmmoLootOnDead(IPBSObject pbsObject)
-        {
-            var constructionLevelMax = pbsObject.ConstructionLevelMax;
-
-            var amount = (int)(constructionLevelMax*0.7*pbsObject.ConstructionLevelCurrent/constructionLevelMax);
-
-            var constructionLootList = new List<LootItem>();
-
-            if (amount > 0)
-            {
-                constructionLootList.Add(LootItemBuilder.Create(CONSTRUCTION_AMMO_DEFINITION).SetQuantity(amount).Build());
-            }
-
-            return constructionLootList;
-        }
-
-        public static IEnumerable<LootItem> GetConstructionAmmoLootOnDeconstruct(IPBSObject pbsObject)
-        {
-            var amount = (int) (pbsObject.ConstructionLevelMax*0.7);
-
-            var constructionLootList = new List<LootItem>();
-
-            if (amount > 0)
-            {
-                constructionLootList.Add(LootItemBuilder.Create(CONSTRUCTION_AMMO_DEFINITION).SetQuantity(amount).Build());
-            }
-
-            return constructionLootList;
         }
 
         public static void DropLootToZoneFromBase(IZone zone, PBSDockingBase pbsDockingBase, Unit killer)
@@ -950,7 +918,7 @@ namespace Perpetuum.Zones.PBS
 
                 LootContainer.Create()
                                     .AddLoot(GetLootFromCapsule(pbsDockingBase))
-                                    .AddLoot(GetConstructionAmmoLootOnDead(pbsDockingBase))
+                                    .AddLoot(ConstructionAmmoHelpers.GetConstructionAmmoLootOnDead(pbsDockingBase))
                                     .BuildAndAddToZone(zone, lootPosition);
 
                 //eddig jo innen 0sszeszedjuk sqlbol a cuccot ami van a bazison, hozzadjuk a loot hoz, es kesz
