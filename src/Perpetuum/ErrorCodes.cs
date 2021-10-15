@@ -704,6 +704,8 @@ namespace Perpetuum
         AccountAlreadyExists,
         RobotWrongType, // 666
         PBSTechLevelTooHighForZone,
-        TooCloseToOtherDevice
+        TooCloseToOtherDevice,
+        TooCloseToNPCBase,
+        TechLevelTooLow
     }
 }

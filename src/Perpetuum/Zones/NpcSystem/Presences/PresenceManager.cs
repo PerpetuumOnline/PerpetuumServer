@@ -27,6 +27,11 @@ namespace Perpetuum.Zones.NpcSystem.Presences
             foreach (var configuration in _configurationReader.GetAll(_zone.Id))
             {
                 var presence = CreatePresence(configuration);
+                if (presence == null)
+                {
+                    Logger.Warning($"Failed to load presence: {configuration.ID}");
+                    continue;
+                }
                 presence.LoadFlocks();
                 AddPresence(presence);
             }

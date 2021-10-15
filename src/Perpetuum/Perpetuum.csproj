@@ -716,8 +716,14 @@
     <Compile Include="Zones\NpcSystem\Flocks\RoamingFlock.cs" />
     <Compile Include="Zones\NpcSystem\NpcBossInfo.cs" />
     <Compile Include="Zones\NpcSystem\NpcEp.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\ExpiringStaticPresence\FlockEscalationSelector.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\ExpiringStaticPresence\IRandomStaticPresence.cs" />
     <Compile Include="Zones\NpcSystem\Presences\ExpiringStaticPresence\StaticExpiringFlock.cs" />
     <Compile Include="Zones\NpcSystem\Presences\ExpiringStaticPresence\RandomSpawningExpiringPresence.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\ExpiringStaticPresence\StaticSpawnState.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\GrowingPresences\GrowingNPCBasePresence.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\GrowingPresences\GrowingPresence.cs" />
+    <Compile Include="Zones\NpcSystem\Presences\GrowingPresences\GrowthStates.cs" />
     <Compile Include="Zones\NpcSystem\Reinforcements\INpcReinforcementWave.cs" />
     <Compile Include="Zones\NpcSystem\Reinforcements\INpcReinforcementsRepository.cs" />
     <Compile Include="Zones\NpcSystem\Reinforcements\INpcReinforcements.cs" />
@@ -741,6 +747,7 @@
     <Compile Include="Zones\NpcSystem\Presences\RandomFlockReader.cs" />
     <Compile Include="Zones\NpcSystem\Presences\RandomFlockSelector.cs" />
     <Compile Include="Zones\NpcSystem\Reinforcements\ReinforcementType.cs" />
+    <Compile Include="Zones\PBS\ConstructionAmmoHelpers.cs" />
     <Compile Include="Zones\ProximityProbes\PBSRegisterHelper.cs" />
     <Compile Include="Zones\ProximityProbes\VisibilityBasedProximityProbe.cs" />
     <Compile Include="Accounting\Characters\CharacterCleaner.cs" />

@@ -46,6 +46,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences
                 RandomRadius = record.GetValue<int?>("randomradius"),
                 DynamicLifeTime = record.GetValue<int?>("dynamiclifetime"),
                 IsRespawnAllowed = record.GetValue<bool>("isrespawnallowed"),
+                GrowthSeconds = record.GetValue<int?>("growthseconds"),
                 Area = new Area(topX, topY, bottomX, bottomY)
             };
             return p;

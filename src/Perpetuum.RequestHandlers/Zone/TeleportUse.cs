@@ -139,6 +139,7 @@ namespace Perpetuum.RequestHandlers.Zone
             public override void VisitTeleport(Teleport teleport)
             {
                 _player.HasTeleportSicknessEffect.ThrowIfTrue(ErrorCodes.TeleportTimerStillRunning);
+                (_player.HasPvpEffect && _player.HasNoTeleportWhilePVP).ThrowIfTrue(ErrorCodes.CantBeUsedInPvp);
                 _player.CurrentPosition.IsInRangeOf3D(teleport.CurrentPosition, Teleport.TeleportRange).ThrowIfFalse(ErrorCodes.TeleportOutOfRange);
                 base.VisitTeleport(teleport);
             }

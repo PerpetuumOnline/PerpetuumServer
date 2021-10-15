@@ -46,10 +46,10 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
     public class SpawnState : CancellableState, IState
     {
         protected readonly IRoamingPresence _presence;
-        private TimeSpan _delay = TimeSpan.Zero;
+        protected TimeSpan _delay = TimeSpan.Zero;
 
         protected bool _spawned;
-        private double _repawnDelayModifier = 0.0;
+        protected double _repawnDelayModifier = 0.0;
 
         protected readonly int _playerMinDist;
 
@@ -57,6 +57,12 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
         {
             _presence = presence;
             _playerMinDist = playerMinDist;
+        }
+
+        protected virtual void SetSpawnDelay()
+        {
+            _delay = TimeSpan.FromSeconds(_presence.Configuration.RoamingRespawnSeconds * _repawnDelayModifier);
+            _repawnDelayModifier = FastRandom.NextDouble(1.0, 2.0);
         }
 
         public void Enter()
@@ -69,8 +75,7 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
 
             _elapsed = TimeSpan.Zero;
 
-            _delay = TimeSpan.FromSeconds(_presence.Configuration.RoamingRespawnSeconds * _repawnDelayModifier);
-            _repawnDelayModifier = FastRandom.NextDouble(1.0, 2.0);
+            SetSpawnDelay();
         }
 
         public void Exit()
@@ -115,12 +120,21 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
             return _presence.Zone.Players.WithinRange(position, range).Any();
         }
 
+        protected virtual bool IsValidSpawnPosition(Position position, int range)
+        {
+            return !IsInRange(position, range);
+        }
+
+        protected virtual Position FindSpawnPosition()
+        {
+            return _presence.PathFinder.FindSpawnPosition(_presence).ToPosition();
+        }
+
         private void SpawnFlocks()
         {
             Position spawnPosition;
-            bool anyPlayersAround;
             int range = _playerMinDist;
-
+            bool isValidSpawnLocation;
             do
             {
                 if (IsCancelled)
@@ -128,12 +142,12 @@ namespace Perpetuum.Zones.NpcSystem.Presences.PathFinders
                     Logger.Warning("SpawnFlocks() cancelled");
                     return;
                 }
-                spawnPosition = _presence.PathFinder.FindSpawnPosition(_presence).ToPosition();
-                anyPlayersAround = IsInRange(spawnPosition, range);
+                spawnPosition = FindSpawnPosition();
+                isValidSpawnLocation = IsValidSpawnPosition(spawnPosition, range);
                 range--;
-            } while (anyPlayersAround && range > 0);
+            } while (!isValidSpawnLocation && range > 0);
 
-            if (anyPlayersAround)
+            if (!isValidSpawnLocation)
             {
                 _presence.Log("FAILED to resolve spawn position out of range of players: " + spawnPosition);
                 return;

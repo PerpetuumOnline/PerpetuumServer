@@ -72,11 +72,6 @@ namespace Perpetuum.Modules.Weapons
 
                 victim.IsInvulnerable.ThrowIfTrue(ErrorCodes.TargetIsInvulnerable);
 
-                if (victim is Rift && (_weapon.ParentRobot.Zone is StrongHoldZone))
-                {
-                    throw new PerpetuumException(ErrorCodes.TargetIsNonAttackable);
-                }
-
                 _weapon.ConsumeAmmo();
 
                 var result = _weapon.GetLineOfSight(victim);
