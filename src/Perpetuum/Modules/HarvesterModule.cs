@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Transactions;
@@ -137,7 +137,11 @@ namespace Perpetuum.Modules
 
                         container.AddItem(item, true);
 
-                        player.MissionHandler.EnqueueMissionEventInfo(new HarvestPlantEventInfo(player, extractedMaterial.Definition, extractedMaterial.Quantity, terrainLock.Location));
+                        var extractedHarvestDefinition = extractedMaterial.Definition;
+                        var extractedQuantity = extractedMaterial.Quantity;
+
+                        player.MissionHandler.EnqueueMissionEventInfo(new HarvestPlantEventInfo(player, extractedHarvestDefinition, extractedQuantity, terrainLock.Location));
+                        player.Zone?.HarvestLogHandler.EnqueueHarvestLog(extractedHarvestDefinition, extractedQuantity);
                     }
 
                     //everything went ok, save container

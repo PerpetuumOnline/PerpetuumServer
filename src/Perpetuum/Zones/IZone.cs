@@ -52,6 +52,7 @@ namespace Perpetuum.Zones
         PBSHighwayHandler HighwayHandler { get; }
         TerraformHandler TerraformHandler { get; }
         MiningLogHandler MiningLogHandler { get; }
+        HarvestLogHandler HarvestLogHandler { get; }
         IRelicManager RelicManager { get; }
         IZoneEffectHandler ZoneEffectHandler { get; }
 

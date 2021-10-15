@@ -65,6 +65,7 @@ namespace Perpetuum.Zones
         public TerraformHandler TerraformHandler { get; set; }
         public IZoneUnitService UnitService { get; set; }
         public MiningLogHandler MiningLogHandler { get; set; }
+        public HarvestLogHandler HarvestLogHandler { get; set; }
         public ZoneSession.Factory ZoneSessionFactory { get; set; }
         public IZoneEffectHandler ZoneEffectHandler { get; set; }
 
@@ -332,6 +333,7 @@ namespace Perpetuum.Zones
             RiftManager?.Update(time);
             RelicManager?.Update(time);
             MiningLogHandler.Update(time);
+            HarvestLogHandler.Update(time);
             MeasureUpdate(time);
         }
 
