@@ -67,7 +67,7 @@ namespace Perpetuum.Zones.PBS
                 {
                     if (!_pbsUnit.States.Dead)
                     {
-                        _pbsUnit.SendNodeUpdate(PBSEventType.nodeAttacked);
+                        SendAttackAlert();
                     }
                 }
                 finally
@@ -75,6 +75,11 @@ namespace Perpetuum.Zones.PBS
                     _damageTaken = 0;
                 }
             });
+        }
+
+        public void SendAttackAlert()
+        {
+            _pbsUnit.SendNodeUpdate(PBSEventType.nodeAttacked);
         }
 
         public void Init()

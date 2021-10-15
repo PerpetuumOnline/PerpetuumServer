@@ -862,6 +862,7 @@ namespace Perpetuum.Bootstrapper
             RegisterEntity<RobotLeg>();
             RegisterUnit<DockingBase>();
             RegisterUnit<PBSDockingBase>();
+            RegisterUnit<ExpiringPBSDockingBase>();
             RegisterUnit<Outpost>().OnActivated(e =>
             {
 #if (DEBUG)
@@ -1122,6 +1123,7 @@ namespace Perpetuum.Bootstrapper
                 ByCategoryFlags<PublicCorporationHangarStorage>(CategoryFlags.cf_public_corporation_hangar_storage);
                 ByCategoryFlags<DockingBase>(CategoryFlags.cf_public_docking_base);
                 ByCategoryFlags<PBSDockingBase>(CategoryFlags.cf_pbs_docking_base);
+                ByName<ExpiringPBSDockingBase>(DefinitionNames.PBS_EXPIRING_DOCKING_BASE); //OPP: new expiring base
                 ByCategoryFlags<Outpost>(CategoryFlags.cf_outpost);
                 ByCategoryFlags<OutpostMill>(CategoryFlags.cf_outpost_mill);
                 ByCategoryFlags<OutpostPrototyper>(CategoryFlags.cf_outpost_prototyper);

@@ -3971,6 +3971,7 @@ namespace Perpetuum.ExportedTypes
  		 public const string PBS_ENERGYWELL_SMALL_CAPSULE_CPRG = "def_pbs_energywell_small_capsule_cprg";
  		 public const string PBS_ENERGYWELL_SMALL_OBJECT = "def_pbs_energywell_small_object";
  		 public const string PBS_EW_TURRET_BOT = "def_pbs_ew_turret_bot";
+ 		 public const string PBS_EXPIRING_DOCKING_BASE = "def_pbs_expiring_docking_base";
  		 public const string PBS_FACILITY_CALIBRATION_PROGRAM_FORGE = "def_pbs_facility_calibration_program_forge";
  		 public const string PBS_FACILITY_MILL = "def_pbs_facility_mill";
  		 public const string PBS_FACILITY_PROTOTYPER = "def_pbs_facility_prototyper";

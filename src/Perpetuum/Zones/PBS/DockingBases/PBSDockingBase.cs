@@ -31,7 +31,7 @@ namespace Perpetuum.Zones.PBS.DockingBases
         private readonly ICorporationManager _corporationManager;
         private readonly SparkTeleportHelper _sparkTeleportHelper;
         private readonly PBSStandingController<PBSDockingBase> _standingController;
-        private readonly PBSObjectHelper<PBSDockingBase> _pbsObjectHelper;
+        protected readonly PBSObjectHelper<PBSDockingBase> _pbsObjectHelper;
         private readonly PBSReinforceHandler<PBSDockingBase> _pbsReinforceHandler;
         private readonly PBSTerritorialVisibilityHelper _pbsTerritorialVisibilityHelper;
 
@@ -370,7 +370,7 @@ namespace Perpetuum.Zones.PBS.DockingBases
         /// If property is present then it's set to deconstruct
         /// </summary>
         /// <returns></returns>
-        public ErrorCodes IsDeconstructAllowed()
+        public virtual ErrorCodes IsDeconstructAllowed()
         {
             
             if (DynamicProperties.Contains(k.allowDeconstruction))

@@ -14,6 +14,14 @@ namespace Perpetuum.EntityFramework
             repository.Delete(entity);
         }
 
+        public static void DeleteTreeButNotRoot(this IEntityRepository repository, long eid)
+        {
+            var entity = repository.LoadTree(eid, null).ThrowIfNull(ErrorCodes.EntityNotFound);
+            foreach(var child in entity.Children){
+                repository.Delete(child);
+            }
+        }
+
         public static void ForceUpdate(this IEntityRepository repository, Entity entity)
         {
             foreach (var child in entity.Children)

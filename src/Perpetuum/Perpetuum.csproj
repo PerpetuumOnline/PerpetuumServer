@@ -747,6 +747,7 @@
     <Compile Include="Zones\NpcSystem\Presences\RandomFlockReader.cs" />
     <Compile Include="Zones\NpcSystem\Presences\RandomFlockSelector.cs" />
     <Compile Include="Zones\NpcSystem\Reinforcements\ReinforcementType.cs" />
+    <Compile Include="Zones\PBS\DockingBases\ExpiringPBSDockingBase.cs" />
     <Compile Include="Zones\PBS\ConstructionAmmoHelpers.cs" />
     <Compile Include="Zones\ProximityProbes\PBSRegisterHelper.cs" />
     <Compile Include="Zones\ProximityProbes\VisibilityBasedProximityProbe.cs" />

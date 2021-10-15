@@ -255,7 +255,7 @@ namespace Perpetuum.Services.ProductionEngine.Facilities
 
         protected void RemoveStorage()
         {
-            Repository.DeleteTree(StorageEid);
+            Repository.DeleteTreeButNotRoot(StorageEid);
         }
 
         protected void MoveItemsToStorage(params Item[] itemsToReserve)

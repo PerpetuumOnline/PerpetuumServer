@@ -706,6 +706,9 @@ namespace Perpetuum
         PBSTechLevelTooHighForZone,
         TooCloseToOtherDevice,
         TooCloseToNPCBase,
-        TechLevelTooLow
+        OnlyBuildableOnTerraformProtected,
+        TechLevelTooLow,
+        MaxExpiringBasePerZoneReached,
+        MaxExpiringBasePerZonePerCorpReached
     }
 }

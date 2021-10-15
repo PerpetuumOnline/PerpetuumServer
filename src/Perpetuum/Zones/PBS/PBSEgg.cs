@@ -153,12 +153,21 @@ namespace Perpetuum.Zones.PBS
                 throw new PerpetuumException(ErrorCodes.ConsistencyError);
             }
 
+            // Check zone level (Gamma Tier)
             (pbsNodeEntityDefault.Tier.level > zone.Configuration.PBSTechLimit).ThrowIfTrue(ErrorCodes.PBSTechLevelTooHighForZone);
 
+            // For bases
             if (pbsNodeEntityDefault.CategoryFlags.IsCategory(CategoryFlags.cf_pbs_docking_base))
             {
-                //check deploying of bases
-                PBSHelper.ValidatePBSDockingBasePlacement(zone, spawnPosition, owner, pbsNodeEntityDefault).ThrowIfError();
+                // Special "Expiring" base
+                if (pbsNodeEntityDefault.Name == DefinitionNames.PBS_EXPIRING_DOCKING_BASE)
+                {
+                    PBSHelper.ValidateExpiringPBSDockingBasePlacement(zone, spawnPosition, owner, pbsNodeEntityDefault).ThrowIfError();
+                }
+                else // Normal PBS Docking base
+                {
+                    PBSHelper.ValidatePBSDockingBasePlacement(zone, spawnPosition, owner, pbsNodeEntityDefault).ThrowIfError();
+                }
                 return;
             }
 
