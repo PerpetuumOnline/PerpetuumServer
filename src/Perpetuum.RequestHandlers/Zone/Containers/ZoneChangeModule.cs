@@ -85,6 +85,9 @@ namespace Perpetuum.RequestHandlers.Zone.Containers
             player.Armor = player.ArmorMax * hpRatio;
             player.Core = player.CoreMax * apRatio;
 
+            player.DynamicProperties.Update(k.armor, hpRatio);
+            player.DynamicProperties.Update(k.currentCore, player.Core);
+
             // Save changes to entities
             player.Save();
             container.Save();
