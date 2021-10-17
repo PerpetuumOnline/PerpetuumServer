@@ -26,7 +26,7 @@ namespace Perpetuum.RequestHandlers.Zone
                     Logger.Error("definition not found:" + definition);
                     continue;
                 }
-
+                Logger.Info($"Blocking all {ed.Name} on zone {request.Zone.Id}");
                 request.Zone.DrawBlockingByDefinition(ed);
             }
 

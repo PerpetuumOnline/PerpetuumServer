@@ -1008,7 +1008,7 @@ namespace Perpetuum.Services.Channels.ChatCommands
             if (!IsDevModeEnabled(data))
                 return;
 
-            Dictionary<string, object> dictionary = new Dictionary<string, object>()
+            var dictionary = new Dictionary<string, object>()
                 {
                     { "mode", data.Command.Args[0] }
                 };
@@ -1022,17 +1022,29 @@ namespace Perpetuum.Services.Channels.ChatCommands
             if (!IsDevModeEnabled(data))
                 return;
 
-            bool err = false;
-            err = !int.TryParse(data.Command.Args[0], out int def);
-            int[] defs = new int[1];
-            defs[0] = def;
+            int zoneId = data.Sender.ZoneId ?? -1;
+            int[] defs;
+            try
+            {
+                var list = new List<int>();
+                zoneId = int.Parse(data.Command.Args[0]);
+                defs = list.AddMany(data.Command.Args.Skip(1).Select(s => int.Parse(s))).ToArray();
+            }
+            catch (Exception ex)
+            {
+                SendMessageToAll(data, "Bad args");
+                if (ex is ArgumentNullException)
+                    throw PerpetuumException.Create(ErrorCodes.RequiredArgumentIsNotSpecified);
+                throw;
+            }
+            CheckZoneId(data, zoneId);
 
-            Dictionary<string, object> dictionary = new Dictionary<string, object>()
+            var dictionary = new Dictionary<string, object>()
                 {
-                    { "definition", defs }
+                    { k.definition, defs }
                 };
 
-            string cmd = string.Format("zoneDrawBlockingByDefinition:zone_{0}:{1}", data.Sender.ZoneId, GenxyConverter.Serialize(dictionary));
+            string cmd = string.Format("{0}:zone_{1}:{2}", Commands.ZoneDrawBlockingByDefinition.Text, zoneId, GenxyConverter.Serialize(dictionary));
             HandleLocalRequest(data, cmd);
         }
         [ChatCommand("ZoneAddBlockingToLockedTiles")]
