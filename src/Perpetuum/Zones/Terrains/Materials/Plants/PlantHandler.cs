@@ -23,10 +23,13 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
         private const int AREA_SIZE = 32;
         // The number of 32x32 cubes across the zone max width of 2048x2048
         private const int TIME_SCALING_BASE = 64;
+        // Number of seconds in 8 hours
+        private const int EIGHT_HOURS = 28800;
+        private const int PLANT_REGEN_BASE_DELAY = EIGHT_HOURS / TIME_SCALING_BASE;
 
         private readonly IZone _zone;
         private readonly TimeSpan _natureSleepAmount = TimeSpan.FromSeconds(7);
-        private IntervalTimer _plantsTimer = new IntervalTimer(TimeSpan.FromSeconds(7));
+        private IntervalTimer _plantsTimer = new IntervalTimer(TimeSpan.FromSeconds(PLANT_REGEN_BASE_DELAY));
         private PlantScannerMode _scannerMode = PlantScannerMode.Paused;
 
         private bool _zoneFinished;
