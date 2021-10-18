@@ -21,15 +21,12 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
         public delegate IPlantHandler Factory(IZone zone);
 
         private const int AREA_SIZE = 32;
-        // The number of 32x32 cubes across the zone max width of 2048x2048
-        private const int TIME_SCALING_BASE = 64;
-        // Number of seconds in 8 hours
-        private const int EIGHT_HOURS = 28800;
-        private const int PLANT_REGEN_BASE_DELAY = EIGHT_HOURS / TIME_SCALING_BASE;
+        // Number of hours a full pass of plant regen should take
+        private readonly int FULL_PLANT_REGEN_PASS = 8;
 
         private readonly IZone _zone;
         private readonly TimeSpan _natureSleepAmount = TimeSpan.FromSeconds(7);
-        private IntervalTimer _plantsTimer = new IntervalTimer(TimeSpan.FromSeconds(PLANT_REGEN_BASE_DELAY));
+        private IntervalTimer _plantsTimer = new IntervalTimer(TimeSpan.FromSeconds(7));
         private PlantScannerMode _scannerMode = PlantScannerMode.Paused;
 
         private bool _zoneFinished;
@@ -39,6 +36,7 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
         private int _areaDoneY;
         private readonly int _areaAmount;
         private bool _stopSignal;
+        private int _total_area;
 
         public Area WorkArea { private get; set; }
 
@@ -46,8 +44,8 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
         {
             _zone = zone;
             _areaAmount = zone.Size.Width / AREA_SIZE; //the amount of areas
-            // We want to scale the time it takes to repopulate a zone
-            AddTimerScaling(_areaAmount);
+            _total_area = (zone.Size.Width / AREA_SIZE) * (zone.Size.Height / AREA_SIZE);
+            _plantsTimer = new IntervalTimer(TimeSpan.FromHours(FULL_PLANT_REGEN_PASS / _total_area));
             WorkArea = zone.Size.ToArea();
 
             ScannerMode = PlantScannerMode.Scanner;
@@ -81,12 +79,6 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
                 _isInProcess = 0;
                 _stopSignal = false;
             });
-        }
-
-        // https://github.com/OpenPerpetuum/PerpetuumServer/issues/304
-        private void AddTimerScaling(int zoneWidth)
-        {
-            _plantsTimer = new IntervalTimer(TimeSpan.FromSeconds((TIME_SCALING_BASE / zoneWidth) * 7));
         }
 
         private void ProcessPlants()
