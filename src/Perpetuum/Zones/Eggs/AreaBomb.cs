@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Perpetuum.EntityFramework;
 using Perpetuum.ExportedTypes;
 using Perpetuum.Modules.Weapons;
@@ -17,6 +18,11 @@ namespace Perpetuum.Zones.Eggs
         {
             if (!TryAcceptVisitor(this, visitor))
                 base.AcceptVisitor(visitor);
+        }
+        public override void Initialize()
+        {
+            DespawnTime = TimeSpan.FromMinutes(15);
+            base.Initialize();
         }
 
         protected override void OnSummonSuccess(IZone zone, Player[] summoners)
