@@ -21,7 +21,7 @@ namespace Perpetuum.Zones.Eggs
         }
         public override void Initialize()
         {
-            DespawnTime = TimeSpan.FromMinutes(15);
+            DespawnTime = TimeSpan.FromMinutes(5);
             base.Initialize();
         }
 

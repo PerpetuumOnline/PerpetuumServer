@@ -22,11 +22,13 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
 
         private const int AREA_SIZE = 32;
         // Number of hours a full pass of plant regen should take
-        private readonly float FULL_PLANT_REGEN_PASS = 8f;
+        private readonly double FULL_PLANT_REGEN_PASS = 8;
 
         private readonly IZone _zone;
-        private readonly TimeSpan _natureSleepAmount = TimeSpan.FromSeconds(7);
+        // Default value of 7s below. These get changed immediately but are left just in case.
+        private TimeSpan _natureSleepAmount = TimeSpan.FromSeconds(7);
         private IntervalTimer _plantsTimer = new IntervalTimer(TimeSpan.FromSeconds(7));
+
         private PlantScannerMode _scannerMode = PlantScannerMode.Paused;
 
         private bool _zoneFinished;
@@ -44,8 +46,10 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
         {
             _zone = zone;
             _areaAmount = zone.Size.Width / AREA_SIZE; //the amount of areas
-            _total_area = ((float)zone.Size.Width / (float)AREA_SIZE) * ((float)zone.Size.Height / (float)AREA_SIZE);
-            _plantsTimer = new IntervalTimer(TimeSpan.FromHours(FULL_PLANT_REGEN_PASS / _total_area));
+            _total_area = (zone.Size.Width / (float)AREA_SIZE) * (zone.Size.Height / (float)AREA_SIZE);
+            var refreshRate = FULL_PLANT_REGEN_PASS / _total_area;
+            _plantsTimer = new IntervalTimer(TimeSpan.FromHours(refreshRate));
+            _natureSleepAmount = TimeSpan.FromHours(refreshRate);
             WorkArea = zone.Size.ToArea();
 
             ScannerMode = PlantScannerMode.Scanner;
