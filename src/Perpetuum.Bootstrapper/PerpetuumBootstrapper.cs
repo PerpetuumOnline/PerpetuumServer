@@ -2421,6 +2421,23 @@ namespace Perpetuum.Bootstrapper
             {
                 return zone =>
                 {
+
+                    var zoneConfigs = Db.Query().CommandText("SELECT maxrifts FROM zoneriftsconfig WHERE zoneid = @zoneId")
+                    .SetParameter("@zoneId", zone.Id)
+                    .Execute();
+                    if (zoneConfigs.Count < 1) 
+                    {
+                        return null;
+                    }
+
+                    var record = zoneConfigs[0];
+                    var maxrifts = record.GetValue<int>("maxrifts");
+
+                    if (maxrifts < 1) 
+                    {
+                        return null;
+                    }
+
                     if (zone.Configuration.Terraformable)
                     {
                         return new PvpRiftSpawnPositionFinder(zone);
@@ -2430,14 +2447,30 @@ namespace Perpetuum.Bootstrapper
                 };
             });
 
-            _builder.RegisterType<RiftManager>();
-            _builder.RegisterType<StrongholdRiftManager>();
+            _builder.RegisterType<RiftManager>().As<IRiftManager>();
+            _builder.RegisterType<StrongholdRiftManager>().As<IRiftManager>();
 
             _builder.Register<Func<IZone, IRiftManager>>(x =>
             {
                 var ctx = x.Resolve<IComponentContext>();
-                return zone =>
-                {
+                return zone => {
+
+                    var zoneConfigs = Db.Query().CommandText("SELECT maxrifts FROM zoneriftsconfig WHERE zoneid = @zoneId")
+                    .SetParameter("@zoneId", zone.Id)
+                    .Execute();
+                    if (zoneConfigs.Count < 1) 
+                    {
+                        return null;
+                    }
+
+                    var record = zoneConfigs[0];
+                    var maxrifts = record.GetValue<int>("maxrifts");
+
+                    if (maxrifts < 1) 
+                    {
+                        return null;
+                    }
+
                     if (zone is TrainingZone)
                         return null;
 
