@@ -2447,13 +2447,31 @@ namespace Perpetuum.Bootstrapper
                 };
             });
 
-            _builder.RegisterType<RiftManager>().As<IRiftManager>();
-            _builder.RegisterType<StrongholdRiftManager>().As<IRiftManager>();
+            _builder.RegisterType<RiftManager>();
+            _builder.RegisterType<StrongholdRiftManager>();
 
             _builder.Register<Func<IZone, IRiftManager>>(x =>
             {
                 var ctx = x.Resolve<IComponentContext>();
-                return zone => {
+                return zone => 
+                {
+                    if (zone is TrainingZone)
+                        return null;
+
+                    if (zone is StrongHoldZone)
+                    {
+
+                        var strongHoldExitConfigCount = Db.Query().CommandText("select count(*) from strongholdexitconfig where zoneid = @zoneId;")
+                        .SetParameter("@zoneId", zone.Id)
+                        .ExecuteScalar<int>();
+                        if (strongHoldExitConfigCount < 1) 
+                        {
+                            return null;
+                        }
+
+                        return ctx.Resolve<StrongholdRiftManager>(new TypedParameter(typeof(IZone), zone));
+                    }
+
 
                     var zoneConfigs = Db.Query().CommandText("SELECT maxrifts FROM zoneriftsconfig WHERE zoneid = @zoneId")
                     .SetParameter("@zoneId", zone.Id)
@@ -2471,17 +2489,9 @@ namespace Perpetuum.Bootstrapper
                         return null;
                     }
 
-                    if (zone is TrainingZone)
-                        return null;
-
-                    if (zone is StrongHoldZone)
-                    {
-                       return ctx.Resolve<StrongholdRiftManager>(new TypedParameter(typeof(IZone), zone));
-                    }
-
                     var spawnTime = TimeRange.FromLength(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(5));
                     var finder = ctx.Resolve<Func<IZone, RiftSpawnPositionFinder>>().Invoke(zone);
-                    return ctx.Resolve<IRiftManager>(new TypedParameter(typeof(IZone),zone),new NamedParameter("spawnTime",spawnTime),new NamedParameter("spawnPositionFinder",finder));
+                    return ctx.Resolve<RiftManager>(new TypedParameter(typeof(IZone),zone),new NamedParameter("spawnTime",spawnTime),new NamedParameter("spawnPositionFinder",finder));
                 };
             });
         }
