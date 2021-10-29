@@ -38,7 +38,6 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
         private int _areaDoneY;
         private readonly int _areaAmount;
         private bool _stopSignal;
-        private float _total_area;
 
         public Area WorkArea { private get; set; }
 
@@ -46,10 +45,10 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
         {
             _zone = zone;
             _areaAmount = zone.Size.Width / AREA_SIZE; //the amount of areas
-            _total_area = (zone.Size.Width / (float)AREA_SIZE) * (zone.Size.Height / (float)AREA_SIZE);
-            var refreshRate = FULL_PLANT_REGEN_PASS / _total_area;
-            _plantsTimer = new IntervalTimer(TimeSpan.FromHours(refreshRate));
-            _natureSleepAmount = TimeSpan.FromHours(refreshRate);
+            var _total_area = (zone.Size.Width / (float)AREA_SIZE) * (zone.Size.Height / (float)AREA_SIZE);
+            var refreshRate = TimeSpan.FromHours(FULL_PLANT_REGEN_PASS / _total_area);
+            _plantsTimer = new IntervalTimer(refreshRate);
+            _natureSleepAmount = refreshRate;
             WorkArea = zone.Size.ToArea();
 
             ScannerMode = PlantScannerMode.Scanner;
