@@ -2481,7 +2481,7 @@ namespace Perpetuum.Bootstrapper
 
                     var spawnTime = TimeRange.FromLength(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(5));
                     var finder = ctx.Resolve<Func<IZone, RiftSpawnPositionFinder>>().Invoke(zone);
-                    return ctx.Resolve<RiftManager>(new TypedParameter(typeof(IZone),zone),new NamedParameter("spawnTime",spawnTime),new NamedParameter("spawnPositionFinder",finder));
+                    return ctx.Resolve<IRiftManager>(new TypedParameter(typeof(IZone),zone),new NamedParameter("spawnTime",spawnTime),new NamedParameter("spawnPositionFinder",finder));
                 };
             });
         }
