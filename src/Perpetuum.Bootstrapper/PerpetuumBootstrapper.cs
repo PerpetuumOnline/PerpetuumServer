@@ -2421,23 +2421,6 @@ namespace Perpetuum.Bootstrapper
             {
                 return zone =>
                 {
-
-                    var zoneConfigs = Db.Query().CommandText("SELECT maxrifts FROM zoneriftsconfig WHERE zoneid = @zoneId")
-                    .SetParameter("@zoneId", zone.Id)
-                    .Execute();
-                    if (zoneConfigs.Count < 1) 
-                    {
-                        return null;
-                    }
-
-                    var record = zoneConfigs[0];
-                    var maxrifts = record.GetValue<int>("maxrifts");
-
-                    if (maxrifts < 1) 
-                    {
-                        return null;
-                    }
-
                     if (zone.Configuration.Terraformable)
                     {
                         return new PvpRiftSpawnPositionFinder(zone);
@@ -2461,7 +2444,7 @@ namespace Perpetuum.Bootstrapper
                     if (zone is StrongHoldZone)
                     {
 
-                        var strongHoldExitConfigCount = Db.Query().CommandText("select count(*) from strongholdexitconfig where zoneid = @zoneId;")
+                        var strongHoldExitConfigCount = Db.Query().CommandText("SELECT COUNT(*) FROM strongholdexitconfig WHERE zoneid = @zoneId;")
                         .SetParameter("@zoneId", zone.Id)
                         .ExecuteScalar<int>();
                         if (strongHoldExitConfigCount < 1) 
