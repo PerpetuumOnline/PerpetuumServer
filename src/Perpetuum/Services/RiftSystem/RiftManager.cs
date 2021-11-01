@@ -62,23 +62,25 @@ namespace Perpetuum.Services.RiftSystem
         private readonly TimeRange _spawnTime;
         private readonly RiftSpawnPositionFinder _spawnPositionFinder;
         private readonly IEntityServices _entityServices;
+        private readonly ZoneRiftConfigRepository zoneRiftConfigRepository;
 
         private readonly LinkedList<TimeTracker> _nextRiftSpawns = new LinkedList<TimeTracker>();
 
         public RiftManager(IZone zone, TimeRange spawnTime, RiftSpawnPositionFinder spawnPositionFinder, IEntityServices entityServices)
         {
             _zone = zone;
-            _config = ZoneRiftConfigReader.GetForZone(zone);
             _spawnTime = spawnTime;
             _spawnPositionFinder = spawnPositionFinder;
             _entityServices = entityServices;
+            zoneRiftConfigRepository = new ZoneRiftConfigRepository(zone);
+            _config = zoneRiftConfigRepository.GetZoneConfig();
         }
 
         private int _riftCounts;
 
         public void Update(TimeSpan time)
         {
-            while (_riftCounts < _config.MaxRifts)
+            while (_riftCounts < _config.GetMaxRifts())
             {
                 _nextRiftSpawns.AddLast(new TimeTracker(FastRandom.NextTimeSpan(_spawnTime)));
                 Interlocked.Increment(ref _riftCounts);
@@ -100,7 +102,7 @@ namespace Perpetuum.Services.RiftSystem
             var rift = (Rift)_entityServices.Factory.CreateWithRandomEID(DefinitionNames.RIFT);
 
             rift.SetDespawnTime(TimeSpan.FromHours(3));
-            rift.SetLevel(_config.MaxLevel);
+            rift.SetLevel(_config.GetMaxLevel());
             rift.RemovedFromZone += OnRiftRemovedFromZone;
 
             var spawnPosition = _spawnPositionFinder.FindSpawnPosition().ToPosition();

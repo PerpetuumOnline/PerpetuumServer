@@ -2436,14 +2436,40 @@ namespace Perpetuum.Bootstrapper
             _builder.Register<Func<IZone, IRiftManager>>(x =>
             {
                 var ctx = x.Resolve<IComponentContext>();
-                return zone =>
+                return zone => 
                 {
                     if (zone is TrainingZone)
                         return null;
 
                     if (zone is StrongHoldZone)
                     {
-                       return ctx.Resolve<StrongholdRiftManager>(new TypedParameter(typeof(IZone), zone));
+
+                        var strongHoldExitConfigCount = Db.Query().CommandText("SELECT COUNT(*) FROM strongholdexitconfig WHERE zoneid = @zoneId;")
+                        .SetParameter("@zoneId", zone.Id)
+                        .ExecuteScalar<int>();
+                        if (strongHoldExitConfigCount < 1) 
+                        {
+                            return null;
+                        }
+
+                        return ctx.Resolve<StrongholdRiftManager>(new TypedParameter(typeof(IZone), zone));
+                    }
+
+
+                    var zoneConfigs = Db.Query().CommandText("SELECT maxrifts FROM zoneriftsconfig WHERE zoneid = @zoneId")
+                    .SetParameter("@zoneId", zone.Id)
+                    .Execute();
+                    if (zoneConfigs.Count < 1) 
+                    {
+                        return null;
+                    }
+
+                    var record = zoneConfigs[0];
+                    var maxrifts = record.GetValue<int>("maxrifts");
+
+                    if (maxrifts < 1) 
+                    {
+                        return null;
                     }
 
                     var spawnTime = TimeRange.FromLength(TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(5));
