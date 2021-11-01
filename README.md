@@ -8,7 +8,7 @@ If you have any questions about joining the team hit us up on [discord](https://
 
 To see what we are working on acquaint yourself with our:
  - Website [https://openperpetuum.com](https://openperpetuum.com)
- - Project Kanban [Board](https://github.com/OpenPerpetuum/OP-Project)
+ - Project Kanban [Board](https://github.com/orgs/OpenPerpetuum/projects/2)
  - [Discord](https://discord.gg/e4gH9Ff)
 
 To contribute, join the team and we will get you up and running, or, show us your moxie and submit a pull request!

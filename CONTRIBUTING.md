@@ -25,8 +25,9 @@ The PerpetuumServer is highly coupled in some instances to DB state.  The OPDB h
  - Submit your PR to the server, and another PR of your SQL patch to the OPDB development branch
  - **Include a comment in the PR note that the server and DB patch are interdependent**
 
-## OP-project - Cross Repo issue and feature planning
-As mentioned above, all action items are collected in one kanban board for Server related development.  These issues should be pointed to with all PR's made.  A PR should address at most one OP-Project issue.  When a server change requires a DB change, use the issue too as a mechanism to indicate the coupling.
+## Org-Project: cross repo issue tracking
+As mentioned above, all action items are collected in one kanban board for Server related development.  These issues should be pointed to with all PR's made.  A PR should address at most one issue.  When a server change requires a DB change, use the issue too as a mechanism to indicate the coupling.  
+[See issues here](https://github.com/orgs/OpenPerpetuum/projects/2)
 
 ## Code of Conduct
 
