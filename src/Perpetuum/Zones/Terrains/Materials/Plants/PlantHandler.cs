@@ -21,10 +21,14 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
         public delegate IPlantHandler Factory(IZone zone);
 
         private const int AREA_SIZE = 32;
+        // Number of hours a full pass of plant regen should take
+        private readonly double FULL_PLANT_REGEN_PASS = 8;
 
         private readonly IZone _zone;
-        private readonly TimeSpan _natureSleepAmount = TimeSpan.FromSeconds(7);
+        // Default value of 7s below. These get changed immediately but are left just in case.
+        private TimeSpan _natureSleepAmount = TimeSpan.FromSeconds(7);
         private IntervalTimer _plantsTimer = new IntervalTimer(TimeSpan.FromSeconds(7));
+
         private PlantScannerMode _scannerMode = PlantScannerMode.Paused;
 
         private bool _zoneFinished;
@@ -41,6 +45,10 @@ namespace Perpetuum.Zones.Terrains.Materials.Plants
         {
             _zone = zone;
             _areaAmount = zone.Size.Width / AREA_SIZE; //the amount of areas
+            var _total_area = (zone.Size.Width / (float)AREA_SIZE) * (zone.Size.Height / (float)AREA_SIZE);
+            var refreshRate = TimeSpan.FromHours(FULL_PLANT_REGEN_PASS / _total_area);
+            _plantsTimer = new IntervalTimer(refreshRate);
+            _natureSleepAmount = refreshRate;
             WorkArea = zone.Size.ToArea();
 
             ScannerMode = PlantScannerMode.Scanner;
