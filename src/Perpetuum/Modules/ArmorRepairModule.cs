@@ -65,9 +65,9 @@ namespace Perpetuum.Modules
         protected override void OnAction()
         {
             var amount = armorRepairAmount.Value;
-            OnRepair(ParentRobot,amount);
-            ParentRobot.SpreadAssistThreatToNpcs(ParentRobot,new Threat(ThreatType.Support,amount));
-
+            OnRepair(ParentRobot, amount);
+            var threatAmount = Math.Sqrt(amount).Clamp(1, 100);
+            ParentRobot.SpreadAssistThreatToNpcs(ParentRobot, new Threat(ThreatType.Support, threatAmount));
         }
     }
 }

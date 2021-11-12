@@ -16,7 +16,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors.NpcSpawnEventHandlers
     {
         protected override TimeSpan SPAWN_DELAY { get { return TimeSpan.FromSeconds(5); } }
         protected override TimeSpan SPAWN_LIFETIME { get { return TimeSpan.FromMinutes(30); } }
-        protected override int MAX_SPAWN_DIST { get { return 10; } }
+        protected override int MAX_SPAWN_DIST { get { return 15; } }
 
         public override EventType Type => EventType.NpcReinforce;
 
