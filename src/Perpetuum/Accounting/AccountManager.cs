@@ -106,7 +106,7 @@ namespace Perpetuum.Accounting
         }
 
         private const double BOOSTMULTIPLIERMAX = 25;
-        private const double SERVER_DESIRED_EP_LEVEL = 750000;
+        private const double SERVER_DESIRED_EP_LEVEL = 1000000;
         private const double GAURANTEED_BOOST_MAX_THRESH = 45000;
 
         public IDictionary<string,object> GetEPData(Account account,Character character)
