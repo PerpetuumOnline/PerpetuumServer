@@ -29,7 +29,8 @@ namespace Perpetuum.Zones.NpcSystem
                                    IEntityVisitor<ArmorHardenerModule>,
                                    IEntityVisitor<BlobEmissionModulatorModule>,
                                    IEntityVisitor<TargetBlinderModule>,
-                                   IEntityVisitor<CoreBoosterModule>
+                                   IEntityVisitor<CoreBoosterModule>,
+                                   IEntityVisitor<TargetPainterModule>
     {
         private readonly IntervalTimer _timer;
         private readonly ActiveModule _module;
@@ -159,6 +160,21 @@ namespace Perpetuum.Zones.NpcSystem
         public void Visit(WebberModule module)
         {
             if (module.ParentRobot.CorePercentage < WEBBER_CORE_THRESHOLD)
+                return;
+
+            var lockTarget = ((Creature)module.ParentRobot).SelectOptimalLockTargetFor(module);
+            if (lockTarget == null)
+                return;
+
+            module.Lock = lockTarget;
+            module.State.SwitchTo(ModuleStateType.Oneshot);
+        }
+
+        private const double PAINTER_CORE_THRESHOLD = 0.65;
+
+        public void Visit(TargetPainterModule module)
+        {
+            if (module.ParentRobot.CorePercentage < PAINTER_CORE_THRESHOLD)
                 return;
 
             var lockTarget = ((Creature)module.ParentRobot).SelectOptimalLockTargetFor(module);
