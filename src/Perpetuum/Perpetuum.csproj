@@ -725,6 +725,7 @@
     <Compile Include="Zones\NpcSystem\Presences\GrowingPresences\GrowingNPCBasePresence.cs" />
     <Compile Include="Zones\NpcSystem\Presences\GrowingPresences\GrowingPresence.cs" />
     <Compile Include="Zones\NpcSystem\Presences\GrowingPresences\GrowthStates.cs" />
+    <Compile Include="Zones\NpcSystem\PrimaryTargetStrategy.cs" />
     <Compile Include="Zones\NpcSystem\Reinforcements\INpcReinforcementWave.cs" />
     <Compile Include="Zones\NpcSystem\Reinforcements\INpcReinforcementsRepository.cs" />
     <Compile Include="Zones\NpcSystem\Reinforcements\INpcReinforcements.cs" />
