@@ -1597,7 +1597,11 @@ killercharacterid
                 unitsInZone.WithinRange(targetPosition, DistanceConstants.PLANT_MAX_DISTANCE_FROM_PBS)
                     .Any(u =>
                     {
-                        if (u is PBSDockingBase || u is PBSControlTower)
+                        if (u is ExpiringPBSDockingBase)
+                        {
+                            return false;
+                        }
+                        else if (u is PBSDockingBase || u is PBSControlTower)
                         {
                             if (u.Owner == corporationEid)
                                 return true;
