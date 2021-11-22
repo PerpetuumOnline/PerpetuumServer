@@ -1,4 +1,5 @@
-﻿using Perpetuum.Common;
+﻿using Perpetuum.Accounting.Characters;
+using Perpetuum.Common;
 using Perpetuum.Groups.Corporations;
 using Perpetuum.Items.Templates;
 using Perpetuum.Services.Channels;
@@ -95,6 +96,12 @@ namespace Perpetuum.Zones.PBS.DockingBases
 
         public override ErrorCodes IsDeconstructAllowed()
         {
+            return ErrorCodes.DockingBaseNotSetToDeconstruct;
+        }
+
+        public override ErrorCodes SetDeconstructionRight(Character issuer, bool state)
+        {
+            DynamicProperties.Remove(k.allowDeconstruction);
             return ErrorCodes.DockingBaseNotSetToDeconstruct;
         }
     }

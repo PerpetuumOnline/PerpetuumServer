@@ -336,7 +336,7 @@ namespace Perpetuum.Zones.PBS.DockingBases
             return info;
         }
 
-        public ErrorCodes SetDeconstructionRight(Character issuer, bool state)
+        public virtual ErrorCodes SetDeconstructionRight(Character issuer, bool state)
         {
             this.CheckAccessAndThrowIfFailed(issuer);
 
