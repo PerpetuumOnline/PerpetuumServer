@@ -51,7 +51,14 @@ namespace Perpetuum.Services.EventServices.EventProcessors
         private string GetNpcName(int def)
         {
             var nameToken = EntityDefault.Get(def).Name + "_name";
-            var name = _nameDictionary[nameToken]?.ToString();
+            var name = "";
+            try
+            {
+                name = _nameDictionary[nameToken]?.ToString();
+            } catch (KeyNotFoundException)
+            {
+                name = 'NameNotFound';
+            }
             return name ?? string.Empty;
         }
 
