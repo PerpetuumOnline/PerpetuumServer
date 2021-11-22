@@ -68,6 +68,7 @@ namespace Perpetuum.Zones.PBS.DockingBases
             _despawnHelper.DespawnStrategy = (unit) =>
             {
                 ReinforceHandler.ReinforceCounter = 0;
+                ReinforceHandler.CurrentState.ToVulnerable();
                 Kill();
             };
 
