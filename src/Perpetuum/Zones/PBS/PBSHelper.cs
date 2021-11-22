@@ -115,13 +115,13 @@ namespace Perpetuum.Zones.PBS
 
         public static ErrorCodes ValidateExpiringPBSDockingBasePlacement(IZone zone, Position position, long owner, EntityDefault definition)
         {
-            var expiringBases = zone.Units.Where(u => u is ExpiringPBSDockingBase);
+            var expiringBasesAndEggs = zone.Units.Where(IsExpiringBaseOrEgg);
 
-            if (expiringBases.Count() >= MAX_EXPIRING_BASES_PER_ZONE)
+            if (expiringBasesAndEggs.Count() >= MAX_EXPIRING_BASES_PER_ZONE)
             {
                 return ErrorCodes.MaxExpiringBasePerZoneReached;
             }
-            else if (expiringBases.Count(u => u.Owner == owner) >= MAX_EXPIRING_BASES_PER_ZONE_PER_CORP)
+            else if (expiringBasesAndEggs.Count(u => IsUnitOrEggOwnedByCorp(u, owner)) >= MAX_EXPIRING_BASES_PER_ZONE_PER_CORP)
             {
                 return ErrorCodes.MaxExpiringBasePerZonePerCorpReached;
             }
@@ -135,11 +135,10 @@ namespace Perpetuum.Zones.PBS
         public static ErrorCodes ValidatePBSDockingBasePlacement(IZone zone, Position position, long owner,
             EntityDefault definition)
         {
-            //Get PBS docking bases - excluding Expiring types
-            var bases = zone.Units.Where(u => u is PBSDockingBase && !(u is ExpiringPBSDockingBase));
+            //Get PBS docking bases (or eggs) - excluding Expiring types
+            var bases = zone.Units.Where(u => IsBaseOrEgg(u) && !IsExpiringBaseOrEgg(u));
             //Total count
             var baseCountPerZone = bases.Count();
-
             //the zone allows
             var maxBasesPerZone = zone.Configuration.MaxDockingBase;
 
@@ -147,17 +146,35 @@ namespace Perpetuum.Zones.PBS
             {
                 return ErrorCodes.MaxDockingBasePerZoneReached;
             }
-
-            if (maxBasesPerZone > MAX_BASES_PER_CORP_PER_ZONE)
+            else if (maxBasesPerZone > MAX_BASES_PER_CORP_PER_ZONE)
             {
                 //only a set number of bases for one corporation
-                if (bases.Count(u => u.Owner == owner) >= MAX_BASES_PER_CORP_PER_ZONE)
+                if (bases.Count(u => IsUnitOrEggOwnedByCorp(u, owner)) >= MAX_BASES_PER_CORP_PER_ZONE)
                 {
                     return ErrorCodes.MaxDockingBasePerZonePerCorporationReached;
                 }
             }
 
             return CheckRangeToOtherBases(zone, position, definition);
+        }
+
+        private static bool IsBaseOrEgg(Unit unit)
+        {
+            return unit.IsCategory(CategoryFlags.cf_pbs_docking_base) || unit.IsCategory(CategoryFlags.cf_pbs_docking_base_capsules);
+        }
+
+        private static bool IsExpiringBaseOrEgg(Unit unit)
+        {
+            return unit is ExpiringPBSDockingBase || (unit as PBSEgg)?.TargetPBSNodeDefault.Name == DefinitionNames.PBS_EXPIRING_DOCKING_BASE;
+        }
+
+        private static bool IsUnitOrEggOwnedByCorp(Unit unit, long corpEid)
+        {
+            if (unit is PBSEgg egg)
+            {
+                return egg.DeployerPlayer.CorporationEid == corpEid;
+            }
+            return unit.Owner == corpEid;
         }
 
         private static ErrorCodes CheckRangeToOtherBases(IZone zone, Position position, EntityDefault definition)
