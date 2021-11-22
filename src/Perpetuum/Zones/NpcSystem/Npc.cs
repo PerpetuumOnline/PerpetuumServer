@@ -405,13 +405,17 @@ namespace Perpetuum.Zones.NpcSystem
 
         public HomingAI(Npc npc) : base(npc)
         {
-            _maxReturnHomeRadius = (npc.HomeRange * 0.4).Clamp(1, 20);
+            _maxReturnHomeRadius = (npc.HomeRange * 0.4).Clamp(3, 20);
             _pathFinder = new AStarFinder(Heuristic.Manhattan, npc.IsWalkable);
         }
 
         public override void Enter()
         {
-            var randomHome = npc.HomePosition.GetRandomPositionInRange2D(1, _maxReturnHomeRadius);
+            var randomHome = npc.Zone.FindPassablePointInRadius(npc.HomePosition, (int)_maxReturnHomeRadius);
+            if(randomHome == default)
+            {
+                randomHome = npc.HomePosition;
+            }
             _pathFinder.FindPathAsync(npc.CurrentPosition, randomHome).ContinueWith(t =>
             {
                 var path = t.Result;
@@ -1134,25 +1138,35 @@ namespace Perpetuum.Zones.NpcSystem
             return IsStationary || IsInRangeOf3D(target, AGGRO_RANGE);
         }
 
+        private readonly TimeKeeper _debounceLockChange = new TimeKeeper(TimeSpan.FromSeconds(2.5));
         protected override void OnUnitLockStateChanged(Lock @lock)
         {
+            if (!_debounceLockChange.Expired)
+                return;
+
             var unitLock = @lock as UnitLock;
-            if ( unitLock == null )
+            if (unitLock == null)
                 return;
 
             if (unitLock.Target != this)
                 return;
 
-            if (unitLock.State != LockState.Locked) 
+            if (unitLock.State != LockState.Locked)
                 return;
 
             var threatValue = unitLock.Primary ? Threat.LOCK_PRIMARY : Threat.LOCK_SECONDARY;
             AddThreat(unitLock.Owner, new Threat(ThreatType.Lock, threatValue), true);
+            _debounceLockChange.Reset();
         }
 
+        private readonly TimeKeeper _debounceBodyPull = new TimeKeeper(TimeSpan.FromSeconds(2.5));
         protected override void OnUnitTileChanged(Unit target)
         {
+            if (!_debounceBodyPull.Expired)
+                return;
+
             AddBodyPullThreat(target);
+            _debounceBodyPull.Reset();
         }
 
         internal override bool IsHostile(Player player)
