@@ -3,6 +3,7 @@ using Perpetuum.EntityFramework;
 using Perpetuum.Services.Channels;
 using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Zones.NpcSystem.Flocks;
+using Perpetuum.Log.Loggers;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -55,9 +56,10 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             try
             {
                 name = _nameDictionary[nameToken]?.ToString();
-            } catch (KeyNotFoundException)
+            }
+            catch (KeyNotFoundException)
             {
-                name = 'NameNotFound';
+                name = "NameNotFound";
             }
             return name ?? string.Empty;
         }
