@@ -1,24 +1,34 @@
 ﻿using Perpetuum.Accounting.Characters;
 using Perpetuum.Common;
+using Perpetuum.Data;
 using Perpetuum.Groups.Corporations;
 using Perpetuum.Items.Templates;
 using Perpetuum.Services.Channels;
+using Perpetuum.Services.Mail;
 using Perpetuum.Services.MarketEngine;
 using Perpetuum.Services.Sparks.Teleports;
 using Perpetuum.Units;
 using Perpetuum.Units.DockingBases;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Perpetuum.Zones.PBS.DockingBases
 {
+    /// <summary>
+    /// This is a special PBS base that expires based on a configured lifetime
+    /// It can not be deconstructed, it must expire or be killed
+    /// There are also special rules about placement which are enforced in the PBSDeployer module
+    /// The expiration status of the base is communicate to players by mail and terminal chat messages and MOTD
+    /// </summary>
     public class ExpiringPBSDockingBase : PBSDockingBase
     {
         private IUnitDespawnHelper _despawnHelper;
-        private readonly TimeSpan _alertPeriod = TimeSpan.FromHours(1);
-        private readonly TimeSpan _minLife = TimeSpan.FromMinutes(5);
-        private const int MIN_LIFE_HOURS = 72;
-        private bool _alerted;
+        private readonly TimeSpan _minLifeOnInit = TimeSpan.FromMinutes(10);
+        private bool _firstUpdate = true;
+        private const string SENDER_CHARACTER_NICKNAME = "[OPP] Announcer";
+        private readonly Character _announcer;
 
         public ExpiringPBSDockingBase(
             MarketHelper marketHelper,
@@ -37,13 +47,14 @@ namespace Perpetuum.Zones.PBS.DockingBases
              sparkTeleportHelper,
              pbsObjectHelperFactory)
         {
+            _announcer = Character.GetByNick(SENDER_CHARACTER_NICKNAME);
         }
 
         public TimeSpan LifeTime
         {
             get
             {
-                return TimeSpan.FromHours(ED.Config.lifeTime ?? MIN_LIFE_HOURS);
+                return TimeSpan.FromHours(ED.Config.lifeTime ?? 72);
             }
         }
 
@@ -59,7 +70,7 @@ namespace Perpetuum.Zones.PBS.DockingBases
         {
             get
             {
-                return (EndTime - DateTime.Now).Max(_minLife);
+                return (EndTime - DateTime.Now).Max(_minLifeOnInit);
             }
         }
 
@@ -72,26 +83,33 @@ namespace Perpetuum.Zones.PBS.DockingBases
                 ReinforceHandler.CurrentState.ToVulnerable();
                 Kill();
             };
+            _firstUpdate = true;
 
             base.OnEnterZone(zone, enterType);
         }
 
+        private void OnFirst()
+        {
+            _firstUpdate = false;
+            ChannelManager.JoinChannel(ChannelName, _announcer, ChannelMemberRole.Operator, null);
+            ChannelManager.SetTopic(ChannelName, _announcer, $"Base Expires at {EndTime.ToString("F")}");
+            SendMailStatusAsync();
+        }
+
         protected override void OnUpdate(TimeSpan time)
         {
-            WarnIfAboutToExpire();
+            if (_firstUpdate)
+                OnFirst();
 
             _despawnHelper?.Update(time, this);
 
             base.OnUpdate(time);
         }
 
-        private void WarnIfAboutToExpire()
+        public override void JoinChannel(Character character)
         {
-            if (!_alerted && Remaining < _alertPeriod)
-            {
-                _alerted = true;
-                Task.Run(() => _pbsObjectHelper.SendAttackAlert());
-            }
+            base.JoinChannel(character);
+            ChannelManager.Announcement(ChannelName, _announcer, $"Base is going to expire in: {Remaining.ToHumanTimeString()}");
         }
 
         public override ErrorCodes IsDeconstructAllowed()
@@ -103,6 +121,48 @@ namespace Perpetuum.Zones.PBS.DockingBases
         {
             DynamicProperties.Remove(k.allowDeconstruction);
             return ErrorCodes.DockingBaseNotSetToDeconstruct;
+        }
+
+        /// <summary>
+        /// Get authorized managers of the facility
+        /// </summary>
+        /// <returns>IEnumerable<Character></returns>
+        private IEnumerable<Character> AuthorizedCorpOfficers()
+        {
+            var corp = Corporation.Get(Owner);
+            if (corp == null)
+                return new Character[] { };
+
+            return corp.GetMembersWithAnyRoles(CorporationRole.DeputyCEO,
+                CorporationRole.CEO,
+                CorporationRole.editPBS).Select(m => m.character);
+        }
+
+        /// <summary>
+        /// Send mail to the top 10 most active authorized corp officers
+        /// </summary>
+        /// <returns>Task</returns>
+        private Task SendMailStatusAsync()
+        {
+            return Task.Run(() =>
+            {
+                var officers = AuthorizedCorpOfficers().OrderByDescending(c => c.LastLogout).Take(10);
+                var message = BuildStatusMessage();
+                var subject = "Syntec Base Expiration info";
+                using (var scope = Db.CreateTransaction())
+                {
+                    foreach (var officer in officers)
+                    {
+                        MailHandler.SendMail(_announcer, officer, subject, BuildStatusMessage(), MailType.storyteller, out _, out _);
+                    }
+                    scope.Complete();
+                }
+            });
+        }
+
+        private string BuildStatusMessage()
+        {
+            return $"Your Syntec Base will expire at {EndTime.ToString("F")} in {Remaining.ToHumanTimeString()}.\n\nBase will become unstable and self-destruct at this time!\nPlease plan your stay accordingly.";
         }
     }
 }

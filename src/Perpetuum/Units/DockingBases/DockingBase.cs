@@ -250,7 +250,7 @@ namespace Perpetuum.Units.DockingBases
 
         protected virtual bool CanCreateEquippedStartRobot => Zone?.Configuration.Protected ?? false;
 
-        public void JoinChannel(Character character)
+        public virtual void JoinChannel(Character character)
         {
             ChannelManager.JoinChannel(ChannelName,character,ChannelMemberRole.Undefined,null);
         }
