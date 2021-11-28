@@ -61,6 +61,7 @@ namespace Perpetuum.Services.EventServices.EventProcessors
             {
                 name = "NameNotFound";
             }
+            //var name = _nameDictionary[nameToken]?.ToString();
             return name ?? string.Empty;
         }
 
