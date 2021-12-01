@@ -3,9 +3,9 @@ using Perpetuum.EntityFramework;
 using Perpetuum.Services.Channels;
 using Perpetuum.Services.EventServices.EventMessages;
 using Perpetuum.Zones.NpcSystem.Flocks;
-using Perpetuum.Log.Loggers;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Perpetuum.Log;
 
 namespace Perpetuum.Services.EventServices.EventProcessors
 {
@@ -53,18 +53,24 @@ namespace Perpetuum.Services.EventServices.EventProcessors
         {
             var nameToken = EntityDefault.Get(def).Name + "_name";
             var name = "";
-            try
+            if (_nameDictionary.TryGetValue(nameToken, out name) != true)
             {
-                name = _nameDictionary[nameToken]?.ToString();
+                WriteNPCStateAnnouncerLog($"Missing localized name for {nameToken}");
             }
-            catch (KeyNotFoundException)
-            {
-                name = "NameNotFound";
-            }
-            //var name = _nameDictionary[nameToken]?.ToString();
             return name ?? string.Empty;
         }
 
+        private void WriteNPCStateAnnouncerLog(string message)
+        {
+            var e = new LogEvent
+            {
+                LogType = LogType.Info,
+                Tag = "NPC",
+                Message = message
+            };
+
+            Logger.Log(e);
+        }
 
         private string GetStateMessage(NpcStateMessage msg)
         {
