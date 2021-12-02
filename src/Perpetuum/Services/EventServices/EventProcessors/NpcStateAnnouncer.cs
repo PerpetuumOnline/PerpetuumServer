@@ -64,8 +64,8 @@ namespace Perpetuum.Services.EventServices.EventProcessors
         {
             var e = new LogEvent
             {
-                LogType = LogType.Info,
-                Tag = "NPC",
+                LogType = LogType.Error,
+                Tag = "NpcStateAnnouncer",
                 Message = message
             };
 
