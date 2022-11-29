@@ -16,8 +16,8 @@ namespace Perpetuum.Zones.Teleporting.Strategies
 {
     public class TrainingExitStrategy : ITeleportStrategy
     {
-        private const double CHARACTER_START_CREDIT = 500000; //TODO: move to DB
-        private const double NIC_REWARD_PER_LEVEL = 125000; //TODO: move to DB
+        private readonly double CHARACTER_START_CREDIT;
+        private readonly double NIC_REWARD_PER_LEVEL;
         private const int MAX_REWARD_LEVEL = 4;
         private TimeSpan WAIT_TIME_BEFORE_SENDING_MAIL = TimeSpan.FromSeconds(10);
         private TimeSpan WAIT_TIME_BEFORE_SENDING_WELCOME_MESSAGE = TimeSpan.FromSeconds(10);
@@ -31,13 +31,16 @@ namespace Perpetuum.Zones.Teleporting.Strategies
 
         public delegate TrainingExitStrategy Factory(TeleportDescription description);
 
-        public TrainingExitStrategy(TeleportDescription description, ITrainingRewardRepository trainingRewardRepository, IChannelManager channelManager, CharacterCleaner characterCleaner, SparkHelper sparkHelper)
+        public TrainingExitStrategy(TeleportDescription description, ITrainingRewardRepository trainingRewardRepository, IChannelManager channelManager, CharacterCleaner characterCleaner, SparkHelper sparkHelper, GlobalConfiguration globalConfiguration)
         {
             _description = description;
             _trainingRewardRepository = trainingRewardRepository;
             _channelManager = channelManager;
             _characterCleaner = characterCleaner;
             _sparkHelper = sparkHelper;
+            // Using NIC for new player from globalConfiguration.
+            CHARACTER_START_CREDIT = globalConfiguration.StartCredit;
+            NIC_REWARD_PER_LEVEL   = globalConfiguration.LevelCredit;
         }
 
         public int TrainingRewardLevel
