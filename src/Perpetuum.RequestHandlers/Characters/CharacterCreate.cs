@@ -21,6 +21,7 @@ namespace Perpetuum.RequestHandlers.Characters
 {
     public class CharacterCreate : IRequestHandler
     {
+        private readonly int ACCOUNT_START_EP;
         private TimeSpan WAIT_TIME_BEFORE_SENDING_MAIL = TimeSpan.FromSeconds(10);
         private TimeSpan WAIT_TIME_BEFORE_SENDING_WELCOME_MESSAGE = TimeSpan.FromSeconds(10);
 
@@ -31,7 +32,7 @@ namespace Perpetuum.RequestHandlers.Characters
         private readonly IEntityServices _entityServices;
         private readonly SparkHelper _sparkHelper;
 
-        public CharacterCreate(IAccountManager accountManager,IChannelManager channelManager,DockingBaseHelper dockingBaseHelper,CharacterFactory characterFactory,IEntityServices entityServices,SparkHelper sparkHelper)
+        public CharacterCreate(IAccountManager accountManager,IChannelManager channelManager,DockingBaseHelper dockingBaseHelper,CharacterFactory characterFactory,IEntityServices entityServices,SparkHelper sparkHelper,GlobalConfiguration globalConfiguration)
         {
             _accountManager = accountManager;
             _channelManager = channelManager;
@@ -39,6 +40,8 @@ namespace Perpetuum.RequestHandlers.Characters
             _characterFactory = characterFactory;
             _entityServices = entityServices;
             _sparkHelper = sparkHelper;
+            // Using EP for new player from globalConfiguration.
+            ACCOUNT_START_EP = globalConfiguration.StartEP;
         }
 
         public void HandleRequest(IRequest request)
@@ -66,7 +69,7 @@ namespace Perpetuum.RequestHandlers.Characters
                 if (account.FirstCharacterDate == null)
                 {
                     account.FirstCharacterDate = DateTime.Now;
-                    _accountManager.AddExtensionPoints(account, 40000); //TODO: starting EP - store in DB
+                    _accountManager.AddExtensionPoints(account, ACCOUNT_START_EP);
                     _accountManager.Repository.Update(account);
                 }
 

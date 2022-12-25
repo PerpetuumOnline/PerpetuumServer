@@ -1,3 +1,6 @@
+using Newtonsoft.Json;
+using System.ComponentModel;
+
 namespace Perpetuum
 {
     public class GlobalConfiguration
@@ -23,5 +26,17 @@ namespace Perpetuum
         public CorporationConfiguration Corporation { get; set; }
 
         public bool StartServerInAdminOnlyMode { get; set; }
+
+        // Default NIC value for new player.
+        [DefaultValue(500000), JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
+        public int StartCredit { get; set; }
+
+        // Default NIC per level value for new player.
+        [DefaultValue(125000), JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
+        public int LevelCredit { get; set; }
+
+        // Default EP value for new player.
+        [DefaultValue(40000), JsonProperty(DefaultValueHandling = DefaultValueHandling.Populate)]
+        public int StartEP { get; set; }
     }
 }
