@@ -187,6 +187,8 @@ using Perpetuum.Zones.NpcSystem.Presences.RandomExpiringPresence;
 using Perpetuum.Zones.NpcSystem.Presences.ExpiringStaticPresence;
 using Perpetuum.Zones.NpcSystem.Presences.GrowingPresences;
 
+
+//TODO: refactor this mess
 namespace Perpetuum.Bootstrapper
 {
     class EntityAggregateServices : IEntityServices
@@ -2223,6 +2225,7 @@ namespace Perpetuum.Bootstrapper
             RegisterRequestHandler<ServerShutDown>(Commands.ServerShutDown);
             RegisterRequestHandler<ServerShutDownCancel>(Commands.ServerShutDownCancel);
 
+
             RegisterZoneRequestHandlers();
 
             //Admin tool commands
@@ -2815,6 +2818,8 @@ namespace Perpetuum.Bootstrapper
             RegisterZoneRequestHandler<ZoneCleanBlockingByDefinition>(Commands.ZoneCleanBlockingByDefinition);
             RegisterZoneRequestHandler<ZoneCleanObstacleBlocking>(Commands.ZoneCleanObstacleBlocking);
             RegisterZoneRequestHandler<ZoneFillGroundTypeRandom>(Commands.ZoneFillGroundTypeRandom);
+            RegisterZoneRequestHandler<ZonePbsApplyStagingToConstructed>(Commands.ZonePbsApplyStagingToConstructed);
+            RegisterZoneRequestHandler<ZonePbsReplaceActualWithStaging>(Commands.ZonePbsReplaceActualWithStaging);
 
 
 

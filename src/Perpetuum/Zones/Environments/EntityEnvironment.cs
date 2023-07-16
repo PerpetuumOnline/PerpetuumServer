@@ -9,9 +9,25 @@ namespace Perpetuum.Zones.Environments
     {
         public static EntityEnvironmentDescription LoadEnvironmentSql(int definition)
         {
-            var descriptionString = Db.Query().CommandText("select descriptionstring from environmentdescription where definition=@definition")
-                                           .SetParameter("@definition", definition)
-                                           .ExecuteScalar<string>();
+            var descriptionString = Db.Query()
+                .CommandText("select descriptionstring from environmentdescription where definition=@definition")
+                .SetParameter("@definition", definition)
+                .ExecuteScalar<string>();
+
+            if (descriptionString == null)
+            {
+                return new EntityEnvironmentDescription();
+            }
+
+            return ConvertFromString(descriptionString);
+        }
+
+        public static EntityEnvironmentDescription LoadEnvironmentFromStagingSql(int definition)
+        {
+            var descriptionString = Db.Query()
+                .CommandText("select descriptionstring from environmentdescriptionstaging where definition=@definition")
+                .SetParameter("@definition", definition)
+                .ExecuteScalar<string>();
 
             if (descriptionString == null)
             {

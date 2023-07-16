@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
+using Perpetuum.Accounting.Characters;
+using Perpetuum.Accounting;
 using Perpetuum.EntityFramework;
 using Perpetuum.Log;
+using Perpetuum.Services.TechTree;
 using Perpetuum.Units;
 using Perpetuum.Zones.Environments;
 using Perpetuum.Zones.Terrains;
 
 namespace Perpetuum.Zones
 {
+    //TODO: Refactor this all
     partial class ZoneExtensions
     {
         private static void DrawEnvironmentByDefinitionAndPosition(this IZone zone,Unit unit)
@@ -45,6 +50,29 @@ namespace Perpetuum.Zones
             var turns = (int)(Math.Round(unit.Orientation, 2) / 0.25);
 
             DrawEnvironmentWithMirrorAndTurns(zone, unit.CurrentPosition, description, turns, false, false, BlockingFlags.Obstacle);
+        }
+
+        /// <summary>
+        /// Attempts to draw environment from staging table.
+        /// </summary>
+        /// <param name="zone">The zone to process.</param>
+        /// <param name="unit">The unit to draw.</param>
+        public static void DrawEnvironmentByUnitFromStaging(this IZone zone, Unit unit)
+        {
+            var description = EntityEnvironment.LoadEnvironmentFromStagingSql(unit.Definition);
+
+            if (!(description.blocksTiles ?? Enumerable.Empty<Tile>()).Any())
+            {
+                    Logger.Error($"No staging desctiption for PBS {unit.Definition}");
+
+                    return;
+            }
+
+            var turns = (int)(Math.Round(unit.Orientation, 2) / 0.25);
+
+            DrawEnvironmentWithMirrorAndTurns(zone, unit.CurrentPosition, description, turns, false, false, BlockingFlags.Obstacle);
+
+            EntityEnvironment.WriteEnvironmentToSql(unit.Definition, description);
         }
 
         public static void DrawBlockingByDefinition(this IZone zone,EntityDefault entityDefault)
@@ -108,10 +136,8 @@ namespace Perpetuum.Zones
                 {
                     var tx = tile.x;
                     var ty = tile.y;
-
                     if (flipX)
                         tx *= -1;
-
                     if (flipY)
                         ty *= -1;
 

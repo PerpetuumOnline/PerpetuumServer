@@ -21,9 +21,9 @@ namespace Perpetuum.Services.Channels.ChatCommands
             _sessionManager = sessionManager;
 
             _commands = typeof(AdminCommandHandlers).GetMethods()
-                .Where(m => m.GetCustomAttributes(typeof(ChatCommand), false).Length > 0)
+                .Where(m => m.GetCustomAttributes(typeof(ChatCommandAttribute), false).Length > 0)
                 .Select(m => new KeyValuePair<string, CommandDelegate>(
-                    ((ChatCommand)m.GetCustomAttribute(typeof(ChatCommand))).Command,
+                    ((ChatCommandAttribute)m.GetCustomAttribute(typeof(ChatCommandAttribute))).Command,
                     (CommandDelegate)Delegate.CreateDelegate(typeof(CommandDelegate), m)))
                 .ToDictionary();
         }

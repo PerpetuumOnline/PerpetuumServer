@@ -596,6 +596,7 @@
     <Compile Include="Zone\ZoneEntityChangeState.cs" />
     <Compile Include="Zone\ZoneEnvironmentDescriptionList.cs" />
     <Compile Include="Zone\ZoneFixPBS.cs" />
+    <Compile Include="Zone\ZonePbsApplyStagingToConstructed.cs" />
     <Compile Include="Zone\ZoneForceDeconstruct.cs" />
     <Compile Include="Zone\ZoneGetBuildings.cs" />
     <Compile Include="Zone\ZoneGetPlantsMode.cs" />
@@ -613,6 +614,7 @@
     <Compile Include="Zone\ZoneNpcFlockSet.cs" />
     <Compile Include="Zone\ZoneNpcFlockSetParameter.cs" />
     <Compile Include="Zone\ZonePBSFixOrphaned.cs" />
+    <Compile Include="Zone\ZonePbsReplaceActualWithStaging.cs" />
     <Compile Include="Zone\ZonePBSTest.cs" />
     <Compile Include="Zone\ZonePlaceWall.cs" />
     <Compile Include="Zone\ZonePutPlant.cs" />

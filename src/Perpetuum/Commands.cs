@@ -1383,6 +1383,18 @@ namespace Perpetuum
             }
         };
 
+        public static readonly Command ZonePbsApplyStagingToConstructed = new Command
+        {
+            Text = "zonePBSApplyStagingToConstructed",
+            AccessLevel = AccessLevel.admin,
+        };
+
+        public static readonly Command ZonePbsReplaceActualWithStaging = new Command
+        {
+            Text = "zonePbsReplaceActualWithStaging",
+            AccessLevel = AccessLevel.admin,
+        };
+
         public static readonly Command ZoneDrawStatMap = new Command
         {
             Text = "zoneDrawStatMap",
@@ -5552,6 +5564,5 @@ namespace Perpetuum
                 new Argument<int>(k.accountID),
             }
         };
-
     }
 }
